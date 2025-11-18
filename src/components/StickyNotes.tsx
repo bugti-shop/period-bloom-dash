@@ -23,6 +23,10 @@ interface Note {
   createdAt: number;
 }
 
+interface WeekNotes {
+  [week: number]: Note[];
+}
+
 const NOTE_COLORS = [
   "#ffeb3b", // Yellow
   "#ee5ea6", // Pink
@@ -31,7 +35,12 @@ const NOTE_COLORS = [
   "#d4b5ff", // Lavender
 ];
 
-export const StickyNotes = () => {
+interface StickyNotesProps {
+  currentWeek?: number;
+}
+
+export const StickyNotes = ({ currentWeek }: StickyNotesProps = {}) => {
+  const [weekNotes, setWeekNotes] = useState<WeekNotes>({});
   const [notes, setNotes] = useState<Note[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editContent, setEditContent] = useState("");
@@ -40,15 +49,36 @@ export const StickyNotes = () => {
   const [selectedColor, setSelectedColor] = useState(NOTE_COLORS[0]);
   const { toast } = useToast();
 
-  useEffect(() => {
-    const savedNotes = loadFromLocalStorage<Note[]>("sticky-notes");
-    if (savedNotes) {
-      setNotes(savedNotes);
-    }
-  }, []);
+  const storageKey = currentWeek !== undefined ? "pregnancy-week-notes" : "sticky-notes";
 
   useEffect(() => {
-    saveToLocalStorage("sticky-notes", notes);
+    if (currentWeek !== undefined) {
+      const savedWeekNotes = loadFromLocalStorage<WeekNotes>(storageKey);
+      if (savedWeekNotes) {
+        setWeekNotes(savedWeekNotes);
+        setNotes(savedWeekNotes[currentWeek] || []);
+      } else {
+        setNotes([]);
+      }
+    } else {
+      const savedNotes = loadFromLocalStorage<Note[]>(storageKey);
+      if (savedNotes) {
+        setNotes(savedNotes);
+      }
+    }
+  }, [currentWeek, storageKey]);
+
+  useEffect(() => {
+    if (currentWeek !== undefined) {
+      const updatedWeekNotes = {
+        ...weekNotes,
+        [currentWeek]: notes
+      };
+      setWeekNotes(updatedWeekNotes);
+      saveToLocalStorage(storageKey, updatedWeekNotes);
+    } else {
+      saveToLocalStorage(storageKey, notes);
+    }
   }, [notes]);
 
   const openAddDialog = () => {
