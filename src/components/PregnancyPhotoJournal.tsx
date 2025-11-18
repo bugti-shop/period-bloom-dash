@@ -3,24 +3,29 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Camera, Download, Trash2, Calendar } from "lucide-react";
-import { format } from "date-fns";
+import { Camera, Download, Trash2 } from "lucide-react";
 import { saveToLocalStorage, loadFromLocalStorage } from "@/lib/storage";
 import { toast } from "sonner";
 
-interface PregnancyPhoto {
-  id: string;
+interface WeekPhoto {
   imageData: string;
-  notes: string;
-  week: number;
   timestamp: Date;
+}
+
+interface WeekNotes {
+  [week: number]: string;
+}
+
+interface WeekPhotos {
+  [week: number]: WeekPhoto;
 }
 
 interface PregnancyPhotoJournalProps {
   currentWeek: number;
 }
 
-const PREGNANCY_PHOTOS_KEY = "pregnancy-photos";
+const PREGNANCY_PHOTOS_KEY = "pregnancy-week-photos";
+const PREGNANCY_NOTES_KEY = "pregnancy-week-notes";
 
 export const PregnancyPhotoJournal = ({ currentWeek }: PregnancyPhotoJournalProps) => {
   const [photos, setPhotos] = useState<PregnancyPhoto[]>([]);
