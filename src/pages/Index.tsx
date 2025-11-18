@@ -279,7 +279,7 @@ const Index = () => {
             </div>
 
             {/* Sticky Notes Section */}
-            <StickyNotes />
+            <StickyNotes currentWeek={undefined} />
           </div>
         </div>
       )}

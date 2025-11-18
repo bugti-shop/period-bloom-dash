@@ -3,9 +3,13 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Camera, Download, Trash2, Mic, Square, Play, Pause } from "lucide-react";
+import { Camera, Download, Trash2, Mic, Square, Play, Pause, ArrowLeftRight, Clock, FileDown } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import { saveToLocalStorage, loadFromLocalStorage } from "@/lib/storage";
 import { toast } from "sonner";
+import { BumpPhotoComparison } from "./BumpPhotoComparison";
+import { PregnancyTimeline } from "./PregnancyTimeline";
+import { exportPregnancyJournal } from "@/lib/pregnancyExport";
 
 interface WeekPhoto {
   imageData: string;
@@ -48,6 +52,11 @@ export const PregnancyPhotoJournal = ({ currentWeek }: PregnancyPhotoJournalProp
   const [isRecording, setIsRecording] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
+  const [showComparison, setShowComparison] = useState(false);
+  const [showTimeline, setShowTimeline] = useState(false);
+  const [showExportDialog, setShowExportDialog] = useState(false);
+  const [exportStartWeek, setExportStartWeek] = useState("");
+  const [exportEndWeek, setExportEndWeek] = useState("");
   
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
@@ -249,13 +258,51 @@ export const PregnancyPhotoJournal = ({ currentWeek }: PregnancyPhotoJournalProp
     toast.success("Voice note deleted");
   };
 
+  const handleExport = () => {
+    if (exportStartWeek && exportEndWeek) {
+      const start = parseInt(exportStartWeek);
+      const end = parseInt(exportEndWeek);
+      if (start > end) {
+        toast.error("Start week must be less than or equal to end week");
+        return;
+      }
+      exportPregnancyJournal(start, end);
+      toast.success(`Exported weeks ${start}-${end}`);
+    } else {
+      exportPregnancyJournal();
+      toast.success("Exported all pregnancy journal data");
+    }
+    setShowExportDialog(false);
+    setExportStartWeek("");
+    setExportEndWeek("");
+  };
+
   const currentWeekPhoto = weekPhotos[currentWeek];
   const currentWeekVoiceNote = weekVoiceNotes[currentWeek];
 
   return (
-    <Card className="p-6 bg-card">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-semibold text-foreground">Bump Photo Journal</h2>
+    <>
+      {showComparison && <BumpPhotoComparison onClose={() => setShowComparison(false)} />}
+      {showTimeline && <PregnancyTimeline onClose={() => setShowTimeline(false)} />}
+      
+      <Card className="p-6 bg-card">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-semibold text-foreground">Bump Photo Journal</h2>
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm" onClick={() => setShowComparison(true)}>
+              <ArrowLeftRight className="w-4 h-4 mr-2" />
+              Compare
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => setShowTimeline(true)}>
+              <Clock className="w-4 h-4 mr-2" />
+              Timeline
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => setShowExportDialog(true)}>
+              <FileDown className="w-4 h-4 mr-2" />
+              Export
+            </Button>
+          </div>
+        </div>
         {!currentWeekPhoto && (
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
@@ -405,6 +452,52 @@ export const PregnancyPhotoJournal = ({ currentWeek }: PregnancyPhotoJournalProp
           />
         </div>
       </div>
+
+      <Dialog open={showExportDialog} onOpenChange={setShowExportDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Export Pregnancy Journal</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <p className="text-sm text-muted-foreground">
+              Export all journal entries or specify a week range
+            </p>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium mb-2 text-foreground">Start Week (Optional)</label>
+                <Input
+                  type="number"
+                  min="1"
+                  max="40"
+                  value={exportStartWeek}
+                  onChange={(e) => setExportStartWeek(e.target.value)}
+                  placeholder="e.g., 1"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2 text-foreground">End Week (Optional)</label>
+                <Input
+                  type="number"
+                  min="1"
+                  max="40"
+                  value={exportEndWeek}
+                  onChange={(e) => setExportEndWeek(e.target.value)}
+                  placeholder="e.g., 40"
+                />
+              </div>
+            </div>
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" onClick={() => setShowExportDialog(false)}>
+                Cancel
+              </Button>
+              <Button onClick={handleExport}>
+                Export
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </Card>
+    </>
   );
 };

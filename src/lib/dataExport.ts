@@ -26,7 +26,9 @@ export const exportAllData = () => {
       sectionVisibility: loadFromLocalStorage("section-visibility"),
       contractions: loadFromLocalStorage("contractions"),
       pregnancyMode: loadFromLocalStorage("pregnancy-mode"),
-      pregnancyPhotos: loadFromLocalStorage("pregnancy-photos")
+      pregnancyWeekPhotos: loadFromLocalStorage("pregnancy-week-photos"),
+      pregnancyWeekNotes: loadFromLocalStorage("pregnancy-week-notes"),
+      pregnancyWeekVoiceNotes: loadFromLocalStorage("pregnancy-week-voice-notes")
     }
   };
 
