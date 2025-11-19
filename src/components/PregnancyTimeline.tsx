@@ -50,14 +50,8 @@ export const PregnancyTimeline = ({ onClose }: PregnancyTimelineProps) => {
     const notes = loadFromLocalStorage<WeekNotes>("pregnancy-week-notes") || {};
     const voiceNotes = loadFromLocalStorage<WeekVoiceNotes>("pregnancy-week-voice-notes") || {};
 
-    const allWeeks = new Set([
-      ...Object.keys(photos).map(w => parseInt(w)),
-      ...Object.keys(notes).map(w => parseInt(w)),
-      ...Object.keys(voiceNotes).map(w => parseInt(w))
-    ]);
-
-    const entries: TimelineEntry[] = Array.from(allWeeks)
-      .sort((a, b) => a - b)
+    // Create entries for all weeks 1-40
+    const entries: TimelineEntry[] = Array.from({ length: 40 }, (_, i) => i + 1)
       .map(week => ({
         week,
         photo: photos[week] ? {
@@ -115,74 +109,75 @@ export const PregnancyTimeline = ({ onClose }: PregnancyTimelineProps) => {
             </Button>
           </div>
 
-          {timelineEntries.length === 0 ? (
-            <div className="text-center py-8 sm:py-12 text-muted-foreground">
-              <p className="text-sm sm:text-base">Your pregnancy timeline is empty.</p>
-              <p className="text-xs sm:text-sm mt-2">Start adding photos, notes, and voice recordings!</p>
-            </div>
-          ) : (
-            <div className="space-y-6 sm:space-y-8">
-              {timelineEntries.map((entry) => (
-                <div key={entry.week} className="border-l-4 border-primary pl-6 pb-8 relative">
-                  <div className="absolute -left-2 sm:-left-3 top-0 w-4 h-4 sm:w-6 sm:h-6 rounded-full bg-primary border-2 sm:border-4 border-background"></div>
+          <div className="space-y-6 sm:space-y-8">
+            {timelineEntries.map((entry) => {
+              const hasData = entry.photo || entry.voiceNote || entry.notes;
+              
+              return (
+                <div key={entry.week} className={`border-l-4 ${hasData ? 'border-primary' : 'border-muted'} pl-6 pb-8 relative`}>
+                  <div className={`absolute -left-2 sm:-left-3 top-0 w-4 h-4 sm:w-6 sm:h-6 rounded-full ${hasData ? 'bg-primary' : 'bg-muted'} border-2 sm:border-4 border-background`}></div>
                   
                   <h3 className="text-base sm:text-xl font-semibold mb-3 sm:mb-4 text-foreground">Week {entry.week}</h3>
                   
-                  <div className="space-y-3 sm:space-y-4">
-                    {entry.photo && (
-                      <div>
-                        <h4 className="text-xs sm:text-sm font-medium mb-2 text-muted-foreground">Bump Photo</h4>
-                        <img
-                          src={entry.photo.imageData}
-                          alt={`Week ${entry.week}`}
-                          className="w-full max-w-md aspect-[4/3] object-cover rounded-lg"
-                        />
-                        <p className="text-xs text-muted-foreground mt-1 truncate">
-                          {entry.photo.timestamp.toLocaleDateString()}
-                        </p>
-                      </div>
-                    )}
+                  {hasData ? (
+                    <div className="space-y-3 sm:space-y-4">
+                      {entry.photo && (
+                        <div>
+                          <h4 className="text-xs sm:text-sm font-medium mb-2 text-muted-foreground">Bump Photo</h4>
+                          <img
+                            src={entry.photo.imageData}
+                            alt={`Week ${entry.week}`}
+                            className="w-full max-w-md aspect-[4/3] object-cover rounded-lg"
+                          />
+                          <p className="text-xs text-muted-foreground mt-1 truncate">
+                            {entry.photo.timestamp.toLocaleDateString()}
+                          </p>
+                        </div>
+                      )}
 
-                    {entry.voiceNote && (
-                      <div>
-                        <h4 className="text-xs sm:text-sm font-medium mb-2 text-muted-foreground">Voice Note</h4>
-                        <Button
-                          onClick={() => playVoiceNote(entry.week, entry.voiceNote!)}
-                          variant="outline"
-                          size="sm"
-                          className="w-full sm:w-auto"
-                        >
-                          {playingWeek === entry.week && !isPaused ? (
-                            <>
-                              <Pause className="w-3 h-3 sm:w-4 sm:h-4 mr-2 flex-shrink-0" />
-                              <span className="truncate">Pause ({entry.voiceNote.duration}s)</span>
-                            </>
-                          ) : (
-                            <>
-                              <Play className="w-3 h-3 sm:w-4 sm:h-4 mr-2 flex-shrink-0" />
-                              <span className="truncate">{playingWeek === entry.week && isPaused ? "Resume" : "Play"} ({entry.voiceNote.duration}s)</span>
-                            </>
-                          )}
-                        </Button>
-                        <p className="text-xs text-muted-foreground mt-1 truncate">
-                          {entry.voiceNote.timestamp.toLocaleDateString()}
-                        </p>
-                      </div>
-                    )}
+                      {entry.voiceNote && (
+                        <div>
+                          <h4 className="text-xs sm:text-sm font-medium mb-2 text-muted-foreground">Voice Note</h4>
+                          <Button
+                            onClick={() => playVoiceNote(entry.week, entry.voiceNote!)}
+                            variant="outline"
+                            size="sm"
+                            className="w-full sm:w-auto"
+                          >
+                            {playingWeek === entry.week && !isPaused ? (
+                              <>
+                                <Pause className="w-3 h-3 sm:w-4 sm:h-4 mr-2 flex-shrink-0" />
+                                <span className="truncate">Pause ({entry.voiceNote.duration}s)</span>
+                              </>
+                            ) : (
+                              <>
+                                <Play className="w-3 h-3 sm:w-4 sm:h-4 mr-2 flex-shrink-0" />
+                                <span className="truncate">{playingWeek === entry.week && isPaused ? "Resume" : "Play"} ({entry.voiceNote.duration}s)</span>
+                              </>
+                            )}
+                          </Button>
+                          <p className="text-xs text-muted-foreground mt-1 truncate">
+                            {entry.voiceNote.timestamp.toLocaleDateString()}
+                          </p>
+                        </div>
+                      )}
 
-                    {entry.notes && (
-                      <div>
-                        <h4 className="text-xs sm:text-sm font-medium mb-2 text-muted-foreground">Notes</h4>
-                        <p className="text-xs sm:text-sm text-foreground whitespace-pre-wrap bg-muted/30 p-2 sm:p-3 rounded-lg break-words">
-                          {entry.notes}
-                        </p>
-                      </div>
-                    )}
-                  </div>
+                      {entry.notes && (
+                        <div>
+                          <h4 className="text-xs sm:text-sm font-medium mb-2 text-muted-foreground">Notes</h4>
+                          <p className="text-xs sm:text-sm text-foreground whitespace-pre-wrap bg-muted/30 p-2 sm:p-3 rounded-lg break-words">
+                            {entry.notes}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <p className="text-xs sm:text-sm text-muted-foreground italic">No data recorded for this week yet</p>
+                  )}
                 </div>
-              ))}
-            </div>
-          )}
+              );
+            })}
+          </div>
         </div>
       </Card>
     </div>
