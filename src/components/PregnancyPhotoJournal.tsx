@@ -285,21 +285,21 @@ export const PregnancyPhotoJournal = ({ currentWeek }: PregnancyPhotoJournalProp
       {showComparison && <BumpPhotoComparison onClose={() => setShowComparison(false)} />}
       {showTimeline && <PregnancyTimeline onClose={() => setShowTimeline(false)} />}
       
-      <Card className="p-6 bg-card">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-semibold text-foreground">Bump Photo Journal</h2>
-          <div className="flex gap-2">
-            <Button variant="outline" size="sm" onClick={() => setShowComparison(true)}>
-              <ArrowLeftRight className="w-4 h-4 mr-2" />
-              Compare
+      <Card className="p-4 sm:p-6 bg-card overflow-hidden">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+          <h2 className="text-lg sm:text-xl font-semibold text-foreground truncate">Bump Photo Journal</h2>
+          <div className="flex flex-wrap gap-2">
+            <Button variant="outline" size="sm" onClick={() => setShowComparison(true)} className="flex-1 sm:flex-none min-w-0">
+              <ArrowLeftRight className="w-4 h-4 sm:mr-2" />
+              <span className="hidden sm:inline">Compare</span>
             </Button>
-            <Button variant="outline" size="sm" onClick={() => setShowTimeline(true)}>
-              <Clock className="w-4 h-4 mr-2" />
-              Timeline
+            <Button variant="outline" size="sm" onClick={() => setShowTimeline(true)} className="flex-1 sm:flex-none min-w-0">
+              <Clock className="w-4 h-4 sm:mr-2" />
+              <span className="hidden sm:inline">Timeline</span>
             </Button>
-            <Button variant="outline" size="sm" onClick={() => setShowExportDialog(true)}>
-              <FileDown className="w-4 h-4 mr-2" />
-              Export
+            <Button variant="outline" size="sm" onClick={() => setShowExportDialog(true)} className="flex-1 sm:flex-none min-w-0">
+              <FileDown className="w-4 h-4 sm:mr-2" />
+              <span className="hidden sm:inline">Export</span>
             </Button>
           </div>
         </div>
@@ -340,9 +340,9 @@ export const PregnancyPhotoJournal = ({ currentWeek }: PregnancyPhotoJournalProp
         )}
 
         {!currentWeekPhoto ? (
-        <div className="text-center py-12 text-muted-foreground border-2 border-dashed border-border rounded-lg">
-          <Camera className="w-16 h-16 mx-auto mb-4 opacity-30" />
-          <p>No photo for week {currentWeek} yet</p>
+        <div className="text-center py-8 sm:py-12 text-muted-foreground border-2 border-dashed border-border rounded-lg">
+          <Camera className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 opacity-30" />
+          <p className="text-sm sm:text-base">No photo for week {currentWeek} yet</p>
         </div>
       ) : (
         <div className="relative mb-4">
@@ -385,27 +385,27 @@ export const PregnancyPhotoJournal = ({ currentWeek }: PregnancyPhotoJournalProp
         </div>
         )}
 
-        <div className="space-y-4">
+        <div className="space-y-4 overflow-hidden">
         <div>
-          <label className="block text-sm font-medium mb-2 text-foreground">
+          <label className="block text-sm font-medium mb-2 text-foreground truncate">
             Week {currentWeek} Voice Note
           </label>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
             {!currentWeekVoiceNote ? (
               <Button
                 onClick={isRecording ? stopRecording : startRecording}
                 variant={isRecording ? "destructive" : "outline"}
-                className="flex-1"
+                className="flex-1 min-w-0"
               >
                 {isRecording ? (
                   <>
-                    <Square className="w-4 h-4 mr-2" />
-                    Stop Recording
+                    <Square className="w-4 h-4 mr-2 flex-shrink-0" />
+                    <span className="truncate">Stop Recording</span>
                   </>
                 ) : (
                   <>
-                    <Mic className="w-4 h-4 mr-2" />
-                    Record Voice Note
+                    <Mic className="w-4 h-4 mr-2 flex-shrink-0" />
+                    <span className="truncate">Record Voice Note</span>
                   </>
                 )}
               </Button>
@@ -414,17 +414,17 @@ export const PregnancyPhotoJournal = ({ currentWeek }: PregnancyPhotoJournalProp
                 <Button
                   onClick={playVoiceNote}
                   variant="outline"
-                  className="flex-1"
+                  className="flex-1 min-w-0"
                 >
                   {isPlaying && !isPaused ? (
                     <>
-                      <Pause className="w-4 h-4 mr-2" />
-                      Pause ({currentWeekVoiceNote.duration}s)
+                      <Pause className="w-4 h-4 mr-2 flex-shrink-0" />
+                      <span className="truncate">Pause ({currentWeekVoiceNote.duration}s)</span>
                     </>
                   ) : (
                     <>
-                      <Play className="w-4 h-4 mr-2" />
-                      {isPaused ? "Resume" : "Play"} ({currentWeekVoiceNote.duration}s)
+                      <Play className="w-4 h-4 mr-2 flex-shrink-0" />
+                      <span className="truncate">{isPaused ? "Resume" : "Play"} ({currentWeekVoiceNote.duration}s)</span>
                     </>
                   )}
                 </Button>
@@ -432,6 +432,7 @@ export const PregnancyPhotoJournal = ({ currentWeek }: PregnancyPhotoJournalProp
                   onClick={deleteVoiceNote}
                   variant="outline"
                   size="icon"
+                  className="flex-shrink-0"
                 >
                   <Trash2 className="w-4 h-4" />
                 </Button>
@@ -441,14 +442,14 @@ export const PregnancyPhotoJournal = ({ currentWeek }: PregnancyPhotoJournalProp
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-2 text-foreground">
+          <label className="block text-sm font-medium mb-2 text-foreground truncate">
             Week {currentWeek} Notes
           </label>
           <Textarea
             value={currentNotes}
             onChange={(e) => handleNotesChange(e.target.value)}
             placeholder="Add your thoughts, feelings, or updates for this week..."
-            className="min-h-[120px]"
+            className="min-h-[100px] sm:min-h-[120px] w-full resize-none"
           />
         </div>
         </div>
