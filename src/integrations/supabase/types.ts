@@ -14,51 +14,13 @@ export type Database = {
   }
   public: {
     Tables: {
-      partner_shares: {
-        Row: {
-          created_at: string
-          expires_at: string | null
-          id: string
-          share_code: string
-          share_health_data: boolean | null
-          share_name: string | null
-          share_notes: boolean | null
-          share_period_data: boolean | null
-          share_symptoms: boolean | null
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          expires_at?: string | null
-          id?: string
-          share_code: string
-          share_health_data?: boolean | null
-          share_name?: string | null
-          share_notes?: boolean | null
-          share_period_data?: boolean | null
-          share_symptoms?: boolean | null
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          expires_at?: string | null
-          id?: string
-          share_code?: string
-          share_health_data?: boolean | null
-          share_name?: string | null
-          share_notes?: boolean | null
-          share_period_data?: boolean | null
-          share_symptoms?: boolean | null
-          user_id?: string
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      generate_share_code: { Args: never; Returns: string }
+      [_ in never]: never
     }
     Enums: {
       [_ in never]: never
