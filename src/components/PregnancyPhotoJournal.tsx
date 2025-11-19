@@ -303,43 +303,43 @@ export const PregnancyPhotoJournal = ({ currentWeek }: PregnancyPhotoJournalProp
             </Button>
           </div>
         </div>
-        {!currentWeekPhoto && (
-          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogTrigger asChild>
-              <Button className="gap-2">
-                <Camera className="w-4 h-4" />
-                Add Photo
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Add Bump Photo - Week {currentWeek}</DialogTitle>
-              </DialogHeader>
-              <div className="space-y-4">
-                <div>
-                  <label htmlFor="photo-upload" className="cursor-pointer">
-                    <div className="border-2 border-dashed border-border rounded-lg p-8 text-center hover:border-primary transition-colors">
-                      <Camera className="w-12 h-12 mx-auto mb-2 text-muted-foreground" />
-                      <p className="text-sm text-muted-foreground">
-                        Click to select a photo
-                      </p>
-                    </div>
-                    <input
-                      id="photo-upload"
-                      type="file"
-                      accept="image/*"
-                      onChange={handlePhotoCapture}
-                      className="hidden"
-                    />
-                  </label>
-                </div>
-              </div>
-            </DialogContent>
-          </Dialog>
-        )}
-      </div>
 
-      {!currentWeekPhoto ? (
+        {!currentWeekPhoto && (
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogTrigger asChild>
+            <Button className="gap-2">
+              <Camera className="w-4 h-4" />
+              Add Photo
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Add Bump Photo - Week {currentWeek}</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div>
+                <label htmlFor="photo-upload" className="cursor-pointer">
+                  <div className="border-2 border-dashed border-border rounded-lg p-8 text-center hover:border-primary transition-colors">
+                    <Camera className="w-12 h-12 mx-auto mb-2 text-muted-foreground" />
+                    <p className="text-sm text-muted-foreground">
+                      Click to select a photo
+                    </p>
+                  </div>
+                  <input
+                    id="photo-upload"
+                    type="file"
+                    accept="image/*"
+                    onChange={handlePhotoCapture}
+                    className="hidden"
+                  />
+                </label>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+        )}
+
+        {!currentWeekPhoto ? (
         <div className="text-center py-12 text-muted-foreground border-2 border-dashed border-border rounded-lg">
           <Camera className="w-16 h-16 mx-auto mb-4 opacity-30" />
           <p>No photo for week {currentWeek} yet</p>
@@ -383,9 +383,9 @@ export const PregnancyPhotoJournal = ({ currentWeek }: PregnancyPhotoJournalProp
             )}
           </div>
         </div>
-      )}
+        )}
 
-      <div className="space-y-4">
+        <div className="space-y-4">
         <div>
           <label className="block text-sm font-medium mb-2 text-foreground">
             Week {currentWeek} Voice Note
@@ -451,9 +451,9 @@ export const PregnancyPhotoJournal = ({ currentWeek }: PregnancyPhotoJournalProp
             className="min-h-[120px]"
           />
         </div>
-      </div>
+        </div>
 
-      <Dialog open={showExportDialog} onOpenChange={setShowExportDialog}>
+        <Dialog open={showExportDialog} onOpenChange={setShowExportDialog}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Export Pregnancy Journal</DialogTitle>
@@ -496,8 +496,8 @@ export const PregnancyPhotoJournal = ({ currentWeek }: PregnancyPhotoJournalProp
             </div>
           </div>
         </DialogContent>
-      </Dialog>
-    </Card>
+        </Dialog>
+      </Card>
     </>
   );
 };
