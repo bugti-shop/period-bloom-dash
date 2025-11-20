@@ -282,8 +282,18 @@ export const PregnancyPhotoJournal = ({ currentWeek }: PregnancyPhotoJournalProp
 
   return (
     <>
-      {showComparison && <BumpPhotoComparison onClose={() => setShowComparison(false)} />}
-      {showTimeline && <PregnancyTimeline onClose={() => setShowTimeline(false)} />}
+      {showComparison && (
+        <BumpPhotoComparison 
+          key={`comparison-${Object.keys(weekPhotos).length}`}
+          onClose={() => setShowComparison(false)} 
+        />
+      )}
+      {showTimeline && (
+        <PregnancyTimeline 
+          key={`timeline-${Object.keys(weekPhotos).length}-${Object.keys(weekNotes).length}-${Object.keys(weekVoiceNotes).length}`}
+          onClose={() => setShowTimeline(false)} 
+        />
+      )}
       
       <Card className="p-4 sm:p-6 bg-card overflow-hidden">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
