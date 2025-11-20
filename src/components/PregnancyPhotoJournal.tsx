@@ -3,12 +3,13 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Camera, Download, Trash2, Mic, Square, Play, Pause, ArrowLeftRight, Clock, FileDown } from "lucide-react";
+import { Camera, Download, Trash2, Mic, Square, Play, Pause, ArrowLeftRight, Clock, FileDown, Grid3x3 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { saveToLocalStorage, loadFromLocalStorage } from "@/lib/storage";
 import { toast } from "sonner";
 import { BumpPhotoComparison } from "./BumpPhotoComparison";
 import { PregnancyTimeline } from "./PregnancyTimeline";
+import { PhotoGallery } from "./PhotoGallery";
 import { exportPregnancyJournal } from "@/lib/pregnancyExport";
 
 interface WeekPhoto {
@@ -57,6 +58,8 @@ export const PregnancyPhotoJournal = ({ currentWeek }: PregnancyPhotoJournalProp
   const [showExportDialog, setShowExportDialog] = useState(false);
   const [exportStartWeek, setExportStartWeek] = useState("");
   const [exportEndWeek, setExportEndWeek] = useState("");
+  const [showGallery, setShowGallery] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
   
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
@@ -121,6 +124,7 @@ export const PregnancyPhotoJournal = ({ currentWeek }: PregnancyPhotoJournalProp
       
       setWeekPhotos(updatedPhotos);
       saveToLocalStorage(PREGNANCY_PHOTOS_KEY, updatedPhotos);
+      setRefreshKey(prev => prev + 1);
       
       setIsDialogOpen(false);
       toast.success("Bump photo added!");
@@ -133,6 +137,7 @@ export const PregnancyPhotoJournal = ({ currentWeek }: PregnancyPhotoJournalProp
     delete updatedPhotos[currentWeek];
     setWeekPhotos(updatedPhotos);
     saveToLocalStorage(PREGNANCY_PHOTOS_KEY, updatedPhotos);
+    setRefreshKey(prev => prev + 1);
     setShowControls(false);
     toast.success("Photo deleted");
   };
@@ -156,6 +161,7 @@ export const PregnancyPhotoJournal = ({ currentWeek }: PregnancyPhotoJournalProp
     };
     setWeekNotes(updatedNotes);
     saveToLocalStorage(PREGNANCY_NOTES_KEY, updatedNotes);
+    setRefreshKey(prev => prev + 1);
   };
 
   const startRecording = async () => {
@@ -191,6 +197,7 @@ export const PregnancyPhotoJournal = ({ currentWeek }: PregnancyPhotoJournalProp
           
           setWeekVoiceNotes(updatedVoiceNotes);
           saveToLocalStorage(PREGNANCY_VOICE_NOTES_KEY, updatedVoiceNotes);
+          setRefreshKey(prev => prev + 1);
           
           toast.success(`Voice note saved (${duration}s)`);
         };
@@ -247,6 +254,7 @@ export const PregnancyPhotoJournal = ({ currentWeek }: PregnancyPhotoJournalProp
     delete updatedVoiceNotes[currentWeek];
     setWeekVoiceNotes(updatedVoiceNotes);
     saveToLocalStorage(PREGNANCY_VOICE_NOTES_KEY, updatedVoiceNotes);
+    setRefreshKey(prev => prev + 1);
     
     if (currentAudioRef.current) {
       currentAudioRef.current.pause();
@@ -284,14 +292,20 @@ export const PregnancyPhotoJournal = ({ currentWeek }: PregnancyPhotoJournalProp
     <>
       {showComparison && (
         <BumpPhotoComparison 
-          key={`comparison-${Object.keys(weekPhotos).length}`}
+          key={refreshKey}
           onClose={() => setShowComparison(false)} 
         />
       )}
       {showTimeline && (
         <PregnancyTimeline 
-          key={`timeline-${Object.keys(weekPhotos).length}-${Object.keys(weekNotes).length}-${Object.keys(weekVoiceNotes).length}`}
+          key={refreshKey}
           onClose={() => setShowTimeline(false)} 
+        />
+      )}
+      {showGallery && (
+        <PhotoGallery 
+          key={refreshKey}
+          onClose={() => setShowGallery(false)} 
         />
       )}
       
@@ -299,6 +313,10 @@ export const PregnancyPhotoJournal = ({ currentWeek }: PregnancyPhotoJournalProp
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
           <h2 className="text-lg sm:text-xl font-semibold text-foreground truncate">Bump Photo Journal</h2>
           <div className="flex flex-wrap gap-2">
+            <Button variant="outline" size="sm" onClick={() => setShowGallery(true)} className="flex-1 sm:flex-none min-w-0">
+              <Grid3x3 className="w-4 h-4 sm:mr-2" />
+              <span className="hidden sm:inline">Gallery</span>
+            </Button>
             <Button variant="outline" size="sm" onClick={() => setShowComparison(true)} className="flex-1 sm:flex-none min-w-0">
               <ArrowLeftRight className="w-4 h-4 sm:mr-2" />
               <span className="hidden sm:inline">Compare</span>
