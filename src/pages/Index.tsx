@@ -18,6 +18,7 @@ import { HistoryPage } from "@/pages/HistoryPage";
 import { ToolsPage } from "@/pages/ToolsPage";
 import { PregnancyTracker } from "@/components/PregnancyTracker";
 import { loadPregnancyMode } from "@/lib/pregnancyMode";
+import { ArticlesPage } from "@/pages/ArticlesPage";
 import floralDecoration from "@/assets/floral-decoration.png";
 
 interface RegularPeriodData {
@@ -42,6 +43,7 @@ const Index = () => {
   const [activeTab, setActiveTab] = useState<"home" | "symptoms" | "settings" | "tools">("home");
   const [selectedMonth, setSelectedMonth] = useState<Date | null>(null);
   const [showHistory, setShowHistory] = useState(false);
+  const [isArticlesMode, setIsArticlesMode] = useState(false);
   const pregnancyMode = loadPregnancyMode();
 
   // Load saved period data on mount
@@ -153,7 +155,11 @@ const Index = () => {
   if (!periodData) {
     return (
       <div className="min-h-screen bg-white pb-20">
-        <Header />
+        <Header 
+          showArticlesToggle={true} 
+          onArticlesToggle={() => setIsArticlesMode(true)}
+          isArticlesMode={false}
+        />
         <div className="max-w-7xl mx-auto py-6 px-4">
           <div className="max-w-md mx-auto">
             <header className="text-center mb-8">
@@ -175,9 +181,27 @@ const Index = () => {
     return <HistoryPage onBack={() => setShowHistory(false)} />;
   }
 
+  // Show Articles Page
+  if (isArticlesMode) {
+    return (
+      <div className="min-h-screen bg-white">
+        <Header 
+          showArticlesToggle={true} 
+          onArticlesToggle={() => setIsArticlesMode(false)}
+          isArticlesMode={true}
+        />
+        <ArticlesPage />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-white">
-      <Header />
+      <Header 
+        showArticlesToggle={true} 
+        onArticlesToggle={() => setIsArticlesMode(true)}
+        isArticlesMode={false}
+      />
       
       {/* Render content based on active tab */}
       {activeTab === "home" && (
