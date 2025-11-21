@@ -12,6 +12,7 @@ export interface SectionVisibility {
   flowIntensity: boolean;
   stickyNotes: boolean;
   insights: boolean;
+  health: boolean;
 }
 
 const SECTION_VISIBILITY_KEY = "section-visibility";
@@ -28,6 +29,7 @@ const DEFAULT_VISIBILITY: SectionVisibility = {
   flowIntensity: true,
   stickyNotes: true,
   insights: true,
+  health: true,
 };
 
 export const saveSectionVisibility = (visibility: SectionVisibility) => {

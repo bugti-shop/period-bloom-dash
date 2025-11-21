@@ -169,20 +169,79 @@ export const SymptomsPage = () => {
           {/* Mood & Symptom Correlation */}
           <MoodSymptomCorrelation />
 
-          {/* Intimacy, BBT, and Appetite Trackers */}
-          <IntimacyTracker />
-          <BBTTracker />
-          <AppetiteTracker />
+          {/* Tracker Cards with Images */}
+          <div className="grid grid-cols-2 gap-4">
+            {/* Intimacy Tracker Card */}
+            <div 
+              className="relative rounded-2xl overflow-hidden shadow-md cursor-pointer h-48 group"
+              onClick={() => document.getElementById('intimacy-section')?.scrollIntoView({ behavior: 'smooth' })}
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-pink-400 to-rose-500" />
+              <div className="absolute inset-0 flex flex-col justify-end p-4 text-white">
+                <h3 className="text-xl font-bold mb-1">Intimacy</h3>
+                <p className="text-sm opacity-90">Track</p>
+              </div>
+            </div>
+
+            {/* BBT Tracker Card */}
+            <div 
+              className="relative rounded-2xl overflow-hidden shadow-md cursor-pointer h-48 group"
+              onClick={() => document.getElementById('bbt-section')?.scrollIntoView({ behavior: 'smooth' })}
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-400 to-indigo-500" />
+              <div className="absolute inset-0 flex flex-col justify-end p-4 text-white">
+                <h3 className="text-xl font-bold mb-1">BBT</h3>
+                <p className="text-sm opacity-90">Monitor</p>
+              </div>
+            </div>
+
+            {/* Appetite Tracker Card */}
+            <div 
+              className="relative rounded-2xl overflow-hidden shadow-md cursor-pointer h-48 group"
+              onClick={() => document.getElementById('appetite-section')?.scrollIntoView({ behavior: 'smooth' })}
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-orange-400 to-amber-500" />
+              <div className="absolute inset-0 flex flex-col justify-end p-4 text-white">
+                <h3 className="text-xl font-bold mb-1">Appetite</h3>
+                <p className="text-sm opacity-90">Log</p>
+              </div>
+            </div>
+
+            {/* Health Tracker Card */}
+            <div 
+              className="relative rounded-2xl overflow-hidden shadow-md cursor-pointer h-48 group"
+              onClick={() => document.getElementById('health-section')?.scrollIntoView({ behavior: 'smooth' })}
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-green-400 to-teal-500" />
+              <div className="absolute inset-0 flex flex-col justify-end p-4 text-white">
+                <h3 className="text-xl font-bold mb-1">Health</h3>
+                <p className="text-sm opacity-90">Monitor</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Actual Tracker Sections */}
+          <div id="intimacy-section">
+            <IntimacyTracker />
+          </div>
+          
+          <div id="bbt-section">
+            <BBTTracker />
+          </div>
+          
+          <div id="appetite-section">
+            <AppetiteTracker />
+          </div>
 
           {/* Statistics Dashboard */}
           <SymptomStatistics />
 
           {/* Health Tracker, Voice Notes, Photos and Sticky Notes */}
-          <div className="grid md:grid-cols-2 gap-4">
+          <div id="health-section">
             <HealthTracker selectedDate={selectedDate} />
-            <DateStickyNotes selectedDate={selectedDate} />
           </div>
           
+          <DateStickyNotes selectedDate={selectedDate} />
           <VoiceNotes selectedDate={selectedDate} />
           <PhotoLogger selectedDate={selectedDate} />
         </div>

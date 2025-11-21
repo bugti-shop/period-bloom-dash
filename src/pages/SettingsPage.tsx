@@ -41,14 +41,28 @@ export const SettingsPage = () => {
     }
   };
 
-  const handlePregnancyToggle = (checked: boolean) => {
-    if (checked) {
-      setShowPregnancyDialog(true);
-    } else {
-      const updated = { ...pregnancyMode, isPregnancyMode: false };
+  const handlePregnancyToggle = () => {
+    // Automatically switch modes without asking for dates
+    if (pregnancyMode.isPregnancyMode) {
+      // Switch from Pregnancy to Period mode
+      const updated = { isPregnancyMode: false };
       savePregnancyMode(updated);
       setPregnancyMode(updated);
-      notifySuccess("Switched back to Period Tracking Mode");
+      notifySuccess("Switched to Period Tracking Mode");
+      setTimeout(() => window.location.reload(), 500);
+    } else {
+      // Switch from Period to Pregnancy mode
+      // Use today as default last period date
+      const today = new Date();
+      const updated = {
+        isPregnancyMode: true,
+        lastPeriodDate: today,
+        dueDate: undefined,
+        currentWeek: undefined
+      };
+      savePregnancyMode(updated);
+      setPregnancyMode(updated);
+      notifySuccess("Switched to Pregnancy Tracking Mode! 🎉");
       setTimeout(() => window.location.reload(), 500);
     }
   };
@@ -108,10 +122,12 @@ export const SettingsPage = () => {
             </div>
             
             <button
-              onClick={() => setShowPregnancyDialog(true)}
+              onClick={handlePregnancyToggle}
               className="w-full flex items-center justify-between px-4 py-4 border-b border-border hover:bg-muted/30 transition-colors"
             >
-              <span className="text-foreground text-base">Change mode</span>
+              <span className="text-foreground text-base">
+                {pregnancyMode.isPregnancyMode ? "Switch to Period Tracking" : "Switch to Pregnancy Tracking"}
+              </span>
               <ChevronRight className="w-5 h-5 text-primary" />
             </button>
           </div>

@@ -7,6 +7,7 @@ import { BottomNav } from "@/components/BottomNav";
 import { SymptomsPage } from "@/pages/SymptomsPage";
 import { SettingsPage } from "@/pages/SettingsPage";
 import { ToolsPage } from "@/pages/ToolsPage";
+import { ArticlesPage } from "@/pages/ArticlesPage";
 import { 
   calculatePregnancyWeek, 
   calculateDueDate, 
@@ -22,6 +23,7 @@ export const PregnancyTracker = ({ lastPeriodDate: initialLastPeriodDate }: Preg
   const [activeTab, setActiveTab] = useState<"home" | "symptoms" | "settings" | "tools">("home");
   const [lastPeriodDate, setLastPeriodDate] = useState(initialLastPeriodDate);
   const [manualWeek, setManualWeek] = useState<number | undefined>(undefined);
+  const [isArticlesMode, setIsArticlesMode] = useState(false);
   
   // Load saved manual week override on mount
   useEffect(() => {
@@ -61,9 +63,27 @@ export const PregnancyTracker = ({ lastPeriodDate: initialLastPeriodDate }: Preg
     setActiveTab(tab);
   };
 
+  // Show Articles Page
+  if (isArticlesMode) {
+    return (
+      <div className="min-h-screen bg-white">
+        <Header 
+          showArticlesToggle={true} 
+          onArticlesToggle={() => setIsArticlesMode(false)}
+          isArticlesMode={true}
+        />
+        <ArticlesPage />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-white">
-      <Header />
+      <Header 
+        showArticlesToggle={true} 
+        onArticlesToggle={() => setIsArticlesMode(true)}
+        isArticlesMode={false}
+      />
       
       {activeTab === "home" && (
         <div className="max-w-7xl mx-auto py-3 px-3 pb-20">
