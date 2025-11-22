@@ -15,7 +15,12 @@ import { MoodSymptomCorrelation } from "@/components/MoodSymptomCorrelation";
 import { IntimacyTracker } from "@/components/IntimacyTracker";
 import { BBTTracker } from "@/components/BBTTracker";
 import { AppetiteTracker } from "@/components/AppetiteTracker";
+import { SymptomsChecker } from "@/components/SymptomsChecker";
 import { FileDown } from "lucide-react";
+import intimacyImg from "@/assets/tracker-intimacy.jpg";
+import bbtImg from "@/assets/tracker-bbt.jpg";
+import appetiteImg from "@/assets/tracker-appetite.jpg";
+import healthImg from "@/assets/tracker-health.jpg";
 import {
   saveSymptomLog,
   getSymptomsForDate,
@@ -169,6 +174,9 @@ export const SymptomsPage = () => {
           {/* Mood & Symptom Correlation */}
           <MoodSymptomCorrelation />
 
+          {/* Symptoms Checker */}
+          <SymptomsChecker />
+
           {/* Tracker Cards with Images */}
           <div className="grid grid-cols-2 gap-4">
             {/* Intimacy Tracker Card */}
@@ -176,7 +184,12 @@ export const SymptomsPage = () => {
               className="relative rounded-2xl overflow-hidden shadow-md cursor-pointer h-48 group"
               onClick={() => document.getElementById('intimacy-section')?.scrollIntoView({ behavior: 'smooth' })}
             >
-              <div className="absolute inset-0 bg-gradient-to-br from-pink-400 to-rose-500" />
+              <img 
+                src={intimacyImg} 
+                alt="Intimacy Tracker" 
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
               <div className="absolute inset-0 flex flex-col justify-end p-4 text-white">
                 <h3 className="text-xl font-bold mb-1">Intimacy</h3>
                 <p className="text-sm opacity-90">Track</p>
@@ -188,7 +201,12 @@ export const SymptomsPage = () => {
               className="relative rounded-2xl overflow-hidden shadow-md cursor-pointer h-48 group"
               onClick={() => document.getElementById('bbt-section')?.scrollIntoView({ behavior: 'smooth' })}
             >
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-400 to-indigo-500" />
+              <img 
+                src={bbtImg} 
+                alt="BBT Tracker" 
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
               <div className="absolute inset-0 flex flex-col justify-end p-4 text-white">
                 <h3 className="text-xl font-bold mb-1">BBT</h3>
                 <p className="text-sm opacity-90">Monitor</p>
@@ -200,7 +218,12 @@ export const SymptomsPage = () => {
               className="relative rounded-2xl overflow-hidden shadow-md cursor-pointer h-48 group"
               onClick={() => document.getElementById('appetite-section')?.scrollIntoView({ behavior: 'smooth' })}
             >
-              <div className="absolute inset-0 bg-gradient-to-br from-orange-400 to-amber-500" />
+              <img 
+                src={appetiteImg} 
+                alt="Appetite Tracker" 
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
               <div className="absolute inset-0 flex flex-col justify-end p-4 text-white">
                 <h3 className="text-xl font-bold mb-1">Appetite</h3>
                 <p className="text-sm opacity-90">Log</p>
@@ -212,7 +235,12 @@ export const SymptomsPage = () => {
               className="relative rounded-2xl overflow-hidden shadow-md cursor-pointer h-48 group"
               onClick={() => document.getElementById('health-section')?.scrollIntoView({ behavior: 'smooth' })}
             >
-              <div className="absolute inset-0 bg-gradient-to-br from-green-400 to-teal-500" />
+              <img 
+                src={healthImg} 
+                alt="Health Tracker" 
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
               <div className="absolute inset-0 flex flex-col justify-end p-4 text-white">
                 <h3 className="text-xl font-bold mb-1">Health</h3>
                 <p className="text-sm opacity-90">Monitor</p>
