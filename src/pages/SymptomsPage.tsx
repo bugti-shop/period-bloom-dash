@@ -1,21 +1,20 @@
 import { useState, useEffect } from "react";
 import { format } from "date-fns";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { PeriodCalendar } from "@/components/PeriodCalendar";
 import { SymptomCategoryPicker } from "@/components/SymptomCategoryPicker";
 import { DateStickyNotes } from "@/components/DateStickyNotes";
-import { HealthTracker } from "@/components/HealthTracker";
 import { VoiceNotes } from "@/components/VoiceNotes";
 import { PhotoLogger } from "@/components/PhotoLogger";
 import { SymptomStatistics } from "@/components/SymptomStatistics";
 import { SymptomHistoryPage } from "@/pages/SymptomHistoryPage";
-import { generateSymptomReport } from "@/lib/symptomReport";
+import { generateSymptomPDF } from "@/lib/symptomPdfExport";
 import { MoodTracker } from "@/components/MoodTracker";
 import { MoodSymptomCorrelation } from "@/components/MoodSymptomCorrelation";
-import { IntimacyTracker } from "@/components/IntimacyTracker";
-import { BBTTracker } from "@/components/BBTTracker";
-import { AppetiteTracker } from "@/components/AppetiteTracker";
 import { SymptomsChecker } from "@/components/SymptomsChecker";
+import { SymptomPatternPredictor } from "@/components/SymptomPatternPredictor";
+import { SymptomReminders } from "@/components/SymptomReminders";
 import { FileDown } from "lucide-react";
 import intimacyImg from "@/assets/tracker-intimacy.jpg";
 import bbtImg from "@/assets/tracker-bbt.jpg";
@@ -37,6 +36,7 @@ interface PeriodData {
 }
 
 export const SymptomsPage = () => {
+  const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>([]);
   const [periodData, setPeriodData] = useState<PeriodData | null>(null);
@@ -160,11 +160,11 @@ export const SymptomsPage = () => {
               History
             </Button>
             <Button
-              onClick={generateSymptomReport}
+              onClick={generateSymptomPDF}
               className="py-4 rounded-xl font-semibold text-xs bg-purple-500 text-white hover:bg-purple-600"
             >
               <FileDown className="w-4 h-4 mr-1" />
-              Report
+              PDF
             </Button>
           </div>
 
@@ -177,12 +177,18 @@ export const SymptomsPage = () => {
           {/* Symptoms Checker */}
           <SymptomsChecker />
 
+          {/* ML Pattern Predictor */}
+          <SymptomPatternPredictor />
+
+          {/* Symptom Reminders */}
+          <SymptomReminders />
+
           {/* Tracker Cards with Images */}
           <div className="grid grid-cols-2 gap-4">
             {/* Intimacy Tracker Card */}
             <div 
               className="relative rounded-2xl overflow-hidden shadow-md cursor-pointer h-48 group"
-              onClick={() => document.getElementById('intimacy-section')?.scrollIntoView({ behavior: 'smooth' })}
+              onClick={() => navigate('/intimacy')}
             >
               <img 
                 src={intimacyImg} 
@@ -199,7 +205,7 @@ export const SymptomsPage = () => {
             {/* BBT Tracker Card */}
             <div 
               className="relative rounded-2xl overflow-hidden shadow-md cursor-pointer h-48 group"
-              onClick={() => document.getElementById('bbt-section')?.scrollIntoView({ behavior: 'smooth' })}
+              onClick={() => navigate('/bbt')}
             >
               <img 
                 src={bbtImg} 
@@ -216,7 +222,7 @@ export const SymptomsPage = () => {
             {/* Appetite Tracker Card */}
             <div 
               className="relative rounded-2xl overflow-hidden shadow-md cursor-pointer h-48 group"
-              onClick={() => document.getElementById('appetite-section')?.scrollIntoView({ behavior: 'smooth' })}
+              onClick={() => navigate('/appetite')}
             >
               <img 
                 src={appetiteImg} 
@@ -233,7 +239,7 @@ export const SymptomsPage = () => {
             {/* Health Tracker Card */}
             <div 
               className="relative rounded-2xl overflow-hidden shadow-md cursor-pointer h-48 group"
-              onClick={() => document.getElementById('health-section')?.scrollIntoView({ behavior: 'smooth' })}
+              onClick={() => navigate('/health')}
             >
               <img 
                 src={healthImg} 
@@ -248,27 +254,10 @@ export const SymptomsPage = () => {
             </div>
           </div>
 
-          {/* Actual Tracker Sections */}
-          <div id="intimacy-section">
-            <IntimacyTracker />
-          </div>
-          
-          <div id="bbt-section">
-            <BBTTracker />
-          </div>
-          
-          <div id="appetite-section">
-            <AppetiteTracker />
-          </div>
-
           {/* Statistics Dashboard */}
           <SymptomStatistics />
 
-          {/* Health Tracker, Voice Notes, Photos and Sticky Notes */}
-          <div id="health-section">
-            <HealthTracker selectedDate={selectedDate} />
-          </div>
-          
+          {/* Voice Notes, Photos and Sticky Notes */}
           <DateStickyNotes selectedDate={selectedDate} />
           <VoiceNotes selectedDate={selectedDate} />
           <PhotoLogger selectedDate={selectedDate} />
