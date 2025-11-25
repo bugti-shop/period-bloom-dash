@@ -12,6 +12,7 @@ import { SymptomInsights } from "@/components/SymptomInsights";
 import { PeriodCountdown } from "@/components/PeriodCountdown";
 import { PregnancyChances } from "@/components/PregnancyChances";
 import { schedulePeriodReminder } from "@/lib/notifications";
+import { scheduleFertilityReminders } from "@/lib/fertilityNotifications";
 import { CycleEntry } from "@/lib/irregularCycle";
 
 import { SymptomsPage } from "@/pages/SymptomsPage";
@@ -62,6 +63,7 @@ const Index = () => {
         // Schedule notifications
         const nextPeriodDate = addDays(data.lastPeriodDate, data.cycleLength);
         schedulePeriodReminder(nextPeriodDate, data.cycleLength);
+        scheduleFertilityReminders(data.lastPeriodDate, data.cycleLength);
       } else if (savedData.cycleType === 'irregular' && savedData.cycles && Array.isArray(savedData.cycles) && savedData.cycles.length > 0) {
         // Irregular cycle with valid data
         const data = {
@@ -100,6 +102,7 @@ const Index = () => {
     if (data.cycleType === 'regular') {
       const nextPeriodDate = addDays(data.lastPeriodDate, data.cycleLength);
       schedulePeriodReminder(nextPeriodDate, data.cycleLength);
+      scheduleFertilityReminders(data.lastPeriodDate, data.cycleLength);
     } else {
       const lastCycle = data.cycles[data.cycles.length - 1];
       const nextPeriodDate = addDays(lastCycle.endDate, data.mean);
