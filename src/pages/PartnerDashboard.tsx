@@ -4,9 +4,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Users, DollarSign, Clock, TrendingUp, Copy, Share2, ChevronLeft } from "lucide-react";
+import { Users, DollarSign, Clock, TrendingUp, Copy, Share2, ChevronLeft, Gift } from "lucide-react";
 import { toast } from "sonner";
 import { Header } from "@/components/Header";
+import { RewardsPanel } from "@/components/RewardsPanel";
+import { RewardConfigManager } from "@/components/RewardConfigManager";
 
 interface DashboardStats {
   totalReferrals: number;
@@ -225,7 +227,9 @@ export const PartnerDashboard = () => {
         <Tabs defaultValue="referrals" className="w-full">
           <TabsList>
             <TabsTrigger value="referrals">Referrals</TabsTrigger>
+            <TabsTrigger value="rewards">Rewards</TabsTrigger>
             <TabsTrigger value="activity">Activity Log</TabsTrigger>
+            <TabsTrigger value="config">Config</TabsTrigger>
           </TabsList>
 
           <TabsContent value="referrals" className="mt-6">
@@ -252,12 +256,35 @@ export const PartnerDashboard = () => {
                             Joined {new Date(referral.created_at).toLocaleDateString()}
                           </div>
                         </div>
-                        <div className={`px-3 py-1 rounded-full text-sm ${
-                          referral.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                          referral.status === 'confirmed' ? 'bg-green-100 text-green-800' :
-                          'bg-blue-100 text-blue-800'
-                        }`}>
-                          {referral.status}
+                        <div className="flex items-center gap-2">
+                          {referral.status === 'pending' && (
+                            <Button
+                              size="sm"
+                              onClick={async () => {
+                                try {
+                                  const { error } = await supabase.functions.invoke(
+                                    'partner-confirm-referral',
+                                    { body: { referralId: referral.id } }
+                                  );
+                                  if (error) throw error;
+                                  toast.success('Referral confirmed and reward distributed!');
+                                  loadReferrals();
+                                } catch (error) {
+                                  console.error('Error confirming referral:', error);
+                                  toast.error('Failed to confirm referral');
+                                }
+                              }}
+                            >
+                              Confirm & Reward
+                            </Button>
+                          )}
+                          <div className={`px-3 py-1 rounded-full text-sm ${
+                            referral.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                            referral.status === 'confirmed' ? 'bg-green-100 text-green-800' :
+                            'bg-blue-100 text-blue-800'
+                          }`}>
+                            {referral.status}
+                          </div>
                         </div>
                       </div>
                     ))}
@@ -265,6 +292,10 @@ export const PartnerDashboard = () => {
                 )}
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="rewards" className="mt-6">
+            <RewardsPanel />
           </TabsContent>
 
           <TabsContent value="activity" className="mt-6">
@@ -296,6 +327,10 @@ export const PartnerDashboard = () => {
                 )}
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="config" className="mt-6">
+            <RewardConfigManager />
           </TabsContent>
         </Tabs>
       </div>

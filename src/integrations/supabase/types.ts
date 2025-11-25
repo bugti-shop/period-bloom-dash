@@ -130,12 +130,170 @@ export type Database = {
           },
         ]
       }
+      reward_config: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean
+          name: string
+          required_action: string | null
+          requires_referral_action: boolean
+          reward_type: Database["public"]["Enums"]["reward_type"]
+          reward_unit: string | null
+          reward_value: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          required_action?: string | null
+          requires_referral_action?: boolean
+          reward_type: Database["public"]["Enums"]["reward_type"]
+          reward_unit?: string | null
+          reward_value: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          required_action?: string | null
+          requires_referral_action?: boolean
+          reward_type?: Database["public"]["Enums"]["reward_type"]
+          reward_unit?: string | null
+          reward_value?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      reward_transactions: {
+        Row: {
+          amount: number | null
+          created_at: string
+          description: string | null
+          id: string
+          metadata: Json | null
+          reward_id: string | null
+          transaction_type: string
+          user_id: string
+        }
+        Insert: {
+          amount?: number | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          metadata?: Json | null
+          reward_id?: string | null
+          transaction_type: string
+          user_id: string
+        }
+        Update: {
+          amount?: number | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          metadata?: Json | null
+          reward_id?: string | null
+          transaction_type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reward_transactions_reward_id_fkey"
+            columns: ["reward_id"]
+            isOneToOne: false
+            referencedRelation: "user_rewards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_rewards: {
+        Row: {
+          activated_at: string | null
+          earned_at: string
+          expires_at: string | null
+          id: string
+          metadata: Json | null
+          reward_config_id: string
+          reward_type: Database["public"]["Enums"]["reward_type"]
+          reward_unit: string | null
+          reward_value: number
+          source_referral_id: string | null
+          status: string
+          used_at: string | null
+          user_id: string
+        }
+        Insert: {
+          activated_at?: string | null
+          earned_at?: string
+          expires_at?: string | null
+          id?: string
+          metadata?: Json | null
+          reward_config_id: string
+          reward_type: Database["public"]["Enums"]["reward_type"]
+          reward_unit?: string | null
+          reward_value: number
+          source_referral_id?: string | null
+          status?: string
+          used_at?: string | null
+          user_id: string
+        }
+        Update: {
+          activated_at?: string | null
+          earned_at?: string
+          expires_at?: string | null
+          id?: string
+          metadata?: Json | null
+          reward_config_id?: string
+          reward_type?: Database["public"]["Enums"]["reward_type"]
+          reward_unit?: string | null
+          reward_value?: number
+          source_referral_id?: string | null
+          status?: string
+          used_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_rewards_reward_config_id_fkey"
+            columns: ["reward_config_id"]
+            isOneToOne: false
+            referencedRelation: "reward_config"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_rewards_source_referral_id_fkey"
+            columns: ["source_referral_id"]
+            isOneToOne: false
+            referencedRelation: "partner_referrals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      distribute_referral_reward: {
+        Args: {
+          p_partner_user_id: string
+          p_referral_id: string
+          p_referred_user_id: string
+        }
+        Returns: boolean
+      }
       generate_partner_code: { Args: never; Returns: string }
+      get_user_available_credits: {
+        Args: { p_user_id: string }
+        Returns: number
+      }
       log_partner_event: {
         Args: {
           p_event_data?: Json
@@ -153,6 +311,7 @@ export type Database = {
         | "referral_confirmed"
         | "payout_requested"
       referral_status: "pending" | "confirmed" | "rewarded"
+      reward_type: "credit" | "discount" | "trial_extension" | "premium_access"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -288,6 +447,7 @@ export const Constants = {
         "payout_requested",
       ],
       referral_status: ["pending", "confirmed", "rewarded"],
+      reward_type: ["credit", "discount", "trial_extension", "premium_access"],
     },
   },
 } as const

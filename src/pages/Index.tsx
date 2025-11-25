@@ -12,6 +12,8 @@ import { SymptomInsights } from "@/components/SymptomInsights";
 import { schedulePeriodReminder } from "@/lib/notifications";
 import { CycleEntry } from "@/lib/irregularCycle";
 import { PartnerClaimDialog } from "@/components/PartnerClaimDialog";
+import { trackUserAction, UserActions } from "@/lib/referralTracking";
+import { useRewardNotifications } from "@/hooks/useRewardNotifications";
 
 import { SymptomsPage } from "@/pages/SymptomsPage";
 import { SettingsPage } from "@/pages/SettingsPage";
@@ -46,6 +48,9 @@ const Index = () => {
   const [showHistory, setShowHistory] = useState(false);
   const [isArticlesMode, setIsArticlesMode] = useState(false);
   const pregnancyMode = loadPregnancyMode();
+
+  // Enable reward notifications
+  useRewardNotifications();
 
   // Load saved period data on mount
   useEffect(() => {
@@ -85,6 +90,8 @@ const Index = () => {
   const handleFormSubmit = (data: PeriodData) => {
     setPeriodData(data);
     
+    const isFirstLog = !loadFromLocalStorage("current-period-data");
+    
     if (data.cycleType === 'regular') {
       savePeriodHistory({
         lastPeriodDate: data.lastPeriodDate,
@@ -94,6 +101,11 @@ const Index = () => {
     }
     
     saveToLocalStorage("current-period-data", data);
+    
+    // Track first period log for referral rewards
+    if (isFirstLog) {
+      trackUserAction(UserActions.FIRST_PERIOD_LOG);
+    }
     
     // Schedule notifications
     if (data.cycleType === 'regular') {
