@@ -10,7 +10,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { isBookmarked } from "@/lib/articleBookmarks";
 import { getAllProgress, ArticleProgress } from "@/lib/articleProgress";
 import { isArticleOffline } from "@/lib/offlineArticles";
-import { ArticleRecommendations } from "@/components/ArticleRecommendations";
 import { ReadingHistoryDashboard } from "@/components/ReadingHistoryDashboard";
 import { formatDistanceToNow } from "date-fns";
 
@@ -281,13 +280,6 @@ export const ArticlesPage = () => {
                 </div>
               </CardContent>
             </Card>
-          </div>
-        )}
-
-        {/* AI Recommendations */}
-        {!searchQuery && selectedCategory === "All Articles" && (
-          <div className="mb-8">
-            <ArticleRecommendations articles={articles} />
           </div>
         )}
 
