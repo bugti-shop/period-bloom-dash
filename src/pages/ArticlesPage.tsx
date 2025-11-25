@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Menu, X, Home, Heart, Baby, Calendar, BookOpen, Stethoscope } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -63,6 +64,7 @@ const categories = [
 ];
 
 export const ArticlesPage = () => {
+  const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState("All Articles");
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
@@ -157,6 +159,7 @@ export const ArticlesPage = () => {
           {filteredArticles.map((article) => (
             <article
               key={article.id}
+              onClick={() => navigate(`/article/${article.id}`)}
               className="bg-white rounded-xl overflow-hidden shadow-sm border border-border hover:shadow-md transition-shadow cursor-pointer"
             >
               <div className="aspect-video w-full overflow-hidden">
