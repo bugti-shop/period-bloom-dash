@@ -11,6 +11,7 @@ import { PeriodCalendar } from "@/components/PeriodCalendar";
 import { SymptomInsights } from "@/components/SymptomInsights";
 import { PeriodCountdown } from "@/components/PeriodCountdown";
 import { PregnancyChances } from "@/components/PregnancyChances";
+import { DailyFertilityScore } from "@/components/DailyFertilityScore";
 import { schedulePeriodReminder } from "@/lib/notifications";
 import { scheduleFertilityReminders } from "@/lib/fertilityNotifications";
 import { CycleEntry } from "@/lib/irregularCycle";
@@ -22,6 +23,7 @@ import { ToolsPage } from "@/pages/ToolsPage";
 import { PregnancyTracker } from "@/components/PregnancyTracker";
 import { loadPregnancyMode } from "@/lib/pregnancyMode";
 import { ArticlesPage } from "@/pages/ArticlesPage";
+import { CycleInsightsPage } from "@/pages/CycleInsightsPage";
 import floralDecoration from "@/assets/floral-decoration.png";
 
 interface RegularPeriodData {
@@ -46,6 +48,7 @@ const Index = () => {
   const [activeTab, setActiveTab] = useState<"home" | "symptoms" | "settings" | "tools">("home");
   const [selectedMonth, setSelectedMonth] = useState<Date | null>(null);
   const [showHistory, setShowHistory] = useState(false);
+  const [showCycleInsights, setShowCycleInsights] = useState(false);
   const [isArticlesMode, setIsArticlesMode] = useState(false);
   const pregnancyMode = loadPregnancyMode();
 
@@ -186,6 +189,10 @@ const Index = () => {
     return <HistoryPage onBack={() => setShowHistory(false)} />;
   }
 
+  if (showCycleInsights) {
+    return <CycleInsightsPage onBack={() => setShowCycleInsights(false)} />;
+  }
+
   // Show Articles Page
   if (isArticlesMode) {
     return (
@@ -261,6 +268,10 @@ const Index = () => {
                   lastPeriodDate={periodData.lastPeriodDate}
                   cycleLength={periodData.cycleLength}
                 />
+                <DailyFertilityScore 
+                  lastPeriodDate={periodData.lastPeriodDate}
+                  cycleLength={periodData.cycleLength}
+                />
               </div>
             )}
 
@@ -320,6 +331,14 @@ const Index = () => {
                 Periods History
               </button>
             </div>
+
+            {/* Cycle Insights Button */}
+            <button
+              onClick={() => setShowCycleInsights(true)}
+              className="w-full py-4 font-semibold text-white text-sm transition-colors bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 rounded-xl shadow-lg"
+            >
+              View Cycle Insights & Trends
+            </button>
 
             {/* Sticky Notes Section */}
             <StickyNotes currentWeek={undefined} />

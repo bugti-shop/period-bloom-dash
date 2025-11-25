@@ -10,6 +10,7 @@ import { ThemeVariant, loadTheme, saveTheme } from "@/lib/themeStorage";
 import { notifySuccess, notifyError } from "@/lib/notificationWithHaptics";
 import { ReminderSettings } from "@/components/ReminderSettings";
 import { FertilityReminderSettings } from "@/components/FertilityReminderSettings";
+import { SymptomReminderSettings } from "@/components/SymptomReminderSettings";
 import { exportAllData, importData } from "@/lib/dataExport";
 import { Button } from "@/components/ui/button";
 import { useRef } from "react";
@@ -23,6 +24,7 @@ export const SettingsPage = () => {
   const [showDatesDialog, setShowDatesDialog] = useState(false);
   const [showRemindersDialog, setShowRemindersDialog] = useState(false);
   const [showFertilityRemindersDialog, setShowFertilityRemindersDialog] = useState(false);
+  const [showSymptomRemindersDialog, setShowSymptomRemindersDialog] = useState(false);
   const [showDataDialog, setShowDataDialog] = useState(false);
   const [history, setHistory] = useState(getPeriodHistory());
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -164,6 +166,14 @@ export const SettingsPage = () => {
               className="w-full flex items-center justify-between px-4 py-4 border-b border-border hover:bg-muted/30 transition-colors"
             >
               <span className="text-foreground text-base">Fertility & Period reminders</span>
+              <ChevronRight className="w-5 h-5 text-primary" />
+            </button>
+            
+            <button
+              onClick={() => setShowSymptomRemindersDialog(true)}
+              className="w-full flex items-center justify-between px-4 py-4 border-b border-border hover:bg-muted/30 transition-colors"
+            >
+              <span className="text-foreground text-base">Symptom logging reminders</span>
               <ChevronRight className="w-5 h-5 text-primary" />
             </button>
             
@@ -381,6 +391,21 @@ export const SettingsPage = () => {
           </DialogHeader>
           <div className="py-4">
             <FertilityReminderSettings />
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Symptom Logging Reminders Dialog */}
+      <Dialog open={showSymptomRemindersDialog} onOpenChange={setShowSymptomRemindersDialog}>
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Symptom Logging Reminders</DialogTitle>
+            <DialogDescription>
+              Set up daily reminders to log your symptoms
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4">
+            <SymptomReminderSettings />
           </div>
         </DialogContent>
       </Dialog>
