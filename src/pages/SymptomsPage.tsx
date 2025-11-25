@@ -101,14 +101,8 @@ export const SymptomsPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20">
-      <div className="max-w-7xl mx-auto px-4 py-6">
-        <header className="text-center mb-6">
-          <h2 className="text-3xl font-bold mb-2">Symptoms Tracking</h2>
-          <p className="text-gray-600">Track your symptoms by date</p>
-        </header>
-
-        <div className="space-y-4">
+    <div className="max-w-7xl mx-auto px-4 py-6 pb-20">
+      <div className="space-y-4">
           {/* Period Calendar */}
           {periodData && (
             <div className="bg-white rounded-xl p-4 shadow-sm">
@@ -262,7 +256,6 @@ export const SymptomsPage = () => {
           <VoiceNotes selectedDate={selectedDate} />
           <PhotoLogger selectedDate={selectedDate} />
         </div>
-      </div>
     </div>
   );
 };
