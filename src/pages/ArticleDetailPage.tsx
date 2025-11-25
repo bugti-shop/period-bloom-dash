@@ -1,8 +1,11 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Clock, Calendar, BookOpen, Bookmark, CheckCircle, Download, Trash2, WifiOff } from "lucide-react";
+import { ArrowLeft, Clock, Calendar, BookOpen, Bookmark, CheckCircle, Download, Trash2, WifiOff, StickyNote, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { Textarea } from "@/components/ui/textarea";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { toggleBookmark, isBookmarked } from "@/lib/articleBookmarks";
 import { 
   saveArticleProgress, 
@@ -14,6 +17,13 @@ import {
   isArticleOffline,
   removeOfflineArticle
 } from "@/lib/offlineArticles";
+import { 
+  saveArticleNote, 
+  getArticleNotes, 
+  deleteArticleNote,
+  ArticleNote 
+} from "@/lib/articleNotes";
+import { addToHistory } from "@/lib/readingHistory";
 import { useState, useEffect, useRef } from "react";
 import { toast } from "sonner";
 
@@ -203,6 +213,11 @@ export const ArticleDetailPage = () => {
   const [hasRestoredPosition, setHasRestoredPosition] = useState(false);
   const [offlineAvailable, setOfflineAvailable] = useState(false);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
+  const [notes, setNotes] = useState<ArticleNote[]>([]);
+  const [selectedText, setSelectedText] = useState("");
+  const [selectedParagraph, setSelectedParagraph] = useState<number | null>(null);
+  const [noteText, setNoteText] = useState("");
+  const [isNotesOpen, setIsNotesOpen] = useState(false);
   const articleRef = useRef<HTMLDivElement>(null);
   const saveTimeoutRef = useRef<NodeJS.Timeout>();
   
@@ -233,6 +248,7 @@ export const ArticleDetailPage = () => {
     if (id) {
       setBookmarked(isBookmarked(id));
       setOfflineAvailable(isArticleOffline(id));
+      setNotes(getArticleNotes(id));
       
       // Auto-save article for offline reading when first opened
       if (article && !isArticleOffline(id)) {
@@ -287,6 +303,10 @@ export const ArticleDetailPage = () => {
         if (completed && percentage >= 95) {
           const progress = getArticleProgress(id);
           if (progress && !progress.completed) {
+            // Add to reading history when article is completed
+            if (article) {
+              addToHistory(id, article.title, article.category, readingTime);
+            }
             toast.success("Article completed! 🎉");
           }
         }
@@ -331,6 +351,44 @@ export const ArticleDetailPage = () => {
       setOfflineAvailable(true);
       toast.success("Article saved for offline reading!");
     }
+  };
+
+  const handleTextSelection = (paragraphIndex: number) => {
+    const selection = window.getSelection();
+    const text = selection?.toString().trim();
+    
+    if (text && text.length > 0) {
+      setSelectedText(text);
+      setSelectedParagraph(paragraphIndex);
+      setIsNotesOpen(true);
+    }
+  };
+
+  const handleSaveNote = () => {
+    if (!id || !selectedText || selectedParagraph === null || !noteText.trim()) return;
+
+    const note: ArticleNote = {
+      id: `${id}-${Date.now()}`,
+      articleId: id,
+      selectedText,
+      note: noteText,
+      position: selectedParagraph,
+      timestamp: Date.now(),
+      color: '#fef3c7'
+    };
+
+    saveArticleNote(note);
+    setNotes([...notes, note]);
+    setNoteText("");
+    setSelectedText("");
+    setSelectedParagraph(null);
+    toast.success("Note saved!");
+  };
+
+  const handleDeleteNote = (noteId: string) => {
+    deleteArticleNote(noteId);
+    setNotes(notes.filter(n => n.id !== noteId));
+    toast.success("Note deleted");
   };
 
   const getRelatedArticles = () => {
@@ -400,6 +458,70 @@ export const ArticleDetailPage = () => {
               >
                 <Bookmark className={`h-4 w-4 ${bookmarked ? "fill-current" : ""}`} />
               </Button>
+              <Sheet open={isNotesOpen} onOpenChange={setIsNotesOpen}>
+                <SheetTrigger asChild>
+                  <Button variant="outline" size="icon" className="relative">
+                    <StickyNote className="h-4 w-4" />
+                    {notes.length > 0 && (
+                      <Badge className="absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center text-xs">
+                        {notes.length}
+                      </Badge>
+                    )}
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="right" className="w-full sm:w-[400px]">
+                  <SheetHeader>
+                    <SheetTitle>Article Notes</SheetTitle>
+                  </SheetHeader>
+                  <ScrollArea className="h-[calc(100vh-100px)] mt-4">
+                    <div className="space-y-4 pr-4">
+                      {selectedText && (
+                        <div className="p-4 border border-border rounded-lg bg-muted/50">
+                          <p className="text-sm font-medium mb-2">Selected Text:</p>
+                          <p className="text-sm text-muted-foreground italic mb-3">"{selectedText}"</p>
+                          <Textarea
+                            placeholder="Add your note..."
+                            value={noteText}
+                            onChange={(e) => setNoteText(e.target.value)}
+                            className="mb-2"
+                          />
+                          <Button onClick={handleSaveNote} size="sm" className="w-full">
+                            Save Note
+                          </Button>
+                        </div>
+                      )}
+                      
+                      {notes.length === 0 && !selectedText && (
+                        <div className="text-center py-8 text-muted-foreground">
+                          <StickyNote className="h-12 w-12 mx-auto mb-2 opacity-50" />
+                          <p className="text-sm">No notes yet</p>
+                          <p className="text-xs">Select text in the article to add notes</p>
+                        </div>
+                      )}
+                      
+                      {notes.map((note) => (
+                        <div key={note.id} className="p-4 border border-border rounded-lg bg-yellow-50">
+                          <div className="flex items-start justify-between mb-2">
+                            <p className="text-xs text-muted-foreground">
+                              {new Date(note.timestamp).toLocaleDateString()}
+                            </p>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-6 w-6"
+                              onClick={() => handleDeleteNote(note.id)}
+                            >
+                              <X className="h-4 w-4" />
+                            </Button>
+                          </div>
+                          <p className="text-sm italic mb-2 text-muted-foreground">"{note.selectedText}"</p>
+                          <p className="text-sm">{note.note}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </ScrollArea>
+                </SheetContent>
+              </Sheet>
             </div>
           </div>
           <Progress value={scrollProgress} className="h-1" />
@@ -452,11 +574,20 @@ export const ArticleDetailPage = () => {
 
         {/* Article Body */}
         <div className="prose prose-lg max-w-none">
-          {article.content.map((paragraph, index) => (
-            <p key={index} className="text-foreground mb-6 leading-relaxed whitespace-pre-line">
-              {paragraph}
-            </p>
-          ))}
+          {article.content.map((paragraph, index) => {
+            const hasNote = notes.find(n => n.position === index);
+            return (
+              <p
+                key={index}
+                className={`text-foreground mb-6 leading-relaxed whitespace-pre-line cursor-text select-text ${
+                  hasNote ? 'bg-yellow-100 p-2 rounded' : ''
+                }`}
+                onMouseUp={() => handleTextSelection(index)}
+              >
+                {paragraph}
+              </p>
+            );
+          })}
         </div>
 
         {/* Disclaimer */}
