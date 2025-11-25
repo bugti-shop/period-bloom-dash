@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { X, Plus, Trash2, Download, Filter, MessageSquare, Camera, Play, Pause, Edit, Tag, FileDown, Share2, Calendar } from "lucide-react";
+import { X, Plus, Trash2, Download, Filter, MessageSquare, Camera, Play, Pause, Edit, Tag, FileDown, Share2, Calendar, CheckSquare, Square, MoveRight } from "lucide-react";
 import { saveToLocalStorage, loadFromLocalStorage } from "@/lib/storage";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -51,6 +51,8 @@ export const BabyAlbum = ({ onClose }: BabyAlbumProps) => {
   const [sharingPhoto, setSharingPhoto] = useState<string | "album" | null>(null);
   const [shareWithWatermark, setShareWithWatermark] = useState(true);
   const [shareMessage, setShareMessage] = useState("");
+  const [selectionMode, setSelectionMode] = useState(false);
+  const [selectedPhotos, setSelectedPhotos] = useState<Set<string>>(new Set());
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -513,6 +515,104 @@ export const BabyAlbum = ({ onClose }: BabyAlbumProps) => {
     setShareMessage("");
   };
 
+  const toggleSelectionMode = () => {
+    setSelectionMode(!selectionMode);
+    setSelectedPhotos(new Set());
+  };
+
+  const togglePhotoSelection = (photoId: string) => {
+    const newSelected = new Set(selectedPhotos);
+    if (newSelected.has(photoId)) {
+      newSelected.delete(photoId);
+    } else {
+      newSelected.add(photoId);
+    }
+    setSelectedPhotos(newSelected);
+  };
+
+  const selectAll = () => {
+    const allPhotoIds = new Set(photos.map(p => p.id));
+    setSelectedPhotos(allPhotoIds);
+  };
+
+  const deselectAll = () => {
+    setSelectedPhotos(new Set());
+  };
+
+  const deleteSelected = () => {
+    if (selectedPhotos.size === 0) return;
+
+    const confirmed = window.confirm(
+      `Delete ${selectedPhotos.size} photo(s)?`
+    );
+    
+    if (!confirmed) return;
+
+    const updatedPhotos = photos.filter(p => !selectedPhotos.has(p.id));
+    setPhotos(updatedPhotos);
+    saveToLocalStorage(BABY_ALBUM_KEY, updatedPhotos);
+
+    toast.success(`${selectedPhotos.size} photo(s) deleted`);
+    setSelectionMode(false);
+    setSelectedPhotos(new Set());
+  };
+
+  const moveToBumpGallery = () => {
+    if (selectedPhotos.size === 0) return;
+
+    const confirmed = window.confirm(
+      `Move ${selectedPhotos.size} photo(s) to Bump Gallery?`
+    );
+    
+    if (!confirmed) return;
+
+    // Load existing bump gallery photos
+    const existingWeekPhotos = loadFromLocalStorage<Record<number, {
+      imageData: string;
+      timestamp: Date;
+      caption?: string;
+      tags?: string[];
+      filters?: { brightness: number; contrast: number; saturation: number };
+    }>>("pregnancy-week-photos") || {};
+
+    let movedCount = 0;
+
+    // For each selected photo, ask which week to assign
+    const selectedPhotoData = photos.filter(p => selectedPhotos.has(p.id));
+    
+    // Move first photo to week 1 as default (or could show a dialog to choose week)
+    selectedPhotoData.forEach((photo, index) => {
+      // Find first available week or add to week 1
+      let targetWeek = 1;
+      while (existingWeekPhotos[targetWeek] && targetWeek <= 40) {
+        targetWeek++;
+      }
+      
+      if (targetWeek <= 40) {
+        existingWeekPhotos[targetWeek] = {
+          imageData: photo.imageData,
+          timestamp: photo.timestamp,
+          caption: photo.caption,
+          tags: photo.tags,
+          filters: photo.filters
+        };
+        movedCount++;
+      }
+    });
+
+    // Save updated bump gallery
+    saveToLocalStorage("pregnancy-week-photos", existingWeekPhotos);
+
+    // Remove from baby album
+    const updatedPhotos = photos.filter(p => !selectedPhotos.has(p.id));
+    setPhotos(updatedPhotos);
+    saveToLocalStorage(BABY_ALBUM_KEY, updatedPhotos);
+
+    toast.success(`${movedCount} photo(s) moved to Bump Gallery`);
+    setSelectionMode(false);
+    setSelectedPhotos(new Set());
+  };
+
   const filteredPhotos = filterPhotos();
   const groupedByDate = filteredPhotos.reduce((acc, photo) => {
     const dateKey = format(photo.timestamp, 'yyyy-MM-dd');
@@ -540,41 +640,102 @@ export const BabyAlbum = ({ onClose }: BabyAlbumProps) => {
               <h2 className="text-xl font-semibold">Baby Album</h2>
             </div>
             <div className="flex gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={isSlideshow ? () => setIsSlideshow(false) : startSlideshow}
-                className="gap-2"
-              >
-                {isSlideshow ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
-                {isSlideshow ? "Pause" : "Slideshow"}
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={exportToPDF}
-                className="gap-2"
-              >
-                <FileDown className="w-4 h-4" />
-                PDF
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => openShareDialog("album")}
-                className="gap-2"
-              >
-                <Share2 className="w-4 h-4" />
-                Share
-              </Button>
-              <Button
-                size="sm"
-                onClick={() => setShowUploadDialog(true)}
-                className="gap-2"
-              >
-                <Plus className="w-4 h-4" />
-                Add Photos
-              </Button>
+              {!selectionMode ? (
+                <>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={isSlideshow ? () => setIsSlideshow(false) : startSlideshow}
+                    className="gap-2"
+                  >
+                    {isSlideshow ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
+                    {isSlideshow ? "Pause" : "Slideshow"}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={exportToPDF}
+                    className="gap-2"
+                  >
+                    <FileDown className="w-4 h-4" />
+                    PDF
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => openShareDialog("album")}
+                    className="gap-2"
+                  >
+                    <Share2 className="w-4 h-4" />
+                    Share
+                  </Button>
+                  <Button
+                    size="sm"
+                    onClick={() => setShowUploadDialog(true)}
+                    className="gap-2"
+                  >
+                    <Plus className="w-4 h-4" />
+                    Add
+                  </Button>
+                  <Button
+                    variant="default"
+                    size="sm"
+                    onClick={toggleSelectionMode}
+                    className="gap-2"
+                  >
+                    <CheckSquare className="w-4 h-4" />
+                    Select
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={selectAll}
+                    className="gap-2"
+                  >
+                    <CheckSquare className="w-4 h-4" />
+                    All
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={deselectAll}
+                    className="gap-2"
+                  >
+                    <Square className="w-4 h-4" />
+                    None
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={moveToBumpGallery}
+                    disabled={selectedPhotos.size === 0}
+                    className="gap-2"
+                  >
+                    <MoveRight className="w-4 h-4" />
+                    Move ({selectedPhotos.size})
+                  </Button>
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={deleteSelected}
+                    disabled={selectedPhotos.size === 0}
+                    className="gap-2"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                    Delete ({selectedPhotos.size})
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={toggleSelectionMode}
+                  >
+                    Cancel
+                  </Button>
+                </>
+              )}
             </div>
           </div>
           
@@ -661,8 +822,18 @@ export const BabyAlbum = ({ onClose }: BabyAlbumProps) => {
                       return (
                         <div 
                           key={photo.id}
-                          className="relative aspect-square bg-background border-2 border-border rounded-lg overflow-hidden cursor-pointer hover:border-primary transition-colors"
-                          onClick={() => setSelectedPhoto(isSelected ? null : photo.id)}
+                          className={`relative aspect-square bg-background border-2 rounded-lg overflow-hidden cursor-pointer transition-colors ${
+                            selectionMode && selectedPhotos.has(photo.id)
+                              ? 'border-primary ring-2 ring-primary'
+                              : 'border-border hover:border-primary'
+                          }`}
+                          onClick={() => {
+                            if (selectionMode) {
+                              togglePhotoSelection(photo.id);
+                            } else {
+                              setSelectedPhoto(isSelected ? null : photo.id);
+                            }
+                          }}
                         >
                           <img 
                             src={photo.imageData} 
@@ -670,19 +841,32 @@ export const BabyAlbum = ({ onClose }: BabyAlbumProps) => {
                             className="w-full h-full object-cover"
                             style={getPhotoStyle(photo)}
                           />
-                          {photo.tags && photo.tags.length > 0 && !isSelected && (
+                          {selectionMode && (
+                            <div className="absolute top-2 left-2 z-10">
+                              <div className={`w-6 h-6 rounded flex items-center justify-center ${
+                                selectedPhotos.has(photo.id) ? 'bg-primary text-white' : 'bg-white/90 text-gray-600'
+                              }`}>
+                                {selectedPhotos.has(photo.id) ? (
+                                  <CheckSquare className="w-4 h-4" />
+                                ) : (
+                                  <Square className="w-4 h-4" />
+                                )}
+                              </div>
+                            </div>
+                          )}
+                          {photo.tags && photo.tags.length > 0 && !isSelected && !selectionMode && (
                             <div className="absolute top-2 right-2 flex gap-1">
                               <div className="bg-white/90 rounded-full p-1">
                                 <Tag className="w-3 h-3 text-primary" />
                               </div>
                             </div>
                           )}
-                          {photo.caption && !isSelected && (
+                          {photo.caption && !isSelected && !selectionMode && (
                             <div className="absolute bottom-8 left-0 right-0 bg-black/70 text-white text-xs p-2 line-clamp-2">
                               {photo.caption}
                             </div>
                           )}
-                          {isSelected && (
+                          {isSelected && !selectionMode && (
                             <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center gap-2">
                               <div className="flex gap-2 flex-wrap justify-center">
                                 <Button
