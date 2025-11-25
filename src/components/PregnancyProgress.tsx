@@ -110,7 +110,7 @@ export const PregnancyProgress = ({ week, dueDate, onUpdateLastPeriod, onSwitchW
       </div>
 
       {/* Fetal Development Visualization */}
-      <FetalDevelopmentVisualization week={week} />
+      <FetalDevelopmentVisualization week={week} onWeekChange={onSwitchWeek} />
 
       {/* Due Date Card */}
       <div className="bg-card rounded-2xl p-5 border">
