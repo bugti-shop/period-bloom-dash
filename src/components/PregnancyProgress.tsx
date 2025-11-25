@@ -13,6 +13,7 @@ import {
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { FetalDevelopmentVisualization } from "@/components/FetalDevelopmentVisualization";
 
 interface PregnancyProgressProps {
   week: number;
@@ -107,6 +108,9 @@ export const PregnancyProgress = ({ week, dueDate, onUpdateLastPeriod, onSwitchW
           <p className="text-sm text-card-foreground leading-relaxed">{babyData.description}</p>
         </div>
       </div>
+
+      {/* Fetal Development Visualization */}
+      <FetalDevelopmentVisualization week={week} />
 
       {/* Due Date Card */}
       <div className="bg-card rounded-2xl p-5 border">
