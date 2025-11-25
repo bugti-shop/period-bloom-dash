@@ -1,11 +1,13 @@
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { Menu, X, BookOpen, Baby, Calendar, Heart, Stethoscope, Search, Bookmark } from "lucide-react";
+import { Menu, X, BookOpen, Baby, Calendar, Heart, Stethoscope, Search, Bookmark, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
 import { isBookmarked } from "@/lib/articleBookmarks";
+import { getAllProgress } from "@/lib/articleProgress";
 
 const articles = [
   {
@@ -73,6 +75,8 @@ export const ArticlesPage = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [bookmarkRefresh, setBookmarkRefresh] = useState(0);
+  
+  const articleProgress = getAllProgress();
 
   const filteredArticles = useMemo(() => {
     let filtered = articles;
@@ -200,8 +204,13 @@ export const ArticlesPage = () => {
             <article
               key={article.id}
               onClick={() => navigate(`/article/${article.id}`)}
-              className="bg-white rounded-xl overflow-hidden shadow-sm border border-border hover:shadow-md transition-shadow cursor-pointer"
+              className="bg-white rounded-xl overflow-hidden shadow-sm border border-border hover:shadow-md transition-shadow cursor-pointer relative"
             >
+              {articleProgress[article.id]?.completed && (
+                <div className="absolute top-2 right-2 z-10 bg-green-500 text-white rounded-full p-1">
+                  <CheckCircle className="h-4 w-4" />
+                </div>
+              )}
               <div className="aspect-video w-full overflow-hidden">
                 <img
                   src={article.image}
@@ -222,6 +231,16 @@ export const ArticlesPage = () => {
                 <p className="text-sm text-muted-foreground line-clamp-3">
                   {article.excerpt}
                 </p>
+                {articleProgress[article.id] && articleProgress[article.id].scrollPercentage > 5 && !articleProgress[article.id].completed && (
+                  <div className="mt-3">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-xs text-muted-foreground">
+                        {Math.round(articleProgress[article.id].scrollPercentage)}% read
+                      </span>
+                    </div>
+                    <Progress value={articleProgress[article.id].scrollPercentage} className="h-1" />
+                  </div>
+                )}
               </div>
             </article>
           ))}

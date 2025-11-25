@@ -1,9 +1,15 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Clock, Calendar, BookOpen, Bookmark } from "lucide-react";
+import { ArrowLeft, Clock, Calendar, BookOpen, Bookmark, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
 import { toggleBookmark, isBookmarked } from "@/lib/articleBookmarks";
-import { useState, useEffect } from "react";
+import { 
+  saveArticleProgress, 
+  getArticleProgress, 
+  calculateReadingTime 
+} from "@/lib/articleProgress";
+import { useState, useEffect, useRef } from "react";
 import { toast } from "sonner";
 
 const articleContent: Record<string, {
@@ -188,14 +194,73 @@ export const ArticleDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [bookmarked, setBookmarked] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const [hasRestoredPosition, setHasRestoredPosition] = useState(false);
+  const articleRef = useRef<HTMLDivElement>(null);
+  const saveTimeoutRef = useRef<NodeJS.Timeout>();
   
   const article = id ? articleContent[id] : null;
+  const readingTime = article ? calculateReadingTime(article.content.join(' ')) : 0;
 
   useEffect(() => {
     if (id) {
       setBookmarked(isBookmarked(id));
+      
+      // Restore scroll position
+      const progress = getArticleProgress(id);
+      if (progress && progress.scrollPosition > 0 && !progress.completed) {
+        // Wait for content to render then scroll
+        setTimeout(() => {
+          window.scrollTo(0, progress.scrollPosition);
+          setHasRestoredPosition(true);
+          toast.success(`Resumed from ${Math.round(progress.scrollPercentage)}% through the article`);
+        }, 100);
+      } else {
+        setHasRestoredPosition(true);
+      }
     }
   }, [id]);
+
+  useEffect(() => {
+    if (!id || !hasRestoredPosition) return;
+
+    const handleScroll = () => {
+      const windowHeight = window.innerHeight;
+      const documentHeight = document.documentElement.scrollHeight;
+      const scrollTop = window.scrollY;
+      const scrollableHeight = documentHeight - windowHeight;
+      const percentage = (scrollTop / scrollableHeight) * 100;
+      
+      setScrollProgress(Math.min(Math.round(percentage), 100));
+
+      // Debounce saving progress
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
+
+      saveTimeoutRef.current = setTimeout(() => {
+        const completed = percentage >= 95;
+        saveArticleProgress(id, scrollTop, percentage, completed);
+        
+        if (completed && percentage >= 95) {
+          const progress = getArticleProgress(id);
+          if (progress && !progress.completed) {
+            toast.success("Article completed! 🎉");
+          }
+        }
+      }, 500);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    handleScroll(); // Initial calculation
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
+    };
+  }, [id, hasRestoredPosition]);
 
   const handleBookmarkToggle = () => {
     if (!id) return;
@@ -212,6 +277,7 @@ export const ArticleDetailPage = () => {
   };
 
   const relatedArticles = getRelatedArticles();
+  const progress = id ? getArticleProgress(id) : null;
 
   if (!article) {
     return (
@@ -226,10 +292,10 @@ export const ArticleDetailPage = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
+      {/* Header with Progress Bar */}
       <header className="sticky top-0 z-50 w-full border-b border-border bg-white shadow-sm">
         <div className="max-w-4xl mx-auto px-4 py-3">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between mb-2">
             <Button
               variant="ghost"
               onClick={() => navigate("/articles")}
@@ -238,15 +304,23 @@ export const ArticleDetailPage = () => {
               <ArrowLeft className="h-4 w-4" />
               Back to Articles
             </Button>
-            <Button
-              variant={bookmarked ? "default" : "outline"}
-              size="icon"
-              onClick={handleBookmarkToggle}
-              className="ml-auto"
-            >
-              <Bookmark className={`h-4 w-4 ${bookmarked ? "fill-current" : ""}`} />
-            </Button>
+            <div className="flex items-center gap-2">
+              {progress?.completed && (
+                <Badge variant="secondary" className="gap-1">
+                  <CheckCircle className="h-3 w-3" />
+                  Completed
+                </Badge>
+              )}
+              <Button
+                variant={bookmarked ? "default" : "outline"}
+                size="icon"
+                onClick={handleBookmarkToggle}
+              >
+                <Bookmark className={`h-4 w-4 ${bookmarked ? "fill-current" : ""}`} />
+              </Button>
+            </div>
           </div>
+          <Progress value={scrollProgress} className="h-1" />
         </div>
       </header>
 
@@ -260,7 +334,7 @@ export const ArticleDetailPage = () => {
       </div>
 
       {/* Article Content */}
-      <article className="max-w-4xl mx-auto px-4 py-8">
+      <article ref={articleRef} className="max-w-4xl mx-auto px-4 py-8">
         {/* Category Badge */}
         <div className="mb-4">
           <span className="inline-block px-3 py-1 bg-primary/10 text-primary text-sm font-semibold rounded-full">
@@ -281,12 +355,17 @@ export const ArticleDetailPage = () => {
           </div>
           <div className="flex items-center gap-2">
             <Clock className="h-4 w-4" />
-            <span>{article.readTime}</span>
+            <span>{readingTime} min read</span>
           </div>
           <div className="flex items-center gap-2">
             <BookOpen className="h-4 w-4" />
             <span>{article.author}</span>
           </div>
+          {progress && progress.scrollPercentage > 5 && !progress.completed && (
+            <div className="flex items-center gap-2 text-primary">
+              <span className="font-medium">{Math.round(progress.scrollPercentage)}% read</span>
+            </div>
+          )}
         </div>
 
         {/* Article Body */}
