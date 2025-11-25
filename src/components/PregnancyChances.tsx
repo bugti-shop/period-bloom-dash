@@ -30,31 +30,29 @@ export const PregnancyChances = ({ lastPeriodDate, cycleLength }: PregnancyChanc
     return { percentage: 5, label: "Very Low", color: "text-gray-600" };
   };
 
-  const { percentage, label, color } = getPregnancyChance();
-  
-  const getBackgroundGradient = () => {
-    if (percentage >= 70) return "from-green-100 to-emerald-100";
-    if (percentage >= 30) return "from-yellow-100 to-orange-100";
-    return "from-gray-100 to-slate-100";
-  };
+  const chanceData = getPregnancyChance();
 
   return (
-    <div className={`p-6 bg-gradient-to-br ${getBackgroundGradient()} rounded-2xl`}>
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className={`p-3 bg-white rounded-xl ${color}`}>
-            <Heart className="w-6 h-6" />
-          </div>
-          <div>
-            <p className="text-sm text-muted-foreground mb-1">Pregnancy Chances</p>
-            <p className={`text-3xl font-bold ${color}`}>{percentage}%</p>
-          </div>
+    <div className="flex flex-col items-center">
+      <div 
+        className="relative w-40 h-40 rounded-full flex items-center justify-center"
+        style={{ 
+          backgroundColor: '#eb4899',
+          boxShadow: '0 0 0 12px rgba(235, 72, 153, 0.1)'
+        }}
+      >
+        <div className="text-center">
+          <p className="text-4xl font-bold text-white">
+            {chanceData.percentage}%
+          </p>
+          <p className="text-sm text-white/90 mt-1">{chanceData.label}</p>
         </div>
-        <div className="text-right">
-          <p className="text-xs text-muted-foreground mb-1">Fertility Status</p>
-          <p className={`text-sm font-semibold ${color}`}>{label}</p>
-          <p className="text-xs text-muted-foreground mt-1">Day {dayInCycle} of cycle</p>
-        </div>
+      </div>
+      <div className="mt-4 text-center">
+        <p className="text-sm text-muted-foreground mb-1">Pregnancy Chances</p>
+        <p className="text-base font-semibold text-foreground">
+          Day {dayInCycle} of cycle
+        </p>
       </div>
     </div>
   );

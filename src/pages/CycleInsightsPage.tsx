@@ -4,6 +4,7 @@ import { getPeriodHistory, PeriodHistoryEntry } from "@/lib/periodHistory";
 import { loadFromLocalStorage } from "@/lib/storage";
 import { format, differenceInDays } from "date-fns";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, AreaChart } from "recharts";
+import { MonthOverMonthComparison } from "@/components/MonthOverMonthComparison";
 
 interface CycleInsightsPageProps {
   onBack: () => void;
@@ -78,6 +79,9 @@ export const CycleInsightsPage = ({ onBack }: CycleInsightsPageProps) => {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 py-6 space-y-6">
+        {/* Month-Over-Month Comparison */}
+        <MonthOverMonthComparison />
+
         {/* Key Metrics */}
         <div className="grid grid-cols-2 gap-4">
           <div className="p-5 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl">
