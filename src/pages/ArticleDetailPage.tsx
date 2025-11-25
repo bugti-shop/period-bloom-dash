@@ -36,6 +36,13 @@ const articleContent: Record<string, {
   date: string;
   author: string;
   content: string[];
+  images: Array<{
+    url: string;
+    alt: string;
+    credit: string;
+    creditLink: string;
+    position: number; // After which paragraph to insert
+  }>;
 }> = {
   "1": {
     id: 1,
@@ -45,6 +52,22 @@ const articleContent: Record<string, {
     readTime: "5 min read",
     date: "November 20, 2025",
     author: "Maternal Health Team",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1555252333-9f8e92e65df9?w=1200&auto=format&fit=crop",
+        alt: "Pregnant woman holding her belly during first trimester",
+        credit: "Photo by freestocks on Unsplash",
+        creditLink: "https://unsplash.com/@freestocks",
+        position: 2
+      },
+      {
+        url: "https://images.unsplash.com/photo-1492725764893-90b379c2b6e7?w=1200&auto=format&fit=crop",
+        alt: "Healthy pregnancy nutrition with fruits and vegetables",
+        credit: "Photo by Brooke Lark on Unsplash",
+        creditLink: "https://unsplash.com/@brookelark",
+        position: 5
+      }
+    ],
     content: [
       "The first trimester is an exciting and transformative period that spans from conception through week 12 of your pregnancy. During this time, your body undergoes remarkable changes to support your growing baby.",
       
@@ -71,6 +94,29 @@ const articleContent: Record<string, {
     readTime: "7 min read",
     date: "November 18, 2025",
     author: "Women's Health Specialists",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=1200&auto=format&fit=crop",
+        alt: "Woman relaxing with heating pad for menstrual cramps",
+        credit: "Photo by Ravi Patel on Unsplash",
+        creditLink: "https://unsplash.com/@_ravir",
+        position: 3
+      },
+      {
+        url: "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=1200&auto=format&fit=crop",
+        alt: "Healthy foods to reduce period pain including fruits and vegetables",
+        credit: "Photo by Dan Gold on Unsplash",
+        creditLink: "https://unsplash.com/@danielcgold",
+        position: 5
+      },
+      {
+        url: "https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=1200&auto=format&fit=crop",
+        alt: "Woman doing yoga for menstrual health",
+        credit: "Photo by Ginny Rose Stewart on Unsplash",
+        creditLink: "https://unsplash.com/@ginnyrosestewart",
+        position: 7
+      }
+    ],
     content: [
       "Menstrual cramps, medically known as dysmenorrhea, affect up to 90% of women at some point in their lives. While over-the-counter medications can help, many women prefer natural remedies to manage period pain effectively.",
       
@@ -99,6 +145,29 @@ const articleContent: Record<string, {
     readTime: "6 min read",
     date: "November 15, 2025",
     author: "Prenatal Nutrition Experts",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1498837167922-ddd27525d352?w=1200&auto=format&fit=crop",
+        alt: "Healthy pregnancy meals with fresh vegetables and whole grains",
+        credit: "Photo by Anna Pelzer on Unsplash",
+        creditLink: "https://unsplash.com/@annapelzer",
+        position: 2
+      },
+      {
+        url: "https://images.unsplash.com/photo-1559056199-641a0ac8b55e?w=1200&auto=format&fit=crop",
+        alt: "Salmon and omega-3 rich foods for pregnancy",
+        credit: "Photo by Caroline Attwood on Unsplash",
+        creditLink: "https://unsplash.com/@carolineattwood",
+        position: 4
+      },
+      {
+        url: "https://images.unsplash.com/photo-1551024601-bec78aea704b?w=1200&auto=format&fit=crop",
+        alt: "Pregnant woman drinking water for hydration",
+        credit: "Photo by Ale Romo on Unsplash",
+        creditLink: "https://unsplash.com/@ale_romo",
+        position: 6
+      }
+    ],
     content: [
       "Proper nutrition during pregnancy is crucial for your baby's development and your own health. You're not just eating for two—you're building a human being from scratch, and every nutrient counts.",
       
@@ -127,6 +196,22 @@ const articleContent: Record<string, {
     readTime: "4 min read",
     date: "November 12, 2025",
     author: "Fitness and Wellness Coaches",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=1200&auto=format&fit=crop",
+        alt: "Woman exercising during menstrual cycle",
+        credit: "Photo by Karsten Winegeart on Unsplash",
+        creditLink: "https://unsplash.com/@karsten116",
+        position: 2
+      },
+      {
+        url: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=1200&auto=format&fit=crop",
+        alt: "Healthy nutrition for cycle-based fitness",
+        credit: "Photo by Ravi Patel on Unsplash",
+        creditLink: "https://unsplash.com/@_ravir",
+        position: 5
+      }
+    ],
     content: [
       "Your menstrual cycle affects your energy levels, strength, and recovery throughout the month. By understanding these changes, you can optimize your workouts and achieve better results while honoring your body's natural rhythms.",
       
@@ -153,6 +238,29 @@ const articleContent: Record<string, {
     readTime: "8 min read",
     date: "November 10, 2025",
     author: "Birth Preparation Team",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1555252333-9f8e92e65df9?w=1200&auto=format&fit=crop",
+        alt: "Pregnant woman preparing for childbirth",
+        credit: "Photo by freestocks on Unsplash",
+        creditLink: "https://unsplash.com/@freestocks",
+        position: 2
+      },
+      {
+        url: "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=1200&auto=format&fit=crop",
+        alt: "Hospital bag packed for labor and delivery",
+        credit: "Photo by Daiga Ellaby on Unsplash",
+        creditLink: "https://unsplash.com/@daiga_ellaby",
+        position: 6
+      },
+      {
+        url: "https://images.unsplash.com/photo-1584515933487-779824d29309?w=1200&auto=format&fit=crop",
+        alt: "Newborn baby after successful delivery",
+        credit: "Photo by Christian Bowen on Unsplash",
+        creditLink: "https://unsplash.com/@chrishcush",
+        position: 9
+      }
+    ],
     content: [
       "Preparing for labor and delivery can feel overwhelming, but knowledge and planning will help you feel more confident and in control when the big day arrives.",
       
@@ -183,6 +291,22 @@ const articleContent: Record<string, {
     readTime: "6 min read",
     date: "November 8, 2025",
     author: "Reproductive Health Educators",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=1200&auto=format&fit=crop",
+        alt: "Calendar tracking menstrual cycle phases",
+        credit: "Photo by Eric Rothermel on Unsplash",
+        creditLink: "https://unsplash.com/@erothermel",
+        position: 3
+      },
+      {
+        url: "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=1200&auto=format&fit=crop",
+        alt: "Woman exercising during different cycle phases",
+        credit: "Photo by Karsten Winegeart on Unsplash",
+        creditLink: "https://unsplash.com/@karsten116",
+        position: 6
+      }
+    ],
     content: [
       "Your menstrual cycle is more than just your period. It's a complex, beautifully orchestrated series of hormonal changes that affects your mood, energy, skin, and overall health throughout the month.",
       
@@ -572,20 +696,45 @@ export const ArticleDetailPage = () => {
           )}
         </div>
 
-        {/* Article Body */}
+        {/* Article Body with Images */}
         <div className="prose prose-lg max-w-none">
           {article.content.map((paragraph, index) => {
             const hasNote = notes.find(n => n.position === index);
+            const imageAtPosition = article.images.find(img => img.position === index);
+            
             return (
-              <p
-                key={index}
-                className={`text-foreground mb-6 leading-relaxed whitespace-pre-line cursor-text select-text ${
-                  hasNote ? 'bg-yellow-100 p-2 rounded' : ''
-                }`}
-                onMouseUp={() => handleTextSelection(index)}
-              >
-                {paragraph}
-              </p>
+              <div key={index}>
+                <p
+                  className={`text-foreground mb-6 leading-relaxed whitespace-pre-line cursor-text select-text ${
+                    hasNote ? 'bg-yellow-100 p-2 rounded' : ''
+                  }`}
+                  onMouseUp={() => handleTextSelection(index)}
+                >
+                  {paragraph}
+                </p>
+                
+                {imageAtPosition && (
+                  <figure className="my-8">
+                    <img
+                      src={imageAtPosition.url}
+                      alt={imageAtPosition.alt}
+                      className="w-full rounded-lg shadow-md"
+                      loading="lazy"
+                    />
+                    <figcaption className="text-sm text-muted-foreground mt-2 text-center italic">
+                      {imageAtPosition.alt}.{' '}
+                      <a
+                        href={imageAtPosition.creditLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-primary hover:underline"
+                      >
+                        {imageAtPosition.credit}
+                      </a>
+                    </figcaption>
+                  </figure>
+                )}
+              </div>
             );
           })}
         </div>
