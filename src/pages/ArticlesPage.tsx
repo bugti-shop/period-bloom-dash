@@ -1,13 +1,16 @@
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { Menu, X, BookOpen, Baby, Calendar, Heart, Stethoscope, Search, Bookmark, CheckCircle } from "lucide-react";
+import { Menu, X, BookOpen, Baby, Calendar, Heart, Stethoscope, Search, Bookmark, CheckCircle, Clock, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { isBookmarked } from "@/lib/articleBookmarks";
-import { getAllProgress } from "@/lib/articleProgress";
+import { getAllProgress, ArticleProgress } from "@/lib/articleProgress";
+import { isArticleOffline } from "@/lib/offlineArticles";
+import { formatDistanceToNow } from "date-fns";
 
 const articles = [
   {
@@ -77,6 +80,22 @@ export const ArticlesPage = () => {
   const [bookmarkRefresh, setBookmarkRefresh] = useState(0);
   
   const articleProgress = getAllProgress();
+
+  // Get continue reading articles (5-95% progress, sorted by most recent)
+  const continueReadingArticles = useMemo(() => {
+    const progressEntries = Object.entries(articleProgress)
+      .filter(([_, progress]: [string, ArticleProgress]) => 
+        progress.scrollPercentage >= 5 && 
+        progress.scrollPercentage < 95 &&
+        !progress.completed
+      )
+      .sort((a, b) => b[1].lastRead - a[1].lastRead)
+      .slice(0, 3);
+
+    return progressEntries.map(([id]) => 
+      articles.find(article => article.id.toString() === id)
+    ).filter(Boolean);
+  }, [articleProgress]);
 
   const filteredArticles = useMemo(() => {
     let filtered = articles;
@@ -179,6 +198,75 @@ export const ArticlesPage = () => {
           </div>
         </div>
 
+        {/* Continue Reading Section */}
+        {continueReadingArticles.length > 0 && !searchQuery && selectedCategory === "All Articles" && (
+          <div className="mb-8">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <BookOpen className="h-5 w-5 text-primary" />
+                  Continue Reading
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {continueReadingArticles.map((article) => {
+                    if (!article) return null;
+                    const progress = articleProgress[article.id.toString()];
+                    const isOffline = isArticleOffline(article.id.toString());
+                    
+                    return (
+                      <div
+                        key={article.id}
+                        onClick={() => navigate(`/article/${article.id}`)}
+                        className="bg-muted/50 rounded-lg overflow-hidden cursor-pointer hover:bg-muted transition-colors p-4 relative"
+                      >
+                        {isOffline && (
+                          <Badge variant="secondary" className="absolute top-2 right-2 gap-1">
+                            <Download className="h-3 w-3" />
+                            Offline
+                          </Badge>
+                        )}
+                        <div className="flex items-start gap-3">
+                          <div className="w-20 h-20 rounded-md overflow-hidden flex-shrink-0">
+                            <img
+                              src={article.image}
+                              alt={article.title}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <Badge variant="outline" className="text-xs mb-1">
+                              {article.category}
+                            </Badge>
+                            <h4 className="font-semibold text-sm line-clamp-2 mb-1">
+                              {article.title}
+                            </h4>
+                            <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
+                              <Clock className="h-3 w-3" />
+                              <span>
+                                {formatDistanceToNow(progress.lastRead, { addSuffix: true })}
+                              </span>
+                            </div>
+                            <div className="space-y-1">
+                              <div className="flex items-center justify-between text-xs">
+                                <span className="text-muted-foreground">
+                                  {Math.round(progress.scrollPercentage)}% complete
+                                </span>
+                              </div>
+                              <Progress value={progress.scrollPercentage} className="h-1" />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
         {/* Category Pills - Mobile horizontal scroll */}
         <div className="mb-6 overflow-x-auto pb-2 -mx-4 px-4">
           <div className="flex gap-2 min-w-max">
@@ -206,11 +294,18 @@ export const ArticlesPage = () => {
               onClick={() => navigate(`/article/${article.id}`)}
               className="bg-white rounded-xl overflow-hidden shadow-sm border border-border hover:shadow-md transition-shadow cursor-pointer relative"
             >
-              {articleProgress[article.id]?.completed && (
-                <div className="absolute top-2 right-2 z-10 bg-green-500 text-white rounded-full p-1">
-                  <CheckCircle className="h-4 w-4" />
-                </div>
-              )}
+              <div className="absolute top-2 right-2 z-10 flex gap-1">
+                {isArticleOffline(article.id.toString()) && (
+                  <Badge variant="secondary" className="gap-1">
+                    <Download className="h-3 w-3" />
+                  </Badge>
+                )}
+                {articleProgress[article.id]?.completed && (
+                  <div className="bg-green-500 text-white rounded-full p-1">
+                    <CheckCircle className="h-4 w-4" />
+                  </div>
+                )}
+              </div>
               <div className="aspect-video w-full overflow-hidden">
                 <img
                   src={article.image}

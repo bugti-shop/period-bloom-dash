@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Clock, Calendar, BookOpen, Bookmark, CheckCircle } from "lucide-react";
+import { ArrowLeft, Clock, Calendar, BookOpen, Bookmark, CheckCircle, Download, Trash2, WifiOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
@@ -9,6 +9,11 @@ import {
   getArticleProgress, 
   calculateReadingTime 
 } from "@/lib/articleProgress";
+import {
+  saveArticleOffline,
+  isArticleOffline,
+  removeOfflineArticle
+} from "@/lib/offlineArticles";
 import { useState, useEffect, useRef } from "react";
 import { toast } from "sonner";
 
@@ -196,15 +201,52 @@ export const ArticleDetailPage = () => {
   const [bookmarked, setBookmarked] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [hasRestoredPosition, setHasRestoredPosition] = useState(false);
+  const [offlineAvailable, setOfflineAvailable] = useState(false);
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
   const articleRef = useRef<HTMLDivElement>(null);
   const saveTimeoutRef = useRef<NodeJS.Timeout>();
   
   const article = id ? articleContent[id] : null;
   const readingTime = article ? calculateReadingTime(article.content.join(' ')) : 0;
 
+  // Monitor online/offline status
+  useEffect(() => {
+    const handleOnline = () => {
+      setIsOnline(true);
+      toast.success("Back online!");
+    };
+    const handleOffline = () => {
+      setIsOnline(false);
+      toast.info("You're offline. Saved articles are still available.");
+    };
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
+
   useEffect(() => {
     if (id) {
       setBookmarked(isBookmarked(id));
+      setOfflineAvailable(isArticleOffline(id));
+      
+      // Auto-save article for offline reading when first opened
+      if (article && !isArticleOffline(id)) {
+        saveArticleOffline(
+          id,
+          article.title,
+          article.content,
+          article.category,
+          article.image,
+          article.date,
+          article.author
+        );
+        setOfflineAvailable(true);
+      }
       
       // Restore scroll position
       const progress = getArticleProgress(id);
@@ -219,7 +261,7 @@ export const ArticleDetailPage = () => {
         setHasRestoredPosition(true);
       }
     }
-  }, [id]);
+  }, [id, article]);
 
   useEffect(() => {
     if (!id || !hasRestoredPosition) return;
@@ -269,6 +311,28 @@ export const ArticleDetailPage = () => {
     toast.success(newBookmarked ? "Article bookmarked!" : "Bookmark removed");
   };
 
+  const handleDownloadOffline = () => {
+    if (!id || !article) return;
+    
+    if (offlineAvailable) {
+      removeOfflineArticle(id);
+      setOfflineAvailable(false);
+      toast.success("Removed from offline storage");
+    } else {
+      saveArticleOffline(
+        id,
+        article.title,
+        article.content,
+        article.category,
+        article.image,
+        article.date,
+        article.author
+      );
+      setOfflineAvailable(true);
+      toast.success("Article saved for offline reading!");
+    }
+  };
+
   const getRelatedArticles = () => {
     if (!article) return [];
     return Object.values(articleContent)
@@ -305,12 +369,30 @@ export const ArticleDetailPage = () => {
               Back to Articles
             </Button>
             <div className="flex items-center gap-2">
+              {!isOnline && (
+                <Badge variant="outline" className="gap-1">
+                  <WifiOff className="h-3 w-3" />
+                  Offline
+                </Badge>
+              )}
               {progress?.completed && (
                 <Badge variant="secondary" className="gap-1">
                   <CheckCircle className="h-3 w-3" />
                   Completed
                 </Badge>
               )}
+              <Button
+                variant={offlineAvailable ? "default" : "outline"}
+                size="icon"
+                onClick={handleDownloadOffline}
+                title={offlineAvailable ? "Remove from offline storage" : "Save for offline reading"}
+              >
+                {offlineAvailable ? (
+                  <Trash2 className="h-4 w-4" />
+                ) : (
+                  <Download className="h-4 w-4" />
+                )}
+              </Button>
               <Button
                 variant={bookmarked ? "default" : "outline"}
                 size="icon"
