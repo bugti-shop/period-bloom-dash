@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { X, Plus, Trash2, Download, Baby, Filter, MessageSquare, Mic, Camera, ArrowLeftRight } from "lucide-react";
+import { X, Plus, Trash2, Download, Baby, Filter, MessageSquare, Mic, Camera, ArrowLeftRight, Play, Pause, Edit, Tag, FileDown } from "lucide-react";
 import { saveToLocalStorage, loadFromLocalStorage } from "@/lib/storage";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -9,11 +9,19 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { BumpPhotoComparison } from "./BumpPhotoComparison";
+import { Slider } from "@/components/ui/slider";
+import jsPDF from "jspdf";
 
 interface WeekPhoto {
   imageData: string;
   timestamp: Date;
   caption?: string;
+  tags?: string[];
+  filters?: {
+    brightness: number;
+    contrast: number;
+    saturation: number;
+  };
 }
 
 interface WeekNotes {
@@ -57,10 +65,39 @@ export const BumpGallery = ({ onClose }: BumpGalleryProps) => {
   const [editingCaption, setEditingCaption] = useState<number | "baby" | null>(null);
   const [captionText, setCaptionText] = useState("");
   const [showComparison, setShowComparison] = useState(false);
+  const [isSlideshow, setIsSlideshow] = useState(false);
+  const [currentSlideWeek, setCurrentSlideWeek] = useState<number>(1);
+  const [editingPhoto, setEditingPhoto] = useState<number | "baby" | null>(null);
+  const [brightness, setBrightness] = useState(100);
+  const [contrast, setContrast] = useState(100);
+  const [saturation, setSaturation] = useState(100);
+  const [tagInput, setTagInput] = useState("");
+  const [editingTags, setEditingTags] = useState<number | "baby" | null>(null);
+  const [tagFilter, setTagFilter] = useState<string | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     loadData();
   }, []);
+
+  useEffect(() => {
+    if (!isSlideshow) return;
+    
+    const weeksWithPhotos = Object.keys(weekPhotos).map(w => parseInt(w)).sort((a, b) => a - b);
+    if (weeksWithPhotos.length === 0) {
+      setIsSlideshow(false);
+      return;
+    }
+
+    const currentIndex = weeksWithPhotos.indexOf(currentSlideWeek);
+    const nextIndex = (currentIndex + 1) % weeksWithPhotos.length;
+    
+    const timer = setTimeout(() => {
+      setCurrentSlideWeek(weeksWithPhotos[nextIndex]);
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, [isSlideshow, currentSlideWeek, weekPhotos]);
 
   const loadData = () => {
     const storedPhotos = loadFromLocalStorage<WeekPhotos>(PREGNANCY_PHOTOS_KEY);
@@ -181,11 +218,231 @@ export const BumpGallery = ({ onClose }: BumpGalleryProps) => {
   };
 
   const shouldShowWeek = (week: number): boolean => {
-    if (filterType === "all") return true;
-    if (filterType === "photos") return !!weekPhotos[week];
-    if (filterType === "notes") return !!weekNotes[week];
-    if (filterType === "voice") return !!weekVoiceNotes[week];
-    return true;
+    let passesFilter = true;
+    if (filterType === "photos") passesFilter = !!weekPhotos[week];
+    else if (filterType === "notes") passesFilter = !!weekNotes[week];
+    else if (filterType === "voice") passesFilter = !!weekVoiceNotes[week];
+    
+    if (!passesFilter) return false;
+    
+    if (tagFilter && weekPhotos[week]) {
+      return weekPhotos[week].tags?.includes(tagFilter) || false;
+    }
+    
+    return filterType === "all" || passesFilter;
+  };
+
+  const startSlideshow = () => {
+    const weeksWithPhotos = Object.keys(weekPhotos).map(w => parseInt(w)).sort((a, b) => a - b);
+    if (weeksWithPhotos.length > 0) {
+      setCurrentSlideWeek(weeksWithPhotos[0]);
+      setIsSlideshow(true);
+    }
+  };
+
+  const openPhotoEditor = (target: number | "baby") => {
+    const photo = target === "baby" ? babyPhoto : weekPhotos[target];
+    if (!photo) return;
+    
+    setEditingPhoto(target);
+    setBrightness(photo.filters?.brightness || 100);
+    setContrast(photo.filters?.contrast || 100);
+    setSaturation(photo.filters?.saturation || 100);
+  };
+
+  const applyPhotoEdits = () => {
+    if (editingPhoto === null) return;
+
+    const filters = { brightness, contrast, saturation };
+
+    if (editingPhoto === "baby" && babyPhoto) {
+      const updatedPhoto = { ...babyPhoto, filters };
+      setBabyPhoto(updatedPhoto);
+      saveToLocalStorage(BABY_BORN_PHOTO_KEY, updatedPhoto);
+    } else if (typeof editingPhoto === "number") {
+      const updatedPhotos = {
+        ...weekPhotos,
+        [editingPhoto]: { ...weekPhotos[editingPhoto], filters }
+      };
+      setWeekPhotos(updatedPhotos);
+      saveToLocalStorage(PREGNANCY_PHOTOS_KEY, updatedPhotos);
+    }
+    
+    setEditingPhoto(null);
+    toast.success("Photo edits saved!");
+  };
+
+  const openTagEditor = (target: number | "baby") => {
+    setEditingTags(target);
+    setTagInput("");
+  };
+
+  const addTag = () => {
+    if (!tagInput.trim() || editingTags === null) return;
+
+    if (editingTags === "baby" && babyPhoto) {
+      const updatedPhoto = { 
+        ...babyPhoto, 
+        tags: [...(babyPhoto.tags || []), tagInput.trim()] 
+      };
+      setBabyPhoto(updatedPhoto);
+      saveToLocalStorage(BABY_BORN_PHOTO_KEY, updatedPhoto);
+    } else if (typeof editingTags === "number") {
+      const updatedPhotos = {
+        ...weekPhotos,
+        [editingTags]: { 
+          ...weekPhotos[editingTags], 
+          tags: [...(weekPhotos[editingTags].tags || []), tagInput.trim()] 
+        }
+      };
+      setWeekPhotos(updatedPhotos);
+      saveToLocalStorage(PREGNANCY_PHOTOS_KEY, updatedPhotos);
+    }
+    
+    setTagInput("");
+    toast.success("Tag added!");
+  };
+
+  const removeTag = (target: number | "baby", tag: string) => {
+    if (target === "baby" && babyPhoto) {
+      const updatedPhoto = { 
+        ...babyPhoto, 
+        tags: babyPhoto.tags?.filter(t => t !== tag) 
+      };
+      setBabyPhoto(updatedPhoto);
+      saveToLocalStorage(BABY_BORN_PHOTO_KEY, updatedPhoto);
+    } else if (typeof target === "number") {
+      const updatedPhotos = {
+        ...weekPhotos,
+        [target]: { 
+          ...weekPhotos[target], 
+          tags: weekPhotos[target].tags?.filter(t => t !== tag) 
+        }
+      };
+      setWeekPhotos(updatedPhotos);
+      saveToLocalStorage(PREGNANCY_PHOTOS_KEY, updatedPhotos);
+    }
+    toast.success("Tag removed!");
+  };
+
+  const getAllTags = (): string[] => {
+    const tags = new Set<string>();
+    Object.values(weekPhotos).forEach(photo => {
+      photo.tags?.forEach(tag => tags.add(tag));
+    });
+    if (babyPhoto?.tags) {
+      babyPhoto.tags.forEach(tag => tags.add(tag));
+    }
+    return Array.from(tags);
+  };
+
+  const exportToPDF = async () => {
+    toast("Generating PDF memory book...");
+    
+    const pdf = new jsPDF();
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+    let yPosition = 20;
+
+    // Title page
+    pdf.setFontSize(24);
+    pdf.text("My Pregnancy Journey", pageWidth / 2, yPosition, { align: "center" });
+    yPosition += 20;
+    pdf.setFontSize(12);
+    pdf.text("A Week-by-Week Memory Book", pageWidth / 2, yPosition, { align: "center" });
+    
+    pdf.addPage();
+    yPosition = 20;
+
+    // Add each week with photo
+    for (let week = 1; week <= 40; week++) {
+      const photo = weekPhotos[week];
+      if (!photo) continue;
+
+      // Add new page if needed
+      if (yPosition > pageHeight - 80) {
+        pdf.addPage();
+        yPosition = 20;
+      }
+
+      pdf.setFontSize(16);
+      pdf.text(`Week ${week}`, 20, yPosition);
+      yPosition += 10;
+
+      // Add photo
+      try {
+        const img = new Image();
+        img.src = photo.imageData;
+        await new Promise(resolve => { img.onload = resolve; });
+        
+        const imgWidth = 80;
+        const imgHeight = 80;
+        pdf.addImage(photo.imageData, "JPEG", 20, yPosition, imgWidth, imgHeight);
+        yPosition += imgHeight + 10;
+      } catch (error) {
+        console.error("Error adding image:", error);
+      }
+
+      // Add caption
+      if (photo.caption) {
+        pdf.setFontSize(10);
+        const lines = pdf.splitTextToSize(photo.caption, pageWidth - 40);
+        pdf.text(lines, 20, yPosition);
+        yPosition += lines.length * 5 + 5;
+      }
+
+      // Add tags
+      if (photo.tags && photo.tags.length > 0) {
+        pdf.setFontSize(9);
+        pdf.text(`Tags: ${photo.tags.join(", ")}`, 20, yPosition);
+        yPosition += 8;
+      }
+
+      // Add notes
+      if (weekNotes[week]) {
+        pdf.setFontSize(10);
+        pdf.text("Notes:", 20, yPosition);
+        yPosition += 5;
+        const noteLines = pdf.splitTextToSize(weekNotes[week], pageWidth - 40);
+        pdf.text(noteLines, 20, yPosition);
+        yPosition += noteLines.length * 5 + 10;
+      }
+
+      yPosition += 10;
+    }
+
+    // Add baby photo if exists
+    if (babyPhoto) {
+      pdf.addPage();
+      pdf.setFontSize(20);
+      pdf.text("Baby Born!", pageWidth / 2, 20, { align: "center" });
+      
+      try {
+        const img = new Image();
+        img.src = babyPhoto.imageData;
+        await new Promise(resolve => { img.onload = resolve; });
+        
+        pdf.addImage(babyPhoto.imageData, "JPEG", 20, 40, 170, 120);
+        
+        if (babyPhoto.caption) {
+          pdf.setFontSize(12);
+          const lines = pdf.splitTextToSize(babyPhoto.caption, pageWidth - 40);
+          pdf.text(lines, 20, 170);
+        }
+      } catch (error) {
+        console.error("Error adding baby image:", error);
+      }
+    }
+
+    pdf.save("pregnancy-memory-book.pdf");
+    toast.success("PDF exported successfully!");
+  };
+
+  const getPhotoStyle = (photo: WeekPhoto) => {
+    if (!photo.filters) return {};
+    return {
+      filter: `brightness(${photo.filters.brightness}%) contrast(${photo.filters.contrast}%) saturate(${photo.filters.saturation}%)`
+    };
   };
 
   const getWeekBadges = (week: number) => {
@@ -215,6 +472,7 @@ export const BumpGallery = ({ onClose }: BumpGalleryProps) => {
               src={photo.imageData} 
               alt={`Week ${week}`}
               className="w-full h-full object-cover"
+              style={getPhotoStyle(photo)}
             />
             {badges.length > 0 && !isSelected && (
               <div className="absolute top-2 right-2 flex gap-1">
@@ -232,7 +490,7 @@ export const BumpGallery = ({ onClose }: BumpGalleryProps) => {
             )}
             {isSelected && (
               <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center gap-2">
-                <div className="flex gap-2">
+                <div className="flex gap-2 flex-wrap justify-center">
                   <Button
                     size="icon"
                     variant="secondary"
@@ -243,6 +501,28 @@ export const BumpGallery = ({ onClose }: BumpGalleryProps) => {
                     title="Edit caption"
                   >
                     <MessageSquare className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    size="icon"
+                    variant="secondary"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      openPhotoEditor(week);
+                    }}
+                    title="Edit photo"
+                  >
+                    <Edit className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    size="icon"
+                    variant="secondary"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      openTagEditor(week);
+                    }}
+                    title="Add tags"
+                  >
+                    <Tag className="w-4 h-4" />
                   </Button>
                   <Button
                     size="icon"
@@ -314,23 +594,43 @@ export const BumpGallery = ({ onClose }: BumpGalleryProps) => {
               </Button>
               <h2 className="text-xl font-semibold">Bump Gallery</h2>
             </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setShowComparison(true)}
-              className="gap-2"
-            >
-              <ArrowLeftRight className="w-4 h-4" />
-              Compare
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowComparison(true)}
+                className="gap-2"
+              >
+                <ArrowLeftRight className="w-4 h-4" />
+                Compare
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={isSlideshow ? () => setIsSlideshow(false) : startSlideshow}
+                className="gap-2"
+              >
+                {isSlideshow ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
+                {isSlideshow ? "Pause" : "Slideshow"}
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={exportToPDF}
+                className="gap-2"
+              >
+                <FileDown className="w-4 h-4" />
+                Export PDF
+              </Button>
+            </div>
           </div>
           
           {/* Filters */}
-          <div className="flex gap-2 overflow-x-auto">
+          <div className="flex gap-2 overflow-x-auto pb-2">
             <Button
-              variant={filterType === "all" ? "default" : "outline"}
+              variant={filterType === "all" && !tagFilter ? "default" : "outline"}
               size="sm"
-              onClick={() => setFilterType("all")}
+              onClick={() => { setFilterType("all"); setTagFilter(null); }}
               className="gap-2"
             >
               <Filter className="w-4 h-4" />
@@ -363,6 +663,21 @@ export const BumpGallery = ({ onClose }: BumpGalleryProps) => {
               <Mic className="w-4 h-4" />
               Voice Only
             </Button>
+            {getAllTags().map(tag => (
+              <Button
+                key={tag}
+                variant={tagFilter === tag ? "default" : "outline"}
+                size="sm"
+                onClick={() => {
+                  setTagFilter(tagFilter === tag ? null : tag);
+                  setFilterType("all");
+                }}
+                className="gap-2"
+              >
+                <Tag className="w-4 h-4" />
+                {tag}
+              </Button>
+            ))}
           </div>
         </div>
 
@@ -384,6 +699,7 @@ export const BumpGallery = ({ onClose }: BumpGalleryProps) => {
                     src={babyPhoto.imageData} 
                     alt="Baby Born"
                     className="w-full h-full object-cover"
+                    style={getPhotoStyle(babyPhoto)}
                   />
                   {babyPhoto.caption && selectedWeek !== "baby" && (
                     <div className="absolute bottom-0 left-0 right-0 bg-black/70 text-white text-sm p-3 line-clamp-2">
@@ -402,6 +718,28 @@ export const BumpGallery = ({ onClose }: BumpGalleryProps) => {
                         title="Edit caption"
                       >
                         <MessageSquare className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        size="icon"
+                        variant="secondary"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          openPhotoEditor("baby");
+                        }}
+                        title="Edit photo"
+                      >
+                        <Edit className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        size="icon"
+                        variant="secondary"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          openTagEditor("baby");
+                        }}
+                        title="Add tags"
+                      >
+                        <Tag className="w-4 h-4" />
                       </Button>
                       <Button
                         size="icon"
@@ -515,10 +853,160 @@ export const BumpGallery = ({ onClose }: BumpGalleryProps) => {
         </DialogContent>
       </Dialog>
 
+      {/* Photo Editor Dialog */}
+      <Dialog open={editingPhoto !== null} onOpenChange={() => setEditingPhoto(null)}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>
+              Edit Photo {editingPhoto === "baby" ? "- Baby Born" : `- Week ${editingPhoto}`}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-6">
+            {editingPhoto !== null && (
+              <div className="relative w-full h-64 bg-muted rounded-lg overflow-hidden">
+                <img
+                  src={editingPhoto === "baby" ? babyPhoto?.imageData : weekPhotos[editingPhoto as number]?.imageData}
+                  alt="Preview"
+                  className="w-full h-full object-contain"
+                  style={{
+                    filter: `brightness(${brightness}%) contrast(${contrast}%) saturate(${saturation}%)`
+                  }}
+                />
+              </div>
+            )}
+            <div className="space-y-4">
+              <div>
+                <Label>Brightness: {brightness}%</Label>
+                <Slider
+                  value={[brightness]}
+                  onValueChange={(v) => setBrightness(v[0])}
+                  min={0}
+                  max={200}
+                  step={1}
+                  className="mt-2"
+                />
+              </div>
+              <div>
+                <Label>Contrast: {contrast}%</Label>
+                <Slider
+                  value={[contrast]}
+                  onValueChange={(v) => setContrast(v[0])}
+                  min={0}
+                  max={200}
+                  step={1}
+                  className="mt-2"
+                />
+              </div>
+              <div>
+                <Label>Saturation: {saturation}%</Label>
+                <Slider
+                  value={[saturation]}
+                  onValueChange={(v) => setSaturation(v[0])}
+                  min={0}
+                  max={200}
+                  step={1}
+                  className="mt-2"
+                />
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <Button onClick={applyPhotoEdits} className="flex-1">
+                Apply Edits
+              </Button>
+              <Button variant="outline" onClick={() => setEditingPhoto(null)}>
+                Cancel
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Tag Editor Dialog */}
+      <Dialog open={editingTags !== null} onOpenChange={() => setEditingTags(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              Manage Tags {editingTags === "baby" ? "- Baby Born" : `- Week ${editingTags}`}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="flex gap-2">
+              <Input
+                placeholder="Add tag (e.g., location, event)..."
+                value={tagInput}
+                onChange={(e) => setTagInput(e.target.value)}
+                onKeyPress={(e) => e.key === "Enter" && addTag()}
+              />
+              <Button onClick={addTag}>Add</Button>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {editingTags !== null && (
+                editingTags === "baby" 
+                  ? babyPhoto?.tags?.map((tag) => (
+                      <div key={tag} className="flex items-center gap-1 bg-primary/10 text-primary px-3 py-1 rounded-full text-sm">
+                        {tag}
+                        <X 
+                          className="w-3 h-3 cursor-pointer" 
+                          onClick={() => removeTag("baby", tag)}
+                        />
+                      </div>
+                    ))
+                  : weekPhotos[editingTags as number]?.tags?.map((tag) => (
+                      <div key={tag} className="flex items-center gap-1 bg-primary/10 text-primary px-3 py-1 rounded-full text-sm">
+                        {tag}
+                        <X 
+                          className="w-3 h-3 cursor-pointer" 
+                          onClick={() => removeTag(editingTags as number, tag)}
+                        />
+                      </div>
+                    ))
+              )}
+            </div>
+            <Button variant="outline" onClick={() => setEditingTags(null)} className="w-full">
+              Done
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Slideshow Modal */}
+      {isSlideshow && (
+        <div className="fixed inset-0 bg-black z-[60] flex items-center justify-center">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setIsSlideshow(false)}
+            className="absolute top-4 right-4 text-white hover:bg-white/20"
+          >
+            <X className="w-6 h-6" />
+          </Button>
+          <div className="relative w-full h-full flex items-center justify-center p-8">
+            {weekPhotos[currentSlideWeek] && (
+              <div className="relative max-w-4xl max-h-full">
+                <img
+                  src={weekPhotos[currentSlideWeek].imageData}
+                  alt={`Week ${currentSlideWeek}`}
+                  className="max-w-full max-h-[80vh] object-contain"
+                  style={getPhotoStyle(weekPhotos[currentSlideWeek])}
+                />
+                <div className="absolute bottom-0 left-0 right-0 bg-black/70 text-white p-4">
+                  <p className="text-xl font-semibold">Week {currentSlideWeek}</p>
+                  {weekPhotos[currentSlideWeek].caption && (
+                    <p className="text-sm mt-2">{weekPhotos[currentSlideWeek].caption}</p>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Comparison Modal */}
       {showComparison && (
         <BumpPhotoComparison onClose={() => setShowComparison(false)} />
       )}
+
+      <canvas ref={canvasRef} className="hidden" />
     </div>
   );
 };
