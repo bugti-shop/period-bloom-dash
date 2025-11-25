@@ -61,6 +61,38 @@ const articles = [
     excerpt: "A complete guide to the four phases of your menstrual cycle and what they mean.",
     image: "https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=800&auto=format&fit=crop",
     readTime: "6 min read"
+  },
+  {
+    id: 7,
+    category: "Postpartum",
+    title: "Postpartum Recovery: What to Expect",
+    excerpt: "Understanding physical and emotional changes during the fourth trimester and how to support your recovery.",
+    image: "https://images.unsplash.com/photo-1555252333-9f8e92e65df9?w=800&auto=format&fit=crop",
+    readTime: "9 min read"
+  },
+  {
+    id: 8,
+    category: "Breastfeeding",
+    title: "Breastfeeding Basics: A Complete Guide",
+    excerpt: "Everything new mothers need to know about breastfeeding, from latch techniques to common challenges.",
+    image: "https://images.pexels.com/photos/3997993/pexels-photo-3997993.jpeg?w=800&auto=format&fit=crop",
+    readTime: "10 min read"
+  },
+  {
+    id: 9,
+    category: "Newborn Care",
+    title: "Newborn Care Essentials: First Month Guide",
+    excerpt: "Practical guidance on feeding, sleep, diapering, and caring for your newborn during the first month.",
+    image: "https://images.pexels.com/photos/3737582/pexels-photo-3737582.jpeg?w=800&auto=format&fit=crop",
+    readTime: "8 min read"
+  },
+  {
+    id: 10,
+    category: "Newborn Care",
+    title: "Recognizing Illness in Newborns",
+    excerpt: "Learn to identify warning signs of illness in newborns and when to seek immediate medical care.",
+    image: "https://images.pexels.com/photos/8491929/pexels-photo-8491929.jpeg?w=800&auto=format&fit=crop",
+    readTime: "7 min read"
   }
 ];
 
@@ -69,7 +101,9 @@ const categories = [
   { name: "Pregnancy", icon: Baby },
   { name: "Period Health", icon: Calendar },
   { name: "Wellness", icon: Heart },
-  { name: "Medical", icon: Stethoscope },
+  { name: "Postpartum", icon: Heart },
+  { name: "Breastfeeding", icon: Baby },
+  { name: "Newborn Care", icon: Stethoscope },
   { name: "Bookmarked", icon: Bookmark }
 ];
 

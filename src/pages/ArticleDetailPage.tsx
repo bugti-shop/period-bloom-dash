@@ -326,6 +326,226 @@ const articleContent: Record<string, {
       
       "Using Cycle Knowledge\nPlan important events around your cycle when possible. Schedule demanding work during your high-energy follicular phase. Plan self-care and downtime during your luteal phase and period. Use your most creative phase (follicular) for brainstorming and problem-solving. Your body's rhythms are a feature, not a flaw—working with them instead of against them improves your overall wellbeing."
     ]
+  },
+  "7": {
+    id: 7,
+    category: "Postpartum",
+    title: "Postpartum Recovery: What to Expect",
+    image: "https://images.unsplash.com/photo-1555252333-9f8e92e65df9?w=800&auto=format&fit=crop",
+    readTime: "9 min read",
+    date: "November 25, 2025",
+    author: "Postpartum Care Specialists",
+    images: [
+      {
+        url: "https://www.nichd.nih.gov/sites/default/files/inline-images/postpartum-mother-baby-bonding.jpg",
+        alt: "New mother bonding with baby during postpartum recovery",
+        credit: "Image from NICHD - National Institute of Child Health and Human Development",
+        creditLink: "https://www.nichd.nih.gov/health/topics/postpartum",
+        position: 2
+      },
+      {
+        url: "https://www.cdc.gov/maternal-infant-health/images/postpartum-care-visit.jpg",
+        alt: "Healthcare provider conducting postpartum checkup",
+        credit: "Image from CDC - Centers for Disease Control and Prevention",
+        creditLink: "https://www.cdc.gov/maternal-infant-health/",
+        position: 5
+      },
+      {
+        url: "https://images.pexels.com/photos/3997993/pexels-photo-3997993.jpeg?auto=compress&cs=tinysrgb&w=1200",
+        alt: "Mother resting during postpartum recovery period",
+        credit: "Photo by Anna Shvets on Pexels",
+        creditLink: "https://www.pexels.com/@shvetsa",
+        position: 8
+      }
+    ],
+    content: [
+      "The postpartum period, also called the fourth trimester, spans the first six weeks after childbirth. Your body undergoes dramatic physical and emotional changes as it recovers from pregnancy and adapts to caring for a newborn.",
+      
+      "Physical Recovery Timeline\nThe first 24-48 hours after delivery bring significant changes. You'll experience postpartum bleeding (lochia) that starts heavy and red, gradually lightening over 4-6 weeks. Cramping occurs as your uterus contracts back to its pre-pregnancy size. Perineal soreness from tearing or episiotomy is common and typically improves within 1-2 weeks with proper care. If you had a C-section, incision care and managing surgical pain become priorities.",
+      
+      "Managing Postpartum Bleeding\nLochia is normal and expected. Use heavy-duty pads (not tampons) for the first few weeks. Bleeding should gradually decrease and change from bright red to pink to brown to yellow-white. Heavy bleeding that soaks through a pad in an hour, large clots bigger than a golf ball, or foul-smelling discharge require immediate medical attention as these may signal complications like retained placenta or infection.",
+      
+      "Perineal Care and Healing\nWhether you had a vaginal delivery or C-section, proper wound care accelerates healing. For vaginal tears, use a peri bottle with warm water after each bathroom visit. Apply cold packs in the first 24 hours, then switch to warm sitz baths. Change pads frequently to prevent infection. For C-section incisions, keep the area clean and dry, watch for signs of infection (redness, warmth, discharge), and avoid heavy lifting for 6-8 weeks.",
+      
+      "Hormonal Changes and Mood\nHormone levels drop dramatically after delivery, causing the 'baby blues' in 70-80% of new mothers. Symptoms include mood swings, crying spells, anxiety, and difficulty sleeping. These typically peak around day 3-5 and resolve within two weeks. However, 10-15% of mothers develop postpartum depression (PPD), which is more severe and persistent. PPD symptoms include persistent sadness, loss of interest in activities, difficulty bonding with baby, thoughts of harming yourself or baby, and overwhelming anxiety.",
+      
+      "Physical Recovery Milestones\nWeek 1: Focus on rest, healing, and establishing feeding. Accept help with household tasks. Week 2-3: Energy slowly returns but fatigue remains normal with newborn care demands. Week 4-6: Most physical symptoms improve. Your six-week postpartum checkup assesses healing and discusses contraception. Months 2-6: Gradually return to normal activities, including exercise once cleared by your doctor. Full recovery can take 6-12 months, especially for core strength and pelvic floor.",
+      
+      "Breastfeeding Physical Effects\nBreastfeeding affects postpartum recovery. It releases oxytocin, causing uterine contractions that help your uterus return to normal size but may increase cramping. Breast engorgement typically peaks 3-5 days postpartum when milk comes in. Nipple soreness is common initially but shouldn't be severe—proper latch prevents most pain. Stay hydrated and consume an extra 300-500 calories daily while breastfeeding.",
+      
+      "Sleep and Self-Care\nNewborn care means interrupted sleep, but extreme sleep deprivation impairs recovery and increases PPD risk. Sleep when baby sleeps, even brief naps help. Ask partners or family to handle night feedings occasionally. Maintain basic nutrition even when exhausted—prepare simple meals in advance or accept meal deliveries. Gentle movement like short walks aids physical and mental recovery once cleared by your provider.",
+      
+      "Sexual Health and Contraception\nMost providers recommend waiting 4-6 weeks before resuming intercourse to allow healing. When you're ready, use lubrication as hormonal changes reduce natural lubrication, especially while breastfeeding. Discuss contraception at your postpartum visit—pregnancy can occur before your first period returns, even while breastfeeding. IUDs, mini-pills, and barrier methods are safe for breastfeeding mothers.",
+      
+      "When to Seek Help\nContact your healthcare provider immediately for: heavy bleeding, severe abdominal or pelvic pain, fever over 100.4°F, severe headaches or vision changes, chest pain or difficulty breathing, painful urination or inability to urinate, hot, tender breasts with flu-like symptoms (mastitis), wound that won't heal or shows infection signs, or feelings of wanting to harm yourself or your baby. Postpartum complications are serious but treatable when caught early."
+    ]
+  },
+  "8": {
+    id: 8,
+    category: "Breastfeeding",
+    title: "Breastfeeding Basics: A Complete Guide",
+    image: "https://images.pexels.com/photos/3997993/pexels-photo-3997993.jpeg?w=800&auto=format&fit=crop",
+    readTime: "10 min read",
+    date: "November 24, 2025",
+    author: "Lactation Consultants",
+    images: [
+      {
+        url: "https://www.cdc.gov/breastfeeding/images/mother-breastfeeding-newborn.jpg",
+        alt: "Mother breastfeeding newborn baby with proper latch",
+        credit: "Image from CDC - Centers for Disease Control and Prevention",
+        creditLink: "https://www.cdc.gov/breastfeeding/",
+        position: 2
+      },
+      {
+        url: "https://www.nichd.nih.gov/sites/default/files/inline-images/lactation-consultant-helping-mother.jpg",
+        alt: "Lactation consultant assisting new mother with breastfeeding",
+        credit: "Image from NICHD - National Institute of Child Health and Human Development",
+        creditLink: "https://www.nichd.nih.gov/",
+        position: 5
+      },
+      {
+        url: "https://images.pexels.com/photos/8491929/pexels-photo-8491929.jpeg?auto=compress&cs=tinysrgb&w=1200",
+        alt: "Breastfeeding supplies and nursing equipment",
+        credit: "Photo by Yan Krukau on Pexels",
+        creditLink: "https://www.pexels.com/@yankrukov",
+        position: 8
+      }
+    ],
+    content: [
+      "Breastfeeding provides optimal nutrition for your baby and offers health benefits for both mother and child. While natural, it's a learned skill that takes practice and patience for both you and your baby.",
+      
+      "Benefits of Breastfeeding\nBreast milk contains the perfect balance of nutrients, antibodies, and enzymes that protect babies from infections and diseases. Colostrum, the first milk produced in the first few days, is especially rich in antibodies and helps establish baby's immune system. Breastfeeding reduces risk of ear infections, respiratory illnesses, diarrhea, SIDS, obesity, and type 2 diabetes. For mothers, it lowers risk of breast and ovarian cancer, type 2 diabetes, and postpartum depression while promoting faster postpartum weight loss and uterine recovery.",
+      
+      "Getting Started: The First Hour\nSkin-to-skin contact immediately after birth helps initiate breastfeeding. Babies have a strong instinct to feed within the first hour. This early feeding stimulates milk production and helps baby learn to latch. Don't worry if it doesn't go perfectly—you're both learning. Hospital lactation consultants can help with positioning and latch during your stay.",
+      
+      "Proper Latch Technique\nA good latch is crucial for successful, comfortable breastfeeding. Baby's mouth should be wide open, taking in both nipple and a good portion of areola. Lips should flange outward, not tucked in. You should feel pulling and tugging but not pinching or pain. Baby's chin touches your breast, nose is clear for breathing. You'll hear rhythmic sucking and swallowing. If latch hurts, break suction with your finger and try again—persistent pain indicates improper latch.",
+      
+      "Breastfeeding Positions\nTry different positions to find what works best. Cradle hold is traditional, supporting baby's head in the crook of your arm. Cross-cradle hold gives more control, especially for newborns—hold baby with opposite arm from the breast you're using. Football hold tucks baby under your arm, useful after C-section or for large breasts. Side-lying position allows you to rest while feeding, good for night feedings once you and baby are comfortable with breastfeeding.",
+      
+      "Milk Supply and Feeding Frequency\nColostrum is produced in small amounts (2-10ml per feeding) the first 2-3 days—perfectly adequate for your newborn's tiny stomach. Mature milk 'comes in' around day 3-5, causing breast fullness or engorgement. Newborns feed 8-12 times in 24 hours, sometimes more. Feeding on demand establishes good milk supply. Don't watch the clock—let baby feed until satisfied, typically 10-45 minutes per feeding. Feed from both breasts each session, alternating which side you start with.",
+      
+      "Signs of Adequate Intake\nYou can't see how much baby consumes when breastfeeding, so watch for these signs: 6+ wet diapers and 3-4 dirty diapers per day by day 5, steady weight gain after initial newborn weight loss (babies lose 5-10% of birth weight initially, should regain it by 2 weeks), baby seems satisfied after feeding, breasts feel softer after feeding, you hear swallowing during feeds. Weight checks at pediatrician visits track growth.",
+      
+      "Common Breastfeeding Challenges\nEngorgement when milk comes in can make latching difficult—hand express or pump briefly before feeding to soften breasts. Sore nipples usually indicate poor latch—work with a lactation consultant. Clogged ducts feel like tender lumps; massage, warm compresses, and frequent feeding on that side usually clear them. Mastitis causes flu-like symptoms with a hot, red, tender area on breast—requires immediate medical attention and antibiotics. Low milk supply concerns are often perception—most mothers produce adequate milk when feeding on demand.",
+      
+      "Pumping and Storage\nIf returning to work or needing to be away from baby, pumping maintains supply. Hospital-grade or quality double-electric pumps are most efficient. Pump 8-10 times daily to establish supply, or pump after/between feedings to build a stash. Freshly expressed milk lasts 4 hours at room temperature, 4 days in the refrigerator, 6-12 months in the freezer. Thaw frozen milk in refrigerator or under warm water, never microwave. Gently swirl to mix separated fat—don't shake vigorously.",
+      
+      "Nutrition and Self-Care While Breastfeeding\nConsume an extra 300-500 calories daily. Stay hydrated—drink water each time you nurse. Most foods are fine, though some babies react to dairy, caffeine, or spicy foods in mother's diet. Limit caffeine to 300mg daily (2-3 cups coffee). Alcohol passes into breast milk—if drinking, time it so alcohol clears before next feeding or pump and dump. Continue prenatal vitamins. Rest when possible—exhaustion affects milk supply.",
+      
+      "When to Seek Help\nContact a lactation consultant or healthcare provider for: persistent pain beyond the first week, baby not gaining weight, fewer than 6 wet diapers daily after day 5, baby seems constantly hungry or frustrated at breast, suspected tongue or lip tie affecting latch, mastitis symptoms, or concerns about milk supply. Many issues are easily resolved with proper support—don't struggle alone."
+    ]
+  },
+  "9": {
+    id: 9,
+    category: "Newborn Care",
+    title: "Newborn Care Essentials: First Month Guide",
+    image: "https://images.pexels.com/photos/3737582/pexels-photo-3737582.jpeg?w=800&auto=format&fit=crop",
+    readTime: "8 min read",
+    date: "November 23, 2025",
+    author: "Pediatric Care Team",
+    images: [
+      {
+        url: "https://www.nichd.nih.gov/sites/default/files/inline-images/newborn-safe-sleep.jpg",
+        alt: "Newborn baby sleeping safely on back in crib",
+        credit: "Image from NICHD - National Institute of Child Health and Human Development",
+        creditLink: "https://www.nichd.nih.gov/health/topics/sids",
+        position: 2
+      },
+      {
+        url: "https://www.cdc.gov/healthywater/hygiene/images/handwashing-newborn-care.jpg",
+        alt: "Healthcare provider demonstrating proper handwashing before handling newborn",
+        credit: "Image from CDC - Centers for Disease Control and Prevention",
+        creditLink: "https://www.cdc.gov/healthywater/hygiene/hand/",
+        position: 5
+      },
+      {
+        url: "https://images.pexels.com/photos/8490811/pexels-photo-8490811.jpeg?auto=compress&cs=tinysrgb&w=1200",
+        alt: "Parent caring for newborn baby",
+        credit: "Photo by Yan Krukau on Pexels",
+        creditLink: "https://www.pexels.com/@yankrukov",
+        position: 8
+      }
+    ],
+    content: [
+      "Caring for a newborn can feel overwhelming, but understanding basic needs helps you feel confident. During the first month, babies require feeding, sleep, diaper changes, and love—you've got this.",
+      
+      "Feeding Your Newborn\nNewborns need to eat 8-12 times in 24 hours whether breast or formula fed. That's every 2-3 hours, sometimes more. Never let a newborn go more than 4 hours without feeding during the first few weeks. Feeding on demand rather than by schedule is recommended. Breastfed babies feed more frequently as breast milk digests quickly. Formula-fed babies typically eat every 3-4 hours, consuming 2-3 ounces per feeding initially, increasing to 4 ounces by one month.",
+      
+      "Safe Sleep Practices\nSafe sleep reduces SIDS risk. Always place baby on back to sleep, on a firm, flat surface with a tight-fitting sheet. Never use pillows, blankets, bumpers, or stuffed animals in the crib. Room-sharing (not bed-sharing) is recommended for at least 6 months. Keep room temperature comfortable—overheating increases SIDS risk. Use a pacifier for naps and nighttime after breastfeeding is established (usually 3-4 weeks). Newborns sleep 14-17 hours daily in 2-4 hour stretches, waking frequently to eat.",
+      
+      "Diaper Changes and Skin Care\nNewborns need 8-12 diaper changes daily. Change wet or dirty diapers promptly to prevent diaper rash. For girls, wipe front to back. For boys, point penis downward in diaper. Clean with water and soft cloth or fragrance-free wipes. Air dry before applying fresh diaper. Use barrier cream with zinc oxide if redness develops. First few days, baby passes meconium (sticky, black-green stool), transitioning to yellow, seedy stools by day 4-5 if breastfed, or tan/yellow if formula-fed.",
+      
+      "Umbilical Cord Care\nThe umbilical cord stump dries and falls off within 1-3 weeks. Keep it clean and dry. Fold diaper below stump so it's exposed to air. No need for alcohol swabs—studies show dry care works better. Sponge bathe baby until stump falls off and area heals. Small amount of blood when stump falls off is normal. Contact pediatrician if you notice foul odor, yellow discharge, or redness spreading from the base.",
+      
+      "Bathing Your Newborn\nGive sponge baths until umbilical cord falls off and circumcision heals (if applicable). Newborns only need 2-3 baths per week—more can dry their skin. Gather supplies before starting: warm water, mild baby soap, soft washcloths, hooded towel. Keep room warm (75-80°F). Support baby's head at all times. Wash face with water only, hair with small amount of soap, then body. Work quickly as babies lose heat rapidly when wet. Pat dry thoroughly, especially in skin folds.",
+      
+      "Understanding Newborn Cues\nBabies communicate through crying and body language. Hunger cues include rooting (turning toward touch on cheek), hand-to-mouth movements, fussing. Sleepy cues include yawning, looking away, fussiness, rubbing eyes. Respond to early cues before baby becomes overtired or frantically hungry. Crying peaks around 6 weeks and is normal, but excessive crying may indicate discomfort—check for hunger, dirty diaper, temperature discomfort, or need for burping.",
+      
+      "Handling and Holding\nAlways support baby's head and neck—muscles aren't strong enough yet. Pick up baby by sliding one hand under head and neck, other under bottom. Hold close to your body. Try different holds: cradle hold against chest, shoulder hold with baby's head on your shoulder, belly hold face-down across your forearm (helps with gas). Wash hands before handling baby and ask others to do the same. Limit visitors, especially during cold/flu season.",
+      
+      "Normal Newborn Behaviors\nMany newborn traits worry parents unnecessarily. Sneezing, hiccups, and trembling are normal reflexes. Spitting up small amounts after feeding is common—reflux improves with time. Newborn acne appears around 2-4 weeks and clears without treatment. Cradle cap (yellowish, scaly patches on scalp) is harmless—gently wash with baby shampoo. Eyes may cross occasionally as vision develops. Breathing may be irregular, with brief pauses up to 10 seconds—normal unless accompanied by blue color.",
+      
+      "When to Call the Pediatrician\nContact doctor immediately for: rectal temperature over 100.4°F, unusual lethargy or difficulty waking, refusing to eat for several feedings, fewer than 6 wet diapers daily after first week, yellow skin or eyes (jaundice), persistent vomiting or diarrhea, bleeding or discharge from umbilical cord, redness or swelling of eyes, unusual rash or skin changes, difficulty breathing or blue color around lips. Trust your instincts—if something feels wrong, call. Pediatricians expect calls from concerned parents.",
+      
+      "Taking Care of Yourself\nNewborn care is exhausting. Accept help with household tasks. Sleep when baby sleeps, even short naps. Eat regularly—keep easy snacks accessible. Stay hydrated. Don't expect perfection—you're learning together. It's okay to put baby in a safe place (crib or bassinet) and take a break when overwhelmed. Join parent support groups for emotional connection. Remember: the first month is survival mode, and it gets easier as you and baby learn each other's rhythms."
+    ]
+  },
+  "10": {
+    id: 10,
+    category: "Newborn Health",
+    title: "Recognizing Illness in Newborns",
+    image: "https://images.pexels.com/photos/8491929/pexels-photo-8491929.jpeg?w=800&auto=format&fit=crop",
+    readTime: "7 min read",
+    date: "November 22, 2025",
+    author: "Pediatric Health Specialists",
+    images: [
+      {
+        url: "https://www.cdc.gov/vaccines/images/infant-receiving-vaccination.jpg",
+        alt: "Healthcare provider administering vaccine to infant",
+        credit: "Image from CDC - Centers for Disease Control and Prevention",
+        creditLink: "https://www.cdc.gov/vaccines/",
+        position: 2
+      },
+      {
+        url: "https://www.nichd.nih.gov/sites/default/files/inline-images/pediatrician-examining-newborn.jpg",
+        alt: "Pediatrician performing newborn health examination",
+        credit: "Image from NICHD - National Institute of Child Health and Human Development",
+        creditLink: "https://www.nichd.nih.gov/",
+        position: 5
+      },
+      {
+        url: "https://images.pexels.com/photos/7282810/pexels-photo-7282810.jpeg?auto=compress&cs=tinysrgb&w=1200",
+        alt: "Parent monitoring newborn's health at home",
+        credit: "Photo by Ketut Subiyanto on Pexels",
+        creditLink: "https://www.pexels.com/@ketut-subiyanto",
+        position: 8
+      }
+    ],
+    content: [
+      "Newborns have immature immune systems, making them vulnerable to infections. Learning to recognize signs of illness helps you seek timely medical care when needed.",
+      
+      "Fever in Newborns: Always Serious\nAny fever in a baby under 3 months old requires immediate medical evaluation. Take rectal temperature—the most accurate method for newborns. A temperature of 100.4°F (38°C) or higher is a fever. Never give fever-reducing medication without doctor guidance in newborns. Fever in this age group can indicate serious infection requiring immediate treatment. Don't delay—go to emergency room or call pediatrician immediately even if it's the middle of the night.",
+      
+      "Respiratory Distress Signs\nNewborns breathe irregularly, sometimes pausing briefly, but watch for concerning signs: breathing faster than 60 breaths per minute, grunting sounds with each breath, flaring nostrils, chest retractions (skin pulling in between or below ribs), blue or gray color around lips or face, persistent coughing or wheezing. These signs require immediate medical attention. Respiratory infections can deteriorate quickly in newborns.",
+      
+      "Feeding and Hydration Changes\nRefusing to eat or eating significantly less than normal for multiple feedings is concerning. Watch for signs of dehydration: fewer than 6 wet diapers per day after first week, dark yellow or concentrated urine, dry mouth, no tears when crying, sunken soft spot on head, lethargy. Excessive vomiting (different from normal spit-up) or diarrhea can quickly dehydrate newborns. Projectile vomiting after every feeding may indicate pyloric stenosis, requiring surgical correction.",
+      
+      "Jaundice Monitoring\nMild jaundice (yellowing of skin and eyes) is common in newborns, peaking around days 3-5. However, severe or worsening jaundice needs evaluation. Check by pressing gently on baby's forehead or chest—skin should briefly turn white. If it looks yellow, contact pediatrician. Severe jaundice can cause brain damage if untreated. Treatment is simple—phototherapy (special lights) breaks down excess bilirubin. Ensure baby feeds well, as this helps eliminate bilirubin.",
+      
+      "Neurological Warning Signs\nExcessive sleepiness or difficulty waking baby for feedings is concerning. Babies should wake for feeds every 2-4 hours. Stiffness, limpness, or weak muscle tone differs from normal newborn muscle tone. Unusual movements including jerking, trembling that doesn't stop when you hold the limb, or twitching may indicate seizures. Bulging soft spot when baby is upright and calm suggests increased intracranial pressure. High-pitched crying that's different from normal crying patterns needs evaluation.",
+      
+      "Skin Changes and Rashes\nMost newborn rashes are harmless (baby acne, erythema toxicum, milia), but some require attention. Contact doctor for: rash with fever, blisters or pus-filled bumps, rash that looks like bruises or purple spots that don't fade when pressed, red streaks from umbilical cord or circumcision site, severe diaper rash that doesn't improve with treatment, hives or allergic reaction. Impetigo, a bacterial skin infection, shows honey-colored crusted sores and needs antibiotic treatment.",
+      
+      "Umbilical Cord and Circumcision Infections\nUmbilical cord area should stay clean and dry. Warning signs include: red, swollen skin around cord base, foul-smelling drainage, bleeding more than a few drops, yellow discharge. For circumcised boys, slight swelling and yellow crust formation are normal during healing (7-10 days). Concerning signs include: increasing redness, swelling, foul odor, pus, bleeding that doesn't stop with gentle pressure, inability to urinate. Both infections need antibiotic treatment.",
+      
+      "Abnormal Stool and Urine\nBlack, tarry stools after first few days, bright red blood in stool, white or clay-colored stools, or persistent green, watery diarrhea need evaluation. Normal newborn stool varies from yellow-seedy (breastfed) to tan-yellow (formula-fed). Hard, pellet-like stools indicate constipation—rare in breastfed babies, more common with formula. Urine should be pale yellow. Dark urine, blood in urine, or crying during urination (suggesting UTI) require medical attention.",
+      
+      "Lethargy and Behavioral Changes\nNewborns sleep a lot but should wake for feedings and have alert periods. Excessive sleepiness, weak cry, lack of interest in feeding, or seeming 'floppy' when held indicate illness. Alternatively, extreme irritability, inconsolable crying for hours, or high-pitched cry differs from normal fussiness. Behavioral changes often accompany infections before other obvious symptoms appear. Trust your parental instinct—you know your baby's normal patterns.",
+      
+      "Preventive Measures\nProtect your newborn from illness: limit visitors for first few weeks, require everyone to wash hands before holding baby, avoid crowded places during cold/flu season, keep baby away from anyone with cold, flu, or fever sores, ensure baby gets recommended vaccines on schedule, practice safe sleep to reduce SIDS risk, exclusively breastfeed if possible (breast milk provides antibodies). Don't be afraid to ask visitors with symptoms to postpone visits—baby's health comes first.",
+      
+      "When in Doubt, Call\nPediatricians expect calls from new parents. It's better to call about something minor than miss a serious problem. Most offices have 24-hour nurse lines. For non-emergency questions, call during office hours. For fever in newborn under 3 months, difficulty breathing, lethargy, or other emergency signs, call immediately or go to ER. Keep pediatrician's number and nearest children's hospital location easily accessible. As you gain experience, you'll become more confident distinguishing normal from concerning—but err on the side of caution with newborns."
+    ]
   }
 };
 
