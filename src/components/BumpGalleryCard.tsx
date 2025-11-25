@@ -39,17 +39,17 @@ export const BumpGalleryCard = ({ onClick }: BumpGalleryCardProps) => {
 
   return (
     <Card 
-      className="p-6 cursor-pointer hover:shadow-lg transition-shadow bg-gradient-to-br from-pink-50 to-rose-50 dark:from-pink-950 dark:to-rose-950"
+      className="p-6 cursor-pointer hover:shadow-md transition-shadow border"
       onClick={onClick}
     >
       <div className="flex items-center gap-4">
         <div className="flex-1">
-          <h3 className="text-xl font-semibold text-foreground mb-2">Bump Photo Gallery</h3>
+          <h3 className="text-xl font-semibold text-card-foreground mb-1">Bump Photo Gallery</h3>
           <p className="text-sm text-muted-foreground">
             View and manage all your pregnancy photos
           </p>
         </div>
-        <div className="w-24 h-24 rounded-lg overflow-hidden bg-background/50 flex items-center justify-center flex-shrink-0">
+        <div className="w-20 h-20 rounded-xl overflow-hidden bg-muted flex items-center justify-center flex-shrink-0">
           {previewImage ? (
             <img 
               src={previewImage} 
@@ -57,7 +57,7 @@ export const BumpGalleryCard = ({ onClick }: BumpGalleryCardProps) => {
               className="w-full h-full object-cover"
             />
           ) : (
-            <Camera className="w-10 h-10 text-muted-foreground opacity-30" />
+            <Camera className="w-8 h-8 text-muted-foreground" />
           )}
         </div>
       </div>
