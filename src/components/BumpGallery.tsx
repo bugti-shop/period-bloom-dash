@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { X, Plus, Trash2, Download, Baby, Filter, MessageSquare, Mic, Camera, ArrowLeftRight, Play, Pause, Edit, Tag, FileDown, Share2, CheckSquare, Square, MoveRight } from "lucide-react";
+import { X, Plus, Trash2, Download, Baby, Filter, MessageSquare, Mic, Camera, ArrowLeftRight, Play, Pause, Edit, Tag, FileDown, Share2, CheckSquare, Square, MoveRight, Users } from "lucide-react";
 import { saveToLocalStorage, loadFromLocalStorage } from "@/lib/storage";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -9,8 +9,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { BumpPhotoComparison } from "./BumpPhotoComparison";
+import { FaceGroupsView } from "./FaceGroupsView";
 import { Slider } from "@/components/ui/slider";
 import jsPDF from "jspdf";
+import { detectFacesInImage, PhotoWithFaces } from "@/lib/faceDetection";
 
 interface WeekPhoto {
   imageData: string;
@@ -80,6 +82,9 @@ export const BumpGallery = ({ onClose }: BumpGalleryProps) => {
   const [selectionMode, setSelectionMode] = useState(false);
   const [selectedWeeks, setSelectedWeeks] = useState<Set<number>>(new Set());
   const [selectedBabyPhoto, setSelectedBabyPhoto] = useState(false);
+  const [showFaceGroups, setShowFaceGroups] = useState(false);
+  const [photosWithFaces, setPhotosWithFaces] = useState<PhotoWithFaces[]>([]);
+  const [isAnalyzingFaces, setIsAnalyzingFaces] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -666,6 +671,63 @@ export const BumpGallery = ({ onClose }: BumpGalleryProps) => {
     setShareMessage("");
   };
 
+  const analyzeFaces = async () => {
+    setIsAnalyzingFaces(true);
+    toast("Analyzing faces in photos...");
+
+    try {
+      const photosToAnalyze: Array<{ id: string; imageData: string }> = [];
+
+      // Add week photos
+      Object.entries(weekPhotos).forEach(([week, photo]) => {
+        photosToAnalyze.push({
+          id: `week-${week}`,
+          imageData: photo.imageData,
+        });
+      });
+
+      // Add baby photo
+      if (babyPhoto) {
+        photosToAnalyze.push({
+          id: "baby",
+          imageData: babyPhoto.imageData,
+        });
+      }
+
+      const results: PhotoWithFaces[] = [];
+
+      for (const photo of photosToAnalyze) {
+        const faces = await detectFacesInImage(photo.imageData);
+        if (faces.length > 0) {
+          results.push({
+            id: photo.id,
+            imageData: photo.imageData,
+            faces,
+          });
+        }
+      }
+
+      setPhotosWithFaces(results);
+      setShowFaceGroups(true);
+      toast.success(`Detected faces in ${results.length} photos`);
+    } catch (error) {
+      console.error("Face analysis error:", error);
+      toast.error("Failed to analyze faces");
+    } finally {
+      setIsAnalyzingFaces(false);
+    }
+  };
+
+  const handleFaceGroupPhotoClick = (photoId: string) => {
+    if (photoId === "baby") {
+      setSelectedWeek("baby");
+    } else if (photoId.startsWith("week-")) {
+      const week = parseInt(photoId.replace("week-", ""));
+      setSelectedWeek(week);
+    }
+    setShowFaceGroups(false);
+  };
+
   const toggleSelectionMode = () => {
     setSelectionMode(!selectionMode);
     setSelectedWeeks(new Set());
@@ -968,6 +1030,17 @@ export const BumpGallery = ({ onClose }: BumpGalleryProps) => {
     );
   };
 
+  if (showFaceGroups) {
+    return (
+      <FaceGroupsView
+        photos={photosWithFaces}
+        onClose={() => setShowFaceGroups(false)}
+        onPhotoClick={handleFaceGroupPhotoClick}
+        albumType="bump"
+      />
+    );
+  }
+
   return (
     <div className="fixed inset-0 bg-background z-50 overflow-y-auto">
       <div className="min-h-screen pb-20">
@@ -995,6 +1068,16 @@ export const BumpGallery = ({ onClose }: BumpGalleryProps) => {
                   >
                     <ArrowLeftRight className="w-4 h-4" />
                     Compare
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={analyzeFaces}
+                    disabled={isAnalyzingFaces}
+                    className="gap-2"
+                  >
+                    <Users className="w-4 h-4" />
+                    {isAnalyzingFaces ? "Analyzing..." : "Faces"}
                   </Button>
                   <Button
                     variant="outline"

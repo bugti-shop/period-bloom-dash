@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { X, Plus, Trash2, Download, Filter, MessageSquare, Camera, Play, Pause, Edit, Tag, FileDown, Share2, Calendar, CheckSquare, Square, MoveRight } from "lucide-react";
+import { X, Plus, Trash2, Download, Filter, MessageSquare, Camera, Play, Pause, Edit, Tag, FileDown, Share2, Calendar, CheckSquare, Square, MoveRight, Users } from "lucide-react";
 import { saveToLocalStorage, loadFromLocalStorage } from "@/lib/storage";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -10,6 +10,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Slider } from "@/components/ui/slider";
 import { format } from "date-fns";
 import jsPDF from "jspdf";
+import { FaceGroupsView } from "./FaceGroupsView";
+import { detectFacesInImage, PhotoWithFaces } from "@/lib/faceDetection";
 
 interface BabyPhoto {
   id: string;
@@ -53,6 +55,9 @@ export const BabyAlbum = ({ onClose }: BabyAlbumProps) => {
   const [shareMessage, setShareMessage] = useState("");
   const [selectionMode, setSelectionMode] = useState(false);
   const [selectedPhotos, setSelectedPhotos] = useState<Set<string>>(new Set());
+  const [showFaceGroups, setShowFaceGroups] = useState(false);
+  const [photosWithFaces, setPhotosWithFaces] = useState<PhotoWithFaces[]>([]);
+  const [isAnalyzingFaces, setIsAnalyzingFaces] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -613,6 +618,40 @@ export const BabyAlbum = ({ onClose }: BabyAlbumProps) => {
     setSelectedPhotos(new Set());
   };
 
+  const analyzeFaces = async () => {
+    setIsAnalyzingFaces(true);
+    toast("Analyzing faces in photos...");
+
+    try {
+      const results: PhotoWithFaces[] = [];
+
+      for (const photo of photos) {
+        const faces = await detectFacesInImage(photo.imageData);
+        if (faces.length > 0) {
+          results.push({
+            id: photo.id,
+            imageData: photo.imageData,
+            faces,
+          });
+        }
+      }
+
+      setPhotosWithFaces(results);
+      setShowFaceGroups(true);
+      toast.success(`Detected faces in ${results.length} photos`);
+    } catch (error) {
+      console.error("Face analysis error:", error);
+      toast.error("Failed to analyze faces");
+    } finally {
+      setIsAnalyzingFaces(false);
+    }
+  };
+
+  const handleFaceGroupPhotoClick = (photoId: string) => {
+    setSelectedPhoto(photoId);
+    setShowFaceGroups(false);
+  };
+
   const filteredPhotos = filterPhotos();
   const groupedByDate = filteredPhotos.reduce((acc, photo) => {
     const dateKey = format(photo.timestamp, 'yyyy-MM-dd');
@@ -622,6 +661,17 @@ export const BabyAlbum = ({ onClose }: BabyAlbumProps) => {
     acc[dateKey].push(photo);
     return acc;
   }, {} as Record<string, BabyPhoto[]>);
+
+  if (showFaceGroups) {
+    return (
+      <FaceGroupsView
+        photos={photosWithFaces}
+        onClose={() => setShowFaceGroups(false)}
+        onPhotoClick={handleFaceGroupPhotoClick}
+        albumType="baby"
+      />
+    );
+  }
 
   return (
     <div className="fixed inset-0 bg-background z-50 overflow-y-auto">
@@ -650,6 +700,16 @@ export const BabyAlbum = ({ onClose }: BabyAlbumProps) => {
                   >
                     {isSlideshow ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
                     {isSlideshow ? "Pause" : "Slideshow"}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={analyzeFaces}
+                    disabled={isAnalyzingFaces || photos.length === 0}
+                    className="gap-2"
+                  >
+                    <Users className="w-4 h-4" />
+                    {isAnalyzingFaces ? "Analyzing..." : "Faces"}
                   </Button>
                   <Button
                     variant="outline"
