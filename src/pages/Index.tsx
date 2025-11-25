@@ -9,6 +9,8 @@ import { BottomNav } from "@/components/BottomNav";
 import { Header } from "@/components/Header";
 import { PeriodCalendar } from "@/components/PeriodCalendar";
 import { SymptomInsights } from "@/components/SymptomInsights";
+import { PeriodCountdown } from "@/components/PeriodCountdown";
+import { PregnancyChances } from "@/components/PregnancyChances";
 import { schedulePeriodReminder } from "@/lib/notifications";
 import { CycleEntry } from "@/lib/irregularCycle";
 
@@ -244,6 +246,20 @@ const Index = () => {
               }
               onMonthChange={handleMonthChange}
             />
+
+            {/* Period Countdown & Pregnancy Chances - Only for Regular Cycles */}
+            {periodData.cycleType === 'regular' && (
+              <div className="grid grid-cols-1 gap-4">
+                <PeriodCountdown 
+                  lastPeriodDate={periodData.lastPeriodDate}
+                  cycleLength={periodData.cycleLength}
+                />
+                <PregnancyChances 
+                  lastPeriodDate={periodData.lastPeriodDate}
+                  cycleLength={periodData.cycleLength}
+                />
+              </div>
+            )}
 
             {/* Confidence Score for Irregular Cycles */}
             {periodData.cycleType === 'irregular' && (
