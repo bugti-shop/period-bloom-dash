@@ -9,7 +9,6 @@ import { BottomNav } from "@/components/BottomNav";
 import { Header } from "@/components/Header";
 import { PeriodCalendar } from "@/components/PeriodCalendar";
 import { SymptomInsights } from "@/components/SymptomInsights";
-import { UnifiedDashboard } from "@/components/UnifiedDashboard";
 import { schedulePeriodReminder } from "@/lib/notifications";
 import { CycleEntry } from "@/lib/irregularCycle";
 import { PartnerClaimDialog } from "@/components/PartnerClaimDialog";
@@ -297,9 +296,6 @@ const Index = () => {
                 cycleLength={periodData.cycleLength}
               />
             )}
-
-            {/* Unified Dashboard */}
-            <UnifiedDashboard />
 
             {/* Action Buttons */}
             <div className="grid grid-cols-2 gap-3">

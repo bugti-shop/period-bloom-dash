@@ -11,6 +11,7 @@ import { RewardsPanel } from "@/components/RewardsPanel";
 import { RewardConfigManager } from "@/components/RewardConfigManager";
 import { CampaignManager } from "@/components/CampaignManager";
 import { CampaignStats } from "@/components/CampaignStats";
+import { AuthProvider } from "@/components/AuthProvider";
 
 interface DashboardStats {
   totalReferrals: number;
@@ -106,39 +107,44 @@ export const PartnerDashboard = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background">
-        <Header />
-        <div className="flex items-center justify-center h-64">
-          <div className="text-muted-foreground">Loading...</div>
+      <AuthProvider requireAuth>
+        <div className="min-h-screen bg-background">
+          <Header />
+          <div className="flex items-center justify-center h-64">
+            <div className="text-muted-foreground">Loading...</div>
+          </div>
         </div>
-      </div>
+      </AuthProvider>
     );
   }
 
   if (!dashboardData) {
     return (
-      <div className="min-h-screen bg-background">
-        <Header />
-        <div className="max-w-7xl mx-auto px-4 py-8">
-          <Button variant="ghost" onClick={() => navigate(-1)} className="mb-4">
-            <ChevronLeft className="h-4 w-4 mr-2" />
-            Back
-          </Button>
-          <Card>
-            <CardHeader>
-              <CardTitle>No Partner Code</CardTitle>
-              <CardDescription>
-                Generate a partner code in Settings to start earning rewards from referrals.
-              </CardDescription>
-            </CardHeader>
-          </Card>
+      <AuthProvider requireAuth>
+        <div className="min-h-screen bg-background">
+          <Header />
+          <div className="max-w-7xl mx-auto px-4 py-8">
+            <Button variant="ghost" onClick={() => navigate(-1)} className="mb-4">
+              <ChevronLeft className="h-4 w-4 mr-2" />
+              Back
+            </Button>
+            <Card>
+              <CardHeader>
+                <CardTitle>No Partner Code</CardTitle>
+                <CardDescription>
+                  Generate a partner code in Settings to start earning rewards from referrals.
+                </CardDescription>
+              </CardHeader>
+            </Card>
+          </div>
         </div>
-      </div>
+      </AuthProvider>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <AuthProvider requireAuth>
+      <div className="min-h-screen bg-background">
       <Header />
       <div className="max-w-7xl mx-auto px-4 py-8">
         <Button variant="ghost" onClick={() => navigate(-1)} className="mb-4">
@@ -345,5 +351,6 @@ export const PartnerDashboard = () => {
         </Tabs>
       </div>
     </div>
+    </AuthProvider>
   );
 };
