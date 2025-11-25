@@ -1,5 +1,4 @@
 import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Camera } from "lucide-react";
 import { loadFromLocalStorage } from "@/lib/storage";
 import { useEffect, useState } from "react";
@@ -22,20 +21,10 @@ const BABY_BORN_PHOTO_KEY = "baby-born-photo";
 
 export const BumpGalleryCard = ({ onClick }: BumpGalleryCardProps) => {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
-  const [photoCount, setPhotoCount] = useState<number>(0);
 
   useEffect(() => {
     const storedPhotos = loadFromLocalStorage<WeekPhotos>(PREGNANCY_PHOTOS_KEY);
     const babyPhoto = loadFromLocalStorage<WeekPhoto>(BABY_BORN_PHOTO_KEY);
-    
-    let count = 0;
-    if (storedPhotos) {
-      count = Object.keys(storedPhotos).length;
-    }
-    if (babyPhoto) {
-      count += 1;
-    }
-    setPhotoCount(count);
     
     // Use baby photo if available, otherwise use the latest week photo
     if (babyPhoto) {
@@ -55,12 +44,7 @@ export const BumpGalleryCard = ({ onClick }: BumpGalleryCardProps) => {
     >
       <div className="flex items-center gap-4">
         <div className="flex-1">
-          <div className="flex items-center gap-2 mb-1">
-            <h3 className="text-xl font-semibold text-card-foreground">Bump Photo Gallery</h3>
-            <Badge variant="secondary" className="text-xs">
-              {photoCount} {photoCount === 1 ? 'photo' : 'photos'}
-            </Badge>
-          </div>
+          <h3 className="text-xl font-semibold text-card-foreground mb-1">Bump Photo Gallery</h3>
           <p className="text-sm text-muted-foreground">
             View and manage all your pregnancy photos
           </p>

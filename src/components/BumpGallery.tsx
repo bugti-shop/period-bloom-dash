@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { X, Plus, Trash2, Download, Baby, Filter, MessageSquare, Mic, Camera, ArrowLeftRight, Play, Pause, Edit, Tag, FileDown, Share2, CheckSquare, Square, MoveRight, Users } from "lucide-react";
 import { saveToLocalStorage, loadFromLocalStorage } from "@/lib/storage";
@@ -1055,7 +1056,14 @@ export const BumpGallery = ({ onClose }: BumpGalleryProps) => {
               >
                 <X className="w-5 h-5" />
               </Button>
-              <h2 className="text-xl font-semibold">Bump Gallery</h2>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h2 className="text-xl font-semibold">Bump Gallery</h2>
+                  <Badge variant="secondary" className="text-xs">
+                    {Object.keys(weekPhotos).length + (babyPhoto ? 1 : 0)} photos
+                  </Badge>
+                </div>
+              </div>
             </div>
             <div className="flex gap-2 overflow-x-auto pb-2">
               {!selectionMode ? (

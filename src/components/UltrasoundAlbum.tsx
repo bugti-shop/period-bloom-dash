@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { X, Plus, Trash2, Download, Filter, MessageSquare, Camera, Play, Pause, Edit, Tag, FileDown, Share2, Calendar, CheckSquare, Square } from "lucide-react";
 import { saveToLocalStorage, loadFromLocalStorage } from "@/lib/storage";
@@ -397,7 +398,14 @@ export const UltrasoundAlbum = ({ onClose }: UltrasoundAlbumProps) => {
               >
                 <X className="w-5 h-5" />
               </Button>
-              <h2 className="text-xl font-semibold">Ultrasound Images</h2>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h2 className="text-xl font-semibold">Ultrasound Images</h2>
+                  <Badge variant="secondary" className="text-xs">
+                    {photos.length} {photos.length === 1 ? 'image' : 'images'}
+                  </Badge>
+                </div>
+              </div>
             </div>
             <div className="flex gap-2 overflow-x-auto pb-2">
               {!selectionMode ? (
