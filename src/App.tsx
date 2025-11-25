@@ -8,7 +8,6 @@ import { IntimacyPage } from "./pages/IntimacyPage";
 import { BBTPage } from "./pages/BBTPage";
 import { AppetitePage } from "./pages/AppetitePage";
 import { HealthPage } from "./pages/HealthPage";
-import { PartnerDashboard } from "./pages/PartnerDashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -25,7 +24,6 @@ const App = () => (
           <Route path="/bbt" element={<BBTPage />} />
           <Route path="/appetite" element={<AppetitePage />} />
           <Route path="/health" element={<HealthPage />} />
-          <Route path="/partner-dashboard" element={<PartnerDashboard />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
