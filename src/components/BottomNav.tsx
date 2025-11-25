@@ -38,13 +38,13 @@ export const BottomNav = ({ activeTab = "home", onTabChange }: BottomNavProps) =
                 className="flex flex-col items-center justify-center flex-1 h-full transition-colors"
               >
                 <Icon 
-                  className={`w-6 h-6 mb-1 ${
-                    isActive ? "text-primary" : "text-gray-400"
+                  className={`w-5 h-5 mb-2 ${
+                    isActive ? "text-primary" : "text-gray-600"
                   }`}
                 />
                 <span 
-                  className={`text-xs font-medium ${
-                    isActive ? "text-primary" : "text-gray-400"
+                  className={`text-xs font-semibold ${
+                    isActive ? "text-primary" : "text-gray-600"
                   }`}
                 >
                   {item.label}
