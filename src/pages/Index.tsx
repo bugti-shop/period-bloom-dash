@@ -335,7 +335,7 @@ const Index = () => {
             {/* Cycle Insights Button */}
             <button
               onClick={() => setShowCycleInsights(true)}
-              className="w-full py-4 font-semibold text-white text-sm transition-colors bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 rounded-xl shadow-lg"
+              className="w-full py-4 font-semibold text-white text-sm transition-colors bg-[#a40f2d] hover:bg-[#8a0c25] rounded-xl shadow-lg"
             >
               View Cycle Insights & Trends
             </button>
