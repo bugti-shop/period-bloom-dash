@@ -11,6 +11,7 @@ import { PeriodCalendar } from "@/components/PeriodCalendar";
 import { SymptomInsights } from "@/components/SymptomInsights";
 import { schedulePeriodReminder } from "@/lib/notifications";
 import { CycleEntry } from "@/lib/irregularCycle";
+import { PartnerClaimDialog } from "@/components/PartnerClaimDialog";
 
 import { SymptomsPage } from "@/pages/SymptomsPage";
 import { SettingsPage } from "@/pages/SettingsPage";
@@ -319,6 +320,9 @@ const Index = () => {
       {activeTab === "tools" && (
         <ToolsPage />
       )}
+      
+      {/* Partner Claim Dialog */}
+      <PartnerClaimDialog />
       
       {/* Bottom Navigation */}
       <BottomNav 
