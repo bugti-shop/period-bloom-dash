@@ -14,16 +14,145 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      partner_codes: {
+        Row: {
+          code: string
+          created_at: string
+          id: string
+          is_active: boolean
+          regenerated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          regenerated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          regenerated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      partner_events: {
+        Row: {
+          created_at: string
+          event_data: Json | null
+          event_type: Database["public"]["Enums"]["partner_event_type"]
+          id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          event_data?: Json | null
+          event_type: Database["public"]["Enums"]["partner_event_type"]
+          id?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          event_data?: Json | null
+          event_type?: Database["public"]["Enums"]["partner_event_type"]
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      partner_referrals: {
+        Row: {
+          code_used: string
+          confirmed_at: string | null
+          created_at: string
+          id: string
+          partner_user_id: string
+          referred_user_id: string
+          status: Database["public"]["Enums"]["referral_status"]
+        }
+        Insert: {
+          code_used: string
+          confirmed_at?: string | null
+          created_at?: string
+          id?: string
+          partner_user_id: string
+          referred_user_id: string
+          status?: Database["public"]["Enums"]["referral_status"]
+        }
+        Update: {
+          code_used?: string
+          confirmed_at?: string | null
+          created_at?: string
+          id?: string
+          partner_user_id?: string
+          referred_user_id?: string
+          status?: Database["public"]["Enums"]["referral_status"]
+        }
+        Relationships: []
+      }
+      partner_rewards: {
+        Row: {
+          granted_at: string
+          id: string
+          partner_user_id: string
+          referral_id: string
+          reward_type: string
+          reward_value: number
+        }
+        Insert: {
+          granted_at?: string
+          id?: string
+          partner_user_id: string
+          referral_id: string
+          reward_type: string
+          reward_value?: number
+        }
+        Update: {
+          granted_at?: string
+          id?: string
+          partner_user_id?: string
+          referral_id?: string
+          reward_type?: string
+          reward_value?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "partner_rewards_referral_id_fkey"
+            columns: ["referral_id"]
+            isOneToOne: false
+            referencedRelation: "partner_referrals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      generate_partner_code: { Args: never; Returns: string }
+      log_partner_event: {
+        Args: {
+          p_event_data?: Json
+          p_event_type: Database["public"]["Enums"]["partner_event_type"]
+          p_user_id: string
+        }
+        Returns: string
+      }
     }
     Enums: {
-      [_ in never]: never
+      partner_event_type:
+        | "code_generated"
+        | "code_regenerated"
+        | "code_claimed"
+        | "referral_confirmed"
+        | "payout_requested"
+      referral_status: "pending" | "confirmed" | "rewarded"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +279,15 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      partner_event_type: [
+        "code_generated",
+        "code_regenerated",
+        "code_claimed",
+        "referral_confirmed",
+        "payout_requested",
+      ],
+      referral_status: ["pending", "confirmed", "rewarded"],
+    },
   },
 } as const
