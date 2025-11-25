@@ -639,7 +639,7 @@ export const BabyAlbum = ({ onClose }: BabyAlbumProps) => {
               </Button>
               <h2 className="text-xl font-semibold">Baby Album</h2>
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 overflow-x-auto pb-2">
               {!selectionMode ? (
                 <>
                   <Button
