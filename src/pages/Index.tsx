@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { addDays, format } from "date-fns";
+import { addDays, format, differenceInDays } from "date-fns";
 import { PeriodForm } from "@/components/PeriodForm";
 import { savePeriodHistory } from "@/lib/periodHistory";
 import { saveToLocalStorage, loadFromLocalStorage } from "@/lib/storage";
@@ -9,7 +9,7 @@ import { BottomNav } from "@/components/BottomNav";
 import { Header } from "@/components/Header";
 import { PeriodCalendar } from "@/components/PeriodCalendar";
 import { SymptomInsights } from "@/components/SymptomInsights";
-import { UnifiedFertilityWidget } from "@/components/UnifiedFertilityWidget";
+import { Calendar, Heart } from "lucide-react";
 import { schedulePeriodReminder } from "@/lib/notifications";
 import { scheduleFertilityReminders } from "@/lib/fertilityNotifications";
 import { CycleEntry } from "@/lib/irregularCycle";
@@ -255,15 +255,77 @@ const Index = () => {
               onMonthChange={handleMonthChange}
             />
 
-            {/* Unified Fertility Widget - Only for Regular Cycles */}
-            {periodData.cycleType === 'regular' && (
-              <div className="flex justify-center">
-                <UnifiedFertilityWidget 
-                  lastPeriodDate={periodData.lastPeriodDate}
-                  cycleLength={periodData.cycleLength}
-                />
-              </div>
-            )}
+            {/* Fertility Cards - Only for Regular Cycles */}
+            {periodData.cycleType === 'regular' && (() => {
+              const today = new Date();
+              const dayInCycle = differenceInDays(today, periodData.lastPeriodDate) + 1;
+              const nextPeriodDate = addDays(periodData.lastPeriodDate, periodData.cycleLength);
+              const daysUntilPeriod = differenceInDays(nextPeriodDate, today);
+              
+              const ovulationDay = periodData.cycleLength - 14;
+              const fertileWindowStart = ovulationDay - 5;
+              const fertileWindowEnd = ovulationDay + 1;
+              
+              const getPregnancyChance = (): number => {
+                if (dayInCycle >= fertileWindowStart && dayInCycle <= fertileWindowEnd) {
+                  if (dayInCycle === ovulationDay || dayInCycle === ovulationDay - 1) {
+                    return 90;
+                  }
+                  return 70;
+                }
+                if (dayInCycle > fertileWindowEnd && dayInCycle < periodData.cycleLength - 5) {
+                  return 10;
+                }
+                return 5;
+              };
+              
+              const pregnancyChance = getPregnancyChance();
+              const cardColor = pregnancyChance >= 50 ? '#eb4899' : '#a40f2d';
+              const cardBgGradient = pregnancyChance >= 50 
+                ? 'from-pink-50 to-pink-100' 
+                : 'from-red-50 to-red-100';
+              
+              return (
+                <div className="grid grid-cols-2 gap-3">
+                  {/* Next Period Card */}
+                  <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-pink-50 to-pink-100 p-5">
+                    <div className="flex flex-col h-full">
+                      <div className="bg-white rounded-full w-12 h-12 flex items-center justify-center mb-4">
+                        <Calendar className="w-6 h-6" style={{ color: '#eb4899' }} />
+                      </div>
+                      <p className="text-3xl font-bold mb-1" style={{ color: '#eb4899' }}>
+                        {format(nextPeriodDate, "MMM dd")}
+                      </p>
+                      <p className="text-base font-bold text-gray-900 mb-1">Next Period</p>
+                      <p className="text-sm text-gray-600">
+                        ({daysUntilPeriod > 0 ? daysUntilPeriod : 0} Days left)
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Pregnancy Chances Card */}
+                  <div className={`relative overflow-hidden rounded-3xl bg-gradient-to-br ${cardBgGradient} p-5`}>
+                    {/* Confetti decoration */}
+                    <div className="absolute top-0 right-0 w-full h-1" style={{ 
+                      background: `linear-gradient(90deg, transparent 0%, ${cardColor} 50%, transparent 100%)`,
+                      opacity: 0.6
+                    }} />
+                    <div className="flex flex-col h-full">
+                      <div className="bg-white rounded-full w-12 h-12 flex items-center justify-center mb-4">
+                        <Heart className="w-6 h-6" style={{ color: cardColor }} />
+                      </div>
+                      <p className="text-3xl font-bold mb-1" style={{ color: cardColor }}>
+                        {pregnancyChance}%
+                      </p>
+                      <p className="text-base font-bold text-gray-900 mb-1">Pregnancy</p>
+                      <p className="text-sm text-gray-600">
+                        (Day {dayInCycle} of cycle)
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
 
             {/* Confidence Score for Irregular Cycles */}
             {periodData.cycleType === 'irregular' && (
