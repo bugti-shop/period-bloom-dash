@@ -20,6 +20,7 @@ import { SymptomsPage } from "@/pages/SymptomsPage";
 import { SettingsPage } from "@/pages/SettingsPage";
 import { HistoryPage } from "@/pages/HistoryPage";
 import { ToolsPage } from "@/pages/ToolsPage";
+import PartnerSharingPage from "@/pages/PartnerSharingPage";
 import { PregnancyTracker } from "@/components/PregnancyTracker";
 import { loadPregnancyMode } from "@/lib/pregnancyMode";
 import { ArticlesPage } from "@/pages/ArticlesPage";
@@ -44,7 +45,7 @@ type PeriodData = RegularPeriodData | IrregularPeriodData;
 
 const Index = () => {
   const [periodData, setPeriodData] = useState<PeriodData | null>(null);
-  const [activeTab, setActiveTab] = useState<"home" | "symptoms" | "settings" | "tools">("home");
+  const [activeTab, setActiveTab] = useState<"home" | "symptoms" | "settings" | "tools" | "partner">("home");
   const [selectedMonth, setSelectedMonth] = useState<Date | null>(null);
   const [showHistory, setShowHistory] = useState(false);
   const [isArticlesMode, setIsArticlesMode] = useState(false);
@@ -119,7 +120,7 @@ const Index = () => {
     }
   };
 
-  const handleTabChange = (tab: "home" | "symptoms" | "settings" | "tools") => {
+  const handleTabChange = (tab: "home" | "symptoms" | "settings" | "tools" | "partner") => {
     setActiveTab(tab);
   };
 
@@ -335,13 +336,17 @@ const Index = () => {
       {activeTab === "tools" && (
         <ToolsPage />
       )}
+
+      {activeTab === "partner" && (
+        <PartnerSharingPage />
+      )}
       
       {/* Partner Claim Dialog */}
       <PartnerClaimDialog />
       
       {/* Bottom Navigation */}
       <BottomNav 
-        activeTab={activeTab as "home" | "symptoms" | "tools" | "settings"} 
+        activeTab={activeTab} 
         onTabChange={handleTabChange} 
       />
     </div>
