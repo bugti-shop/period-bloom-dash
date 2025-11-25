@@ -984,7 +984,7 @@ export const BumpGallery = ({ onClose }: BumpGalleryProps) => {
               </Button>
               <h2 className="text-xl font-semibold">Bump Gallery</h2>
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 overflow-x-auto pb-2">
               {!selectionMode ? (
                 <>
                   <Button
