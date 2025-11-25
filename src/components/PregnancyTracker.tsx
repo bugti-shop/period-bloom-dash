@@ -3,6 +3,8 @@ import { PregnancyProgress } from "@/components/PregnancyProgress";
 import { StickyNotes } from "@/components/StickyNotes";
 import { BumpGalleryCard } from "@/components/BumpGalleryCard";
 import { BumpGallery } from "@/components/BumpGallery";
+import { BabyAlbumCard } from "@/components/BabyAlbumCard";
+import { BabyAlbum } from "@/components/BabyAlbum";
 import { Header } from "@/components/Header";
 import { BottomNav } from "@/components/BottomNav";
 import { SymptomsPage } from "@/pages/SymptomsPage";
@@ -26,6 +28,7 @@ export const PregnancyTracker = ({ lastPeriodDate: initialLastPeriodDate }: Preg
   const [manualWeek, setManualWeek] = useState<number | undefined>(undefined);
   const [isArticlesMode, setIsArticlesMode] = useState(false);
   const [showGallery, setShowGallery] = useState(false);
+  const [showBabyAlbum, setShowBabyAlbum] = useState(false);
   
   // Load saved manual week override on mount
   useEffect(() => {
@@ -70,6 +73,11 @@ export const PregnancyTracker = ({ lastPeriodDate: initialLastPeriodDate }: Preg
     return <BumpGallery onClose={() => setShowGallery(false)} />;
   }
 
+  // Show Baby Album
+  if (showBabyAlbum) {
+    return <BabyAlbum onClose={() => setShowBabyAlbum(false)} />;
+  }
+
   // Show Articles Page
   if (isArticlesMode) {
     return (
@@ -102,6 +110,7 @@ export const PregnancyTracker = ({ lastPeriodDate: initialLastPeriodDate }: Preg
               onSwitchWeek={handleSwitchWeek}
             />
             <BumpGalleryCard onClick={() => setShowGallery(true)} />
+            <BabyAlbumCard onClick={() => setShowBabyAlbum(true)} />
             <StickyNotes />
           </div>
         </div>
