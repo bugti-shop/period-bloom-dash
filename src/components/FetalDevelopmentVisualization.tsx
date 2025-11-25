@@ -9,17 +9,13 @@ export const FetalDevelopmentVisualization = ({ week }: FetalDevelopmentVisualiz
   const fetalImage = getFetalImageForWeek(week);
 
   return (
-    <div className="bg-gradient-to-br from-primary/10 via-primary/5 to-background rounded-2xl p-6 border relative overflow-hidden">
-      <div className="absolute top-4 left-6 z-10">
-        <p className="text-sm text-muted-foreground mb-1">Hello</p>
+    <div className="bg-gradient-to-br from-primary/10 via-primary/5 to-background rounded-2xl p-6 border">
+      <div className="flex items-center justify-between mb-4">
         <p className="text-2xl font-bold text-card-foreground">Week {week}</p>
-      </div>
-      
-      <div className="absolute top-4 right-6 z-10">
         <ChevronRight className="w-6 h-6 text-primary" />
       </div>
 
-      <div className="flex items-center justify-center pt-8 pb-4">
+      <div className="flex items-center justify-center py-4">
         <img 
           src={fetalImage} 
           alt={`Fetal development at week ${week}`}
@@ -27,7 +23,7 @@ export const FetalDevelopmentVisualization = ({ week }: FetalDevelopmentVisualiz
         />
       </div>
 
-      <p className="text-xs text-center text-muted-foreground mt-4">
+      <p className="text-xs text-center text-muted-foreground mt-2">
         Medically accurate visualization of fetal development
       </p>
     </div>

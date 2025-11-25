@@ -1,4 +1,5 @@
 // Import all fetal development images
+import week3 from "@/assets/fetus-week-3.jpg";
 import week4 from "@/assets/fetus-week-4.jpg";
 import week5 from "@/assets/fetus-week-5.jpg";
 import week6 from "@/assets/fetus-week-6.jpg";
@@ -39,9 +40,9 @@ import week40 from "@/assets/fetus-week-40.jpg";
 
 // Map each week to its corresponding image
 const fetalImageMap: Record<number, string> = {
-  1: week4,  // Early weeks use week 4 image
-  2: week4,
-  3: week4,
+  1: week3,
+  2: week3,
+  3: week3,
   4: week4,
   5: week5,
   6: week6,
