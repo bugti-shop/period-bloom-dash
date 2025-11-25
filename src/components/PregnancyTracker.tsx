@@ -5,6 +5,10 @@ import { BumpGalleryCard } from "@/components/BumpGalleryCard";
 import { BumpGallery } from "@/components/BumpGallery";
 import { BabyAlbumCard } from "@/components/BabyAlbumCard";
 import { BabyAlbum } from "@/components/BabyAlbum";
+import { FamilyAlbumCard } from "@/components/FamilyAlbumCard";
+import { FamilyAlbum } from "@/components/FamilyAlbum";
+import { UltrasoundAlbumCard } from "@/components/UltrasoundAlbumCard";
+import { UltrasoundAlbum } from "@/components/UltrasoundAlbum";
 import { Header } from "@/components/Header";
 import { BottomNav } from "@/components/BottomNav";
 import { SymptomsPage } from "@/pages/SymptomsPage";
@@ -29,6 +33,8 @@ export const PregnancyTracker = ({ lastPeriodDate: initialLastPeriodDate }: Preg
   const [isArticlesMode, setIsArticlesMode] = useState(false);
   const [showGallery, setShowGallery] = useState(false);
   const [showBabyAlbum, setShowBabyAlbum] = useState(false);
+  const [showFamilyAlbum, setShowFamilyAlbum] = useState(false);
+  const [showUltrasoundAlbum, setShowUltrasoundAlbum] = useState(false);
   
   // Load saved manual week override on mount
   useEffect(() => {
@@ -78,6 +84,16 @@ export const PregnancyTracker = ({ lastPeriodDate: initialLastPeriodDate }: Preg
     return <BabyAlbum onClose={() => setShowBabyAlbum(false)} />;
   }
 
+  // Show Family Album
+  if (showFamilyAlbum) {
+    return <FamilyAlbum onClose={() => setShowFamilyAlbum(false)} />;
+  }
+
+  // Show Ultrasound Album
+  if (showUltrasoundAlbum) {
+    return <UltrasoundAlbum onClose={() => setShowUltrasoundAlbum(false)} />;
+  }
+
   // Show Articles Page
   if (isArticlesMode) {
     return (
@@ -111,6 +127,8 @@ export const PregnancyTracker = ({ lastPeriodDate: initialLastPeriodDate }: Preg
             />
             <BumpGalleryCard onClick={() => setShowGallery(true)} />
             <BabyAlbumCard onClick={() => setShowBabyAlbum(true)} />
+            <FamilyAlbumCard onClick={() => setShowFamilyAlbum(true)} />
+            <UltrasoundAlbumCard onClick={() => setShowUltrasoundAlbum(true)} />
             <StickyNotes />
           </div>
         </div>
