@@ -73,7 +73,7 @@ export const PregnancyTracker = ({ lastPeriodDate: initialLastPeriodDate }: Preg
   // Show Articles Page
   if (isArticlesMode) {
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-background">
         <Header 
           showArticlesToggle={true} 
           onArticlesToggle={() => setIsArticlesMode(false)}
@@ -85,7 +85,7 @@ export const PregnancyTracker = ({ lastPeriodDate: initialLastPeriodDate }: Preg
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background">
       <Header 
         showArticlesToggle={true} 
         onArticlesToggle={() => setIsArticlesMode(true)}
@@ -93,7 +93,7 @@ export const PregnancyTracker = ({ lastPeriodDate: initialLastPeriodDate }: Preg
       />
       
       {activeTab === "home" && (
-        <div className="max-w-7xl mx-auto py-3 px-3 pb-20">
+        <div className="max-w-2xl mx-auto py-4 px-4 pb-20">
           <div className="space-y-4">
             <PregnancyProgress 
               week={currentWeek} 
