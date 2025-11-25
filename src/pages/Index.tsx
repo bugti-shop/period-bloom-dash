@@ -20,7 +20,6 @@ import { HistoryPage } from "@/pages/HistoryPage";
 import { ToolsPage } from "@/pages/ToolsPage";
 import { PregnancyTracker } from "@/components/PregnancyTracker";
 import { loadPregnancyMode } from "@/lib/pregnancyMode";
-import { ArticlesPage } from "@/pages/ArticlesPage";
 import { CycleInsightsPage } from "@/pages/CycleInsightsPage";
 import floralDecoration from "@/assets/floral-decoration.png";
 
@@ -47,7 +46,6 @@ const Index = () => {
   const [selectedMonth, setSelectedMonth] = useState<Date | null>(null);
   const [showHistory, setShowHistory] = useState(false);
   const [showCycleInsights, setShowCycleInsights] = useState(false);
-  const [isArticlesMode, setIsArticlesMode] = useState(false);
   const pregnancyMode = loadPregnancyMode();
 
   // Load saved period data on mount
@@ -161,11 +159,7 @@ const Index = () => {
   if (!periodData) {
     return (
       <div className="min-h-screen bg-white pb-20">
-        <Header 
-          showArticlesToggle={true} 
-          onArticlesToggle={() => setIsArticlesMode(true)}
-          isArticlesMode={false}
-        />
+        <Header showArticlesToggle={true} />
         <div className="max-w-7xl mx-auto py-6 px-4">
           <div className="max-w-md mx-auto">
             <header className="text-center mb-8">
@@ -191,27 +185,9 @@ const Index = () => {
     return <CycleInsightsPage onBack={() => setShowCycleInsights(false)} />;
   }
 
-  // Show Articles Page
-  if (isArticlesMode) {
-    return (
-      <div className="min-h-screen bg-white">
-        <Header 
-          showArticlesToggle={true} 
-          onArticlesToggle={() => setIsArticlesMode(false)}
-          isArticlesMode={true}
-        />
-        <ArticlesPage />
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-white">
-      <Header 
-        showArticlesToggle={true} 
-        onArticlesToggle={() => setIsArticlesMode(true)}
-        isArticlesMode={false}
-      />
+      <Header showArticlesToggle={true} />
       
       {/* Render content based on active tab */}
       {activeTab === "home" && (

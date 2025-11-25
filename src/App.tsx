@@ -8,6 +8,7 @@ import { IntimacyPage } from "./pages/IntimacyPage";
 import { BBTPage } from "./pages/BBTPage";
 import { AppetitePage } from "./pages/AppetitePage";
 import { HealthPage } from "./pages/HealthPage";
+import { ArticlesPage } from "./pages/ArticlesPage";
 import { ArticleDetailPage } from "./pages/ArticleDetailPage";
 import NotFound from "./pages/NotFound";
 
@@ -25,6 +26,7 @@ const App = () => (
           <Route path="/bbt" element={<BBTPage />} />
           <Route path="/appetite" element={<AppetitePage />} />
           <Route path="/health" element={<HealthPage />} />
+          <Route path="/articles" element={<ArticlesPage />} />
           <Route path="/article/:id" element={<ArticleDetailPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

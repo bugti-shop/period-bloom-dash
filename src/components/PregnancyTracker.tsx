@@ -14,7 +14,6 @@ import { BottomNav } from "@/components/BottomNav";
 import { SymptomsPage } from "@/pages/SymptomsPage";
 import { SettingsPage } from "@/pages/SettingsPage";
 import { ToolsPage } from "@/pages/ToolsPage";
-import { ArticlesPage } from "@/pages/ArticlesPage";
 import { 
   calculatePregnancyWeek, 
   calculateDueDate, 
@@ -30,7 +29,6 @@ export const PregnancyTracker = ({ lastPeriodDate: initialLastPeriodDate }: Preg
   const [activeTab, setActiveTab] = useState<"home" | "symptoms" | "settings" | "tools">("home");
   const [lastPeriodDate, setLastPeriodDate] = useState(initialLastPeriodDate);
   const [manualWeek, setManualWeek] = useState<number | undefined>(undefined);
-  const [isArticlesMode, setIsArticlesMode] = useState(false);
   const [showGallery, setShowGallery] = useState(false);
   const [showBabyAlbum, setShowBabyAlbum] = useState(false);
   const [showFamilyAlbum, setShowFamilyAlbum] = useState(false);
@@ -94,27 +92,9 @@ export const PregnancyTracker = ({ lastPeriodDate: initialLastPeriodDate }: Preg
     return <UltrasoundAlbum onClose={() => setShowUltrasoundAlbum(false)} />;
   }
 
-  // Show Articles Page
-  if (isArticlesMode) {
-    return (
-      <div className="min-h-screen bg-background">
-        <Header 
-          showArticlesToggle={true} 
-          onArticlesToggle={() => setIsArticlesMode(false)}
-          isArticlesMode={true}
-        />
-        <ArticlesPage />
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-background">
-      <Header 
-        showArticlesToggle={true} 
-        onArticlesToggle={() => setIsArticlesMode(true)}
-        isArticlesMode={false}
-      />
+      <Header showArticlesToggle={true} />
       
       {activeTab === "home" && (
         <div className="max-w-2xl mx-auto py-4 px-4 pb-20">
