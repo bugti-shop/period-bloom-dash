@@ -1,5 +1,4 @@
 import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Camera } from "lucide-react";
 import { useState, useEffect } from "react";
 import { loadFromLocalStorage } from "@/lib/storage";
@@ -31,12 +30,7 @@ export const BabyAlbumCard = ({ onClick }: BabyAlbumCardProps) => {
     >
       <div className="flex items-center gap-4">
         <div className="flex-1">
-          <div className="flex items-center gap-2 mb-1">
-            <h3 className="text-xl font-semibold text-card-foreground">Baby Album</h3>
-            <Badge variant="secondary" className="text-xs">
-              {photos.length} {photos.length === 1 ? 'photo' : 'photos'}
-            </Badge>
-          </div>
+          <h3 className="text-xl font-semibold text-card-foreground mb-1">Baby Album</h3>
           <p className="text-sm text-muted-foreground">
             View and manage all your baby photos
           </p>
