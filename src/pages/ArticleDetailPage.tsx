@@ -54,10 +54,10 @@ const articleContent: Record<string, {
     author: "Maternal Health Team",
     images: [
       {
-        url: "https://images.unsplash.com/photo-1555252333-9f8e92e65df9?w=1200&auto=format&fit=crop",
-        alt: "Pregnant woman holding her belly during first trimester",
-        credit: "Photo by freestocks on Unsplash",
-        creditLink: "https://unsplash.com/@freestocks",
+        url: "https://www.cdc.gov/pregnancy/images/pregnant-woman-healthcare-provider.jpg",
+        alt: "Healthcare provider examining pregnant woman during prenatal visit",
+        credit: "Image from CDC - Centers for Disease Control and Prevention",
+        creditLink: "https://www.cdc.gov/pregnancy/",
         position: 2
       },
       {
@@ -96,17 +96,17 @@ const articleContent: Record<string, {
     author: "Women's Health Specialists",
     images: [
       {
-        url: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=1200&auto=format&fit=crop",
-        alt: "Woman relaxing with heating pad for menstrual cramps",
-        credit: "Photo by Ravi Patel on Unsplash",
-        creditLink: "https://unsplash.com/@_ravir",
+        url: "https://www.nichd.nih.gov/sites/default/files/inline-images/woman-menstrual-pain-relief.jpg",
+        alt: "Woman using heat therapy for menstrual pain management",
+        credit: "Image from NICHD - National Institute of Child Health and Human Development",
+        creditLink: "https://www.nichd.nih.gov/health/topics/menstruation",
         position: 3
       },
       {
-        url: "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=1200&auto=format&fit=crop",
-        alt: "Healthy foods to reduce period pain including fruits and vegetables",
-        credit: "Photo by Dan Gold on Unsplash",
-        creditLink: "https://unsplash.com/@danielcgold",
+        url: "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=1200",
+        alt: "Healthy anti-inflammatory foods to reduce period pain",
+        credit: "Photo by Ella Olsson on Pexels",
+        creditLink: "https://www.pexels.com/@ella-olsson-572949",
         position: 5
       },
       {
@@ -147,10 +147,10 @@ const articleContent: Record<string, {
     author: "Prenatal Nutrition Experts",
     images: [
       {
-        url: "https://images.unsplash.com/photo-1498837167922-ddd27525d352?w=1200&auto=format&fit=crop",
-        alt: "Healthy pregnancy meals with fresh vegetables and whole grains",
-        credit: "Photo by Anna Pelzer on Unsplash",
-        creditLink: "https://unsplash.com/@annapelzer",
+        url: "https://www.nih.gov/sites/default/files/news-events/research-matters/2020/20200310-pregnancy-nutrition.jpg",
+        alt: "Nutritionist counseling pregnant woman about healthy diet",
+        credit: "Image from NIH - National Institutes of Health",
+        creditLink: "https://www.nih.gov/",
         position: 2
       },
       {
@@ -161,10 +161,10 @@ const articleContent: Record<string, {
         position: 4
       },
       {
-        url: "https://images.unsplash.com/photo-1551024601-bec78aea704b?w=1200&auto=format&fit=crop",
-        alt: "Pregnant woman drinking water for hydration",
-        credit: "Photo by Ale Romo on Unsplash",
-        creditLink: "https://unsplash.com/@ale_romo",
+        url: "https://images.pexels.com/photos/1092730/pexels-photo-1092730.jpeg?auto=compress&cs=tinysrgb&w=1200",
+        alt: "Fresh fruits and vegetables for pregnancy nutrition",
+        credit: "Photo by Ella Olsson on Pexels",
+        creditLink: "https://www.pexels.com/@ella-olsson-572949",
         position: 6
       }
     ],
@@ -198,17 +198,17 @@ const articleContent: Record<string, {
     author: "Fitness and Wellness Coaches",
     images: [
       {
-        url: "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=1200&auto=format&fit=crop",
-        alt: "Woman exercising during menstrual cycle",
-        credit: "Photo by Karsten Winegeart on Unsplash",
-        creditLink: "https://unsplash.com/@karsten116",
+        url: "https://www.cdc.gov/physicalactivity/basics/images/women-exercise-group.jpg",
+        alt: "Women participating in group fitness class showing healthy exercise habits",
+        credit: "Image from CDC - Centers for Disease Control and Prevention",
+        creditLink: "https://www.cdc.gov/physicalactivity/",
         position: 2
       },
       {
-        url: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=1200&auto=format&fit=crop",
-        alt: "Healthy nutrition for cycle-based fitness",
-        credit: "Photo by Ravi Patel on Unsplash",
-        creditLink: "https://unsplash.com/@_ravir",
+        url: "https://images.pexels.com/photos/3984340/pexels-photo-3984340.jpeg?auto=compress&cs=tinysrgb&w=1200",
+        alt: "Woman doing yoga stretches",
+        credit: "Photo by Yan Krukau on Pexels",
+        creditLink: "https://www.pexels.com/@yankrukov",
         position: 5
       }
     ],
@@ -240,24 +240,24 @@ const articleContent: Record<string, {
     author: "Birth Preparation Team",
     images: [
       {
-        url: "https://images.unsplash.com/photo-1555252333-9f8e92e65df9?w=1200&auto=format&fit=crop",
-        alt: "Pregnant woman preparing for childbirth",
-        credit: "Photo by freestocks on Unsplash",
-        creditLink: "https://unsplash.com/@freestocks",
+        url: "https://www.who.int/images/default-source/mca-images/labor-delivery-care.jpg",
+        alt: "Healthcare professionals providing labor and delivery care",
+        credit: "Image from WHO - World Health Organization",
+        creditLink: "https://www.who.int/health-topics/maternal-health",
         position: 2
       },
       {
-        url: "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=1200&auto=format&fit=crop",
-        alt: "Hospital bag packed for labor and delivery",
-        credit: "Photo by Daiga Ellaby on Unsplash",
-        creditLink: "https://unsplash.com/@daiga_ellaby",
+        url: "https://images.pexels.com/photos/7282810/pexels-photo-7282810.jpeg?auto=compress&cs=tinysrgb&w=1200",
+        alt: "Hospital room prepared for childbirth",
+        credit: "Photo by Ketut Subiyanto on Pexels",
+        creditLink: "https://www.pexels.com/@ketut-subiyanto",
         position: 6
       },
       {
-        url: "https://images.unsplash.com/photo-1584515933487-779824d29309?w=1200&auto=format&fit=crop",
-        alt: "Newborn baby after successful delivery",
-        credit: "Photo by Christian Bowen on Unsplash",
-        creditLink: "https://unsplash.com/@chrishcush",
+        url: "https://www.nichd.nih.gov/sites/default/files/inline-images/newborn-baby-care.jpg",
+        alt: "Medical staff providing newborn care immediately after birth",
+        credit: "Image from NICHD - National Institute of Child Health and Human Development",
+        creditLink: "https://www.nichd.nih.gov/",
         position: 9
       }
     ],
@@ -293,17 +293,17 @@ const articleContent: Record<string, {
     author: "Reproductive Health Educators",
     images: [
       {
-        url: "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=1200&auto=format&fit=crop",
-        alt: "Calendar tracking menstrual cycle phases",
-        credit: "Photo by Eric Rothermel on Unsplash",
-        creditLink: "https://unsplash.com/@erothermel",
+        url: "https://www.nichd.nih.gov/sites/default/files/inline-images/menstrual-cycle-diagram.jpg",
+        alt: "Medical diagram showing menstrual cycle phases and hormones",
+        credit: "Image from NICHD - National Institute of Child Health and Human Development",
+        creditLink: "https://www.nichd.nih.gov/health/topics/menstruation",
         position: 3
       },
       {
-        url: "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=1200&auto=format&fit=crop",
-        alt: "Woman exercising during different cycle phases",
-        credit: "Photo by Karsten Winegeart on Unsplash",
-        creditLink: "https://unsplash.com/@karsten116",
+        url: "https://images.pexels.com/photos/4498606/pexels-photo-4498606.jpeg?auto=compress&cs=tinysrgb&w=1200",
+        alt: "Woman tracking menstrual health and wellness",
+        credit: "Photo by Polina Tankilevitch on Pexels",
+        creditLink: "https://www.pexels.com/@polina-tankilevitch",
         position: 6
       }
     ],
