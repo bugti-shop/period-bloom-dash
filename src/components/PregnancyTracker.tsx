@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { PregnancyProgress } from "@/components/PregnancyProgress";
 import { StickyNotes } from "@/components/StickyNotes";
-import { PregnancyPhotoJournal } from "@/components/PregnancyPhotoJournal";
+import { BumpGalleryCard } from "@/components/BumpGalleryCard";
+import { BumpGallery } from "@/components/BumpGallery";
 import { Header } from "@/components/Header";
 import { BottomNav } from "@/components/BottomNav";
 import { SymptomsPage } from "@/pages/SymptomsPage";
@@ -24,6 +25,7 @@ export const PregnancyTracker = ({ lastPeriodDate: initialLastPeriodDate }: Preg
   const [lastPeriodDate, setLastPeriodDate] = useState(initialLastPeriodDate);
   const [manualWeek, setManualWeek] = useState<number | undefined>(undefined);
   const [isArticlesMode, setIsArticlesMode] = useState(false);
+  const [showGallery, setShowGallery] = useState(false);
   
   // Load saved manual week override on mount
   useEffect(() => {
@@ -63,6 +65,11 @@ export const PregnancyTracker = ({ lastPeriodDate: initialLastPeriodDate }: Preg
     setActiveTab(tab);
   };
 
+  // Show Gallery
+  if (showGallery) {
+    return <BumpGallery onClose={() => setShowGallery(false)} />;
+  }
+
   // Show Articles Page
   if (isArticlesMode) {
     return (
@@ -94,7 +101,7 @@ export const PregnancyTracker = ({ lastPeriodDate: initialLastPeriodDate }: Preg
               onUpdateLastPeriod={handleUpdateLastPeriod}
               onSwitchWeek={handleSwitchWeek}
             />
-            <PregnancyPhotoJournal currentWeek={currentWeek} />
+            <BumpGalleryCard onClick={() => setShowGallery(true)} />
             <StickyNotes />
           </div>
         </div>
