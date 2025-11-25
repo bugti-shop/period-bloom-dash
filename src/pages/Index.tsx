@@ -14,6 +14,7 @@ import { CycleEntry } from "@/lib/irregularCycle";
 import { PartnerClaimDialog } from "@/components/PartnerClaimDialog";
 import { trackUserAction, UserActions } from "@/lib/referralTracking";
 import { useRewardNotifications } from "@/hooks/useRewardNotifications";
+import { CampaignBanner } from "@/components/CampaignBanner";
 
 import { SymptomsPage } from "@/pages/SymptomsPage";
 import { SettingsPage } from "@/pages/SettingsPage";
@@ -173,6 +174,7 @@ const Index = () => {
           onArticlesToggle={() => setIsArticlesMode(true)}
           isArticlesMode={false}
         />
+        <CampaignBanner />
         <div className="max-w-7xl mx-auto py-6 px-4">
           <div className="max-w-md mx-auto">
             <header className="text-center mb-8">
@@ -219,6 +221,7 @@ const Index = () => {
       {/* Render content based on active tab */}
       {activeTab === "home" && (
         <div className="max-w-7xl mx-auto py-3 px-3 pb-20">
+          <CampaignBanner />
           <div className="space-y-4">
             {/* Floral Calendar Header */}
             <div className="relative bg-gradient-to-br from-pink-50 to-purple-50 rounded-2xl overflow-hidden">

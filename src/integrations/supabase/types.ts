@@ -14,6 +14,89 @@ export type Database = {
   }
   public: {
     Tables: {
+      campaign_participants: {
+        Row: {
+          campaign_id: string
+          enrolled_at: string
+          id: string
+          rewards_earned: number
+          total_bonus_earned: number
+          user_id: string
+        }
+        Insert: {
+          campaign_id: string
+          enrolled_at?: string
+          id?: string
+          rewards_earned?: number
+          total_bonus_earned?: number
+          user_id: string
+        }
+        Update: {
+          campaign_id?: string
+          enrolled_at?: string
+          id?: string
+          rewards_earned?: number
+          total_bonus_earned?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campaign_participants_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "promotional_campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      campaign_rewards: {
+        Row: {
+          bonus_reward_value: number
+          campaign_id: string
+          created_at: string
+          id: string
+          original_reward_value: number
+          referral_id: string | null
+          total_reward_value: number
+          user_id: string
+        }
+        Insert: {
+          bonus_reward_value: number
+          campaign_id: string
+          created_at?: string
+          id?: string
+          original_reward_value: number
+          referral_id?: string | null
+          total_reward_value: number
+          user_id: string
+        }
+        Update: {
+          bonus_reward_value?: number
+          campaign_id?: string
+          created_at?: string
+          id?: string
+          original_reward_value?: number
+          referral_id?: string | null
+          total_reward_value?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campaign_rewards_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "promotional_campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "campaign_rewards_referral_id_fkey"
+            columns: ["referral_id"]
+            isOneToOne: false
+            referencedRelation: "partner_referrals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       partner_codes: {
         Row: {
           code: string
@@ -129,6 +212,78 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      promotional_campaigns: {
+        Row: {
+          activated_at: string | null
+          applies_to_reward_types: string[] | null
+          banner_color: string | null
+          banner_text: string | null
+          bonus_type: Database["public"]["Enums"]["campaign_bonus_type"]
+          bonus_value: number
+          campaign_code: string | null
+          created_at: string
+          created_by: string | null
+          current_uses: number
+          description: string | null
+          end_date: string
+          id: string
+          is_public: boolean
+          max_uses: number | null
+          min_referrals: number | null
+          name: string
+          start_date: string
+          status: Database["public"]["Enums"]["campaign_status"]
+          target_user_segment: string | null
+          updated_at: string
+        }
+        Insert: {
+          activated_at?: string | null
+          applies_to_reward_types?: string[] | null
+          banner_color?: string | null
+          banner_text?: string | null
+          bonus_type?: Database["public"]["Enums"]["campaign_bonus_type"]
+          bonus_value: number
+          campaign_code?: string | null
+          created_at?: string
+          created_by?: string | null
+          current_uses?: number
+          description?: string | null
+          end_date: string
+          id?: string
+          is_public?: boolean
+          max_uses?: number | null
+          min_referrals?: number | null
+          name: string
+          start_date: string
+          status?: Database["public"]["Enums"]["campaign_status"]
+          target_user_segment?: string | null
+          updated_at?: string
+        }
+        Update: {
+          activated_at?: string | null
+          applies_to_reward_types?: string[] | null
+          banner_color?: string | null
+          banner_text?: string | null
+          bonus_type?: Database["public"]["Enums"]["campaign_bonus_type"]
+          bonus_value?: number
+          campaign_code?: string | null
+          created_at?: string
+          created_by?: string | null
+          current_uses?: number
+          description?: string | null
+          end_date?: string
+          id?: string
+          is_public?: boolean
+          max_uses?: number | null
+          min_referrals?: number | null
+          name?: string
+          start_date?: string
+          status?: Database["public"]["Enums"]["campaign_status"]
+          target_user_segment?: string | null
+          updated_at?: string
+        }
+        Relationships: []
       }
       reward_config: {
         Row: {
@@ -281,6 +436,28 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      apply_campaign_bonus_to_reward: {
+        Args: {
+          p_base_reward_value: number
+          p_referral_id: string
+          p_reward_type: Database["public"]["Enums"]["reward_type"]
+          p_user_id: string
+        }
+        Returns: {
+          bonus_value: number
+          campaign_id: string
+          campaign_name: string
+          total_value: number
+        }[]
+      }
+      calculate_campaign_bonus: {
+        Args: {
+          p_base_value: number
+          p_bonus_type: Database["public"]["Enums"]["campaign_bonus_type"]
+          p_bonus_value: number
+        }
+        Returns: number
+      }
       distribute_referral_reward: {
         Args: {
           p_partner_user_id: string
@@ -290,6 +467,38 @@ export type Database = {
         Returns: boolean
       }
       generate_partner_code: { Args: never; Returns: string }
+      get_active_campaigns: {
+        Args: never
+        Returns: {
+          activated_at: string | null
+          applies_to_reward_types: string[] | null
+          banner_color: string | null
+          banner_text: string | null
+          bonus_type: Database["public"]["Enums"]["campaign_bonus_type"]
+          bonus_value: number
+          campaign_code: string | null
+          created_at: string
+          created_by: string | null
+          current_uses: number
+          description: string | null
+          end_date: string
+          id: string
+          is_public: boolean
+          max_uses: number | null
+          min_referrals: number | null
+          name: string
+          start_date: string
+          status: Database["public"]["Enums"]["campaign_status"]
+          target_user_segment: string | null
+          updated_at: string
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "promotional_campaigns"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
       get_user_available_credits: {
         Args: { p_user_id: string }
         Returns: number
@@ -302,8 +511,16 @@ export type Database = {
         }
         Returns: string
       }
+      update_campaign_statuses: { Args: never; Returns: undefined }
     }
     Enums: {
+      campaign_bonus_type: "multiplier" | "fixed_bonus" | "percentage_increase"
+      campaign_status:
+        | "draft"
+        | "scheduled"
+        | "active"
+        | "expired"
+        | "cancelled"
       partner_event_type:
         | "code_generated"
         | "code_regenerated"
@@ -439,6 +656,8 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      campaign_bonus_type: ["multiplier", "fixed_bonus", "percentage_increase"],
+      campaign_status: ["draft", "scheduled", "active", "expired", "cancelled"],
       partner_event_type: [
         "code_generated",
         "code_regenerated",

@@ -9,6 +9,8 @@ import { toast } from "sonner";
 import { Header } from "@/components/Header";
 import { RewardsPanel } from "@/components/RewardsPanel";
 import { RewardConfigManager } from "@/components/RewardConfigManager";
+import { CampaignManager } from "@/components/CampaignManager";
+import { CampaignStats } from "@/components/CampaignStats";
 
 interface DashboardStats {
   totalReferrals: number;
@@ -228,6 +230,7 @@ export const PartnerDashboard = () => {
           <TabsList>
             <TabsTrigger value="referrals">Referrals</TabsTrigger>
             <TabsTrigger value="rewards">Rewards</TabsTrigger>
+            <TabsTrigger value="campaigns">Campaigns</TabsTrigger>
             <TabsTrigger value="activity">Activity Log</TabsTrigger>
             <TabsTrigger value="config">Config</TabsTrigger>
           </TabsList>
@@ -295,7 +298,14 @@ export const PartnerDashboard = () => {
           </TabsContent>
 
           <TabsContent value="rewards" className="mt-6">
-            <RewardsPanel />
+            <div className="space-y-6">
+              <CampaignStats />
+              <RewardsPanel />
+            </div>
+          </TabsContent>
+
+          <TabsContent value="campaigns" className="mt-6">
+            <CampaignManager />
           </TabsContent>
 
           <TabsContent value="activity" className="mt-6">
