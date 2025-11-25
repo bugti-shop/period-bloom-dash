@@ -15,6 +15,7 @@ import { MoodSymptomCorrelation } from "@/components/MoodSymptomCorrelation";
 import { SymptomsChecker } from "@/components/SymptomsChecker";
 import { SymptomPatternPredictor } from "@/components/SymptomPatternPredictor";
 import { SymptomReminders } from "@/components/SymptomReminders";
+import { UnifiedDashboard } from "@/components/UnifiedDashboard";
 import { FileDown } from "lucide-react";
 import intimacyImg from "@/assets/tracker-intimacy.jpg";
 import bbtImg from "@/assets/tracker-bbt.jpg";
@@ -26,6 +27,7 @@ import {
   getSymptomDates,
 } from "@/lib/symptomLog";
 import { loadFromLocalStorage } from "@/lib/storage";
+import { loadSectionVisibility } from "@/lib/sectionVisibility";
 import { useToast } from "@/hooks/use-toast";
 import { addDays } from "date-fns";
 
@@ -41,6 +43,7 @@ export const SymptomsPage = () => {
   const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>([]);
   const [periodData, setPeriodData] = useState<PeriodData | null>(null);
   const [showHistory, setShowHistory] = useState(false);
+  const [visibility] = useState(() => loadSectionVisibility());
   const { toast } = useToast();
 
   useEffect(() => {
@@ -162,6 +165,9 @@ export const SymptomsPage = () => {
             </Button>
           </div>
 
+          {/* Unified Dashboard */}
+          <UnifiedDashboard />
+
           {/* Mood Tracker */}
           <MoodTracker selectedDate={selectedDate} />
 
@@ -169,7 +175,7 @@ export const SymptomsPage = () => {
           <MoodSymptomCorrelation />
 
           {/* Symptoms Checker */}
-          <SymptomsChecker />
+          {visibility.symptomsChecker && <SymptomsChecker />}
 
           {/* ML Pattern Predictor */}
           <SymptomPatternPredictor />
@@ -180,72 +186,80 @@ export const SymptomsPage = () => {
           {/* Tracker Cards with Images */}
           <div className="grid grid-cols-2 gap-4">
             {/* Intimacy Tracker Card */}
-            <div 
-              className="relative rounded-2xl overflow-hidden shadow-md cursor-pointer h-48 group"
-              onClick={() => navigate('/intimacy')}
-            >
-              <img 
-                src={intimacyImg} 
-                alt="Intimacy Tracker" 
-                className="absolute inset-0 w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
-              <div className="absolute inset-0 flex flex-col justify-end p-4 text-white">
-                <h3 className="text-xl font-bold mb-1">Intimacy</h3>
-                <p className="text-sm opacity-90">Track</p>
+            {visibility.intimacy && (
+              <div 
+                className="relative rounded-2xl overflow-hidden shadow-md cursor-pointer h-48 group"
+                onClick={() => navigate('/intimacy')}
+              >
+                <img 
+                  src={intimacyImg} 
+                  alt="Intimacy Tracker" 
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+                <div className="absolute inset-0 flex flex-col justify-end p-4 text-white">
+                  <h3 className="text-xl font-bold mb-1">Intimacy</h3>
+                  <p className="text-sm opacity-90">Track</p>
+                </div>
               </div>
-            </div>
+            )}
 
             {/* BBT Tracker Card */}
-            <div 
-              className="relative rounded-2xl overflow-hidden shadow-md cursor-pointer h-48 group"
-              onClick={() => navigate('/bbt')}
-            >
-              <img 
-                src={bbtImg} 
-                alt="BBT Tracker" 
-                className="absolute inset-0 w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
-              <div className="absolute inset-0 flex flex-col justify-end p-4 text-white">
-                <h3 className="text-xl font-bold mb-1">BBT</h3>
-                <p className="text-sm opacity-90">Monitor</p>
+            {visibility.bbt && (
+              <div 
+                className="relative rounded-2xl overflow-hidden shadow-md cursor-pointer h-48 group"
+                onClick={() => navigate('/bbt')}
+              >
+                <img 
+                  src={bbtImg} 
+                  alt="BBT Tracker" 
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+                <div className="absolute inset-0 flex flex-col justify-end p-4 text-white">
+                  <h3 className="text-xl font-bold mb-1">BBT</h3>
+                  <p className="text-sm opacity-90">Monitor</p>
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Appetite Tracker Card */}
-            <div 
-              className="relative rounded-2xl overflow-hidden shadow-md cursor-pointer h-48 group"
-              onClick={() => navigate('/appetite')}
-            >
-              <img 
-                src={appetiteImg} 
-                alt="Appetite Tracker" 
-                className="absolute inset-0 w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
-              <div className="absolute inset-0 flex flex-col justify-end p-4 text-white">
-                <h3 className="text-xl font-bold mb-1">Appetite</h3>
-                <p className="text-sm opacity-90">Log</p>
+            {visibility.appetite && (
+              <div 
+                className="relative rounded-2xl overflow-hidden shadow-md cursor-pointer h-48 group"
+                onClick={() => navigate('/appetite')}
+              >
+                <img 
+                  src={appetiteImg} 
+                  alt="Appetite Tracker" 
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+                <div className="absolute inset-0 flex flex-col justify-end p-4 text-white">
+                  <h3 className="text-xl font-bold mb-1">Appetite</h3>
+                  <p className="text-sm opacity-90">Log</p>
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Health Tracker Card */}
-            <div 
-              className="relative rounded-2xl overflow-hidden shadow-md cursor-pointer h-48 group"
-              onClick={() => navigate('/health')}
-            >
-              <img 
-                src={healthImg} 
-                alt="Health Tracker" 
-                className="absolute inset-0 w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
-              <div className="absolute inset-0 flex flex-col justify-end p-4 text-white">
-                <h3 className="text-xl font-bold mb-1">Health</h3>
-                <p className="text-sm opacity-90">Monitor</p>
+            {visibility.health && (
+              <div 
+                className="relative rounded-2xl overflow-hidden shadow-md cursor-pointer h-48 group"
+                onClick={() => navigate('/health')}
+              >
+                <img 
+                  src={healthImg} 
+                  alt="Health Tracker" 
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+                <div className="absolute inset-0 flex flex-col justify-end p-4 text-white">
+                  <h3 className="text-xl font-bold mb-1">Health</h3>
+                  <p className="text-sm opacity-90">Monitor</p>
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
           {/* Statistics Dashboard */}
