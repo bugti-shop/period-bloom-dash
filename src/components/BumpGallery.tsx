@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { X, Plus, Trash2, Download, Baby, Filter, MessageSquare, Mic, Camera, ArrowLeftRight, Play, Pause, Edit, Tag, FileDown } from "lucide-react";
+import { X, Plus, Trash2, Download, Baby, Filter, MessageSquare, Mic, Camera, ArrowLeftRight, Play, Pause, Edit, Tag, FileDown, Share2 } from "lucide-react";
 import { saveToLocalStorage, loadFromLocalStorage } from "@/lib/storage";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -74,6 +74,9 @@ export const BumpGallery = ({ onClose }: BumpGalleryProps) => {
   const [tagInput, setTagInput] = useState("");
   const [editingTags, setEditingTags] = useState<number | "baby" | null>(null);
   const [tagFilter, setTagFilter] = useState<string | null>(null);
+  const [sharingPhoto, setSharingPhoto] = useState<number | "baby" | "gallery" | null>(null);
+  const [shareWithWatermark, setShareWithWatermark] = useState(true);
+  const [shareMessage, setShareMessage] = useState("");
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -445,6 +448,221 @@ export const BumpGallery = ({ onClose }: BumpGalleryProps) => {
     };
   };
 
+  const addWatermarkToImage = (imageData: string, text: string): Promise<string> => {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = canvasRef.current;
+        if (!canvas) {
+          resolve(imageData);
+          return;
+        }
+
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          resolve(imageData);
+          return;
+        }
+
+        // Draw original image
+        ctx.drawImage(img, 0, 0);
+
+        // Add watermark
+        const fontSize = Math.max(20, img.height / 30);
+        ctx.font = `${fontSize}px Arial`;
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.5)';
+        ctx.lineWidth = 2;
+        
+        const padding = 20;
+        const textWidth = ctx.measureText(text).width;
+        const x = img.width - textWidth - padding;
+        const y = img.height - padding;
+
+        ctx.strokeText(text, x, y);
+        ctx.fillText(text, x, y);
+
+        resolve(canvas.toDataURL('image/jpeg', 0.9));
+      };
+      img.src = imageData;
+    });
+  };
+
+  const prepareShareImage = async (target: number | "baby"): Promise<Blob | null> => {
+    const photo = target === "baby" ? babyPhoto : weekPhotos[target];
+    if (!photo) return null;
+
+    let imageData = photo.imageData;
+
+    // Apply watermark if enabled
+    if (shareWithWatermark) {
+      const watermarkText = target === "baby" 
+        ? "My Baby Born 💗" 
+        : `Week ${target} Bump 💗`;
+      imageData = await addWatermarkToImage(photo.imageData, watermarkText);
+    }
+
+    // Convert to blob
+    const response = await fetch(imageData);
+    return await response.blob();
+  };
+
+  const sharePhoto = async (target: number | "baby") => {
+    try {
+      const blob = await prepareShareImage(target);
+      if (!blob) return;
+
+      const file = new File(
+        [blob], 
+        target === "baby" ? "baby-born.jpg" : `bump-week-${target}.jpg`,
+        { type: 'image/jpeg' }
+      );
+
+      const shareData = {
+        files: [file],
+        title: target === "baby" ? "My Baby Born!" : `Week ${target} Bump Photo`,
+        text: shareMessage || (target === "baby" ? "Meet my baby! 💗" : `My pregnancy journey - Week ${target} 💗`)
+      };
+
+      if (navigator.canShare && navigator.canShare(shareData)) {
+        await navigator.share(shareData);
+        toast.success("Shared successfully!");
+      } else {
+        // Fallback: download the image
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = target === "baby" ? "baby-born.jpg" : `bump-week-${target}.jpg`;
+        link.click();
+        URL.revokeObjectURL(url);
+        toast.success("Image downloaded for sharing!");
+      }
+    } catch (error) {
+      console.error("Error sharing:", error);
+      toast.error("Failed to share photo");
+    }
+    setSharingPhoto(null);
+  };
+
+  const createGalleryCollage = async (): Promise<Blob | null> => {
+    const photosWithData = Object.entries(weekPhotos)
+      .filter(([_, photo]) => photo)
+      .sort(([weekA], [weekB]) => parseInt(weekA) - parseInt(weekB));
+
+    if (photosWithData.length === 0) return null;
+
+    // Create canvas for collage
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return null;
+
+    // Calculate grid layout
+    const cols = Math.min(4, photosWithData.length);
+    const rows = Math.ceil(photosWithData.length / cols);
+    const cellSize = 400;
+    const padding = 10;
+
+    canvas.width = cols * (cellSize + padding) + padding;
+    canvas.height = rows * (cellSize + padding) + padding + 80; // Extra space for title
+
+    // Fill background
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Add title
+    ctx.font = 'bold 48px Arial';
+    ctx.fillStyle = '#eb4899';
+    ctx.textAlign = 'center';
+    ctx.fillText('My Pregnancy Journey', canvas.width / 2, 60);
+
+    // Load and draw images
+    const imagePromises = photosWithData.map(([week, photo], index) => {
+      return new Promise<void>((resolve) => {
+        const img = new Image();
+        img.onload = () => {
+          const col = index % cols;
+          const row = Math.floor(index / cols);
+          const x = col * (cellSize + padding) + padding;
+          const y = row * (cellSize + padding) + padding + 80;
+
+          // Draw image
+          ctx.drawImage(img, x, y, cellSize, cellSize);
+
+          // Draw week label
+          ctx.font = 'bold 24px Arial';
+          ctx.fillStyle = '#ffffff';
+          ctx.strokeStyle = '#000000';
+          ctx.lineWidth = 3;
+          ctx.textAlign = 'center';
+          const labelText = `Week ${week}`;
+          ctx.strokeText(labelText, x + cellSize / 2, y + cellSize - 20);
+          ctx.fillText(labelText, x + cellSize / 2, y + cellSize - 20);
+
+          resolve();
+        };
+        img.src = photo.imageData;
+      });
+    });
+
+    await Promise.all(imagePromises);
+
+    // Add watermark if enabled
+    if (shareWithWatermark) {
+      ctx.font = '20px Arial';
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+      ctx.textAlign = 'center';
+      ctx.fillText('Created with love 💗', canvas.width / 2, canvas.height - 20);
+    }
+
+    return new Promise((resolve) => {
+      canvas.toBlob((blob) => resolve(blob), 'image/jpeg', 0.9);
+    });
+  };
+
+  const shareGallery = async () => {
+    try {
+      toast("Creating gallery collage...");
+      const blob = await createGalleryCollage();
+      if (!blob) {
+        toast.error("No photos to share");
+        return;
+      }
+
+      const file = new File([blob], "pregnancy-journey.jpg", { type: 'image/jpeg' });
+
+      const shareData = {
+        files: [file],
+        title: "My Pregnancy Journey",
+        text: shareMessage || "My complete pregnancy journey - 40 weeks of memories 💗"
+      };
+
+      if (navigator.canShare && navigator.canShare(shareData)) {
+        await navigator.share(shareData);
+        toast.success("Gallery shared successfully!");
+      } else {
+        // Fallback: download the collage
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = "pregnancy-journey.jpg";
+        link.click();
+        URL.revokeObjectURL(url);
+        toast.success("Gallery collage downloaded for sharing!");
+      }
+    } catch (error) {
+      console.error("Error sharing gallery:", error);
+      toast.error("Failed to share gallery");
+    }
+    setSharingPhoto(null);
+  };
+
+  const openShareDialog = (target: number | "baby" | "gallery") => {
+    setSharingPhoto(target);
+    setShareMessage("");
+  };
+
   const getWeekBadges = (week: number) => {
     const badges = [];
     if (weekPhotos[week]) badges.push({ icon: Camera, color: "text-primary" });
@@ -523,6 +741,17 @@ export const BumpGallery = ({ onClose }: BumpGalleryProps) => {
                     title="Add tags"
                   >
                     <Tag className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    size="icon"
+                    variant="secondary"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      openShareDialog(week);
+                    }}
+                    title="Share photo"
+                  >
+                    <Share2 className="w-4 h-4" />
                   </Button>
                   <Button
                     size="icon"
@@ -621,6 +850,15 @@ export const BumpGallery = ({ onClose }: BumpGalleryProps) => {
               >
                 <FileDown className="w-4 h-4" />
                 Export PDF
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => openShareDialog("gallery")}
+                className="gap-2"
+              >
+                <Share2 className="w-4 h-4" />
+                Share Gallery
               </Button>
             </div>
           </div>
@@ -740,6 +978,17 @@ export const BumpGallery = ({ onClose }: BumpGalleryProps) => {
                         title="Add tags"
                       >
                         <Tag className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        size="icon"
+                        variant="secondary"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          openShareDialog("baby");
+                        }}
+                        title="Share photo"
+                      >
+                        <Share2 className="w-4 h-4" />
                       </Button>
                       <Button
                         size="icon"
@@ -914,6 +1163,62 @@ export const BumpGallery = ({ onClose }: BumpGalleryProps) => {
                 Apply Edits
               </Button>
               <Button variant="outline" onClick={() => setEditingPhoto(null)}>
+                Cancel
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Share Dialog */}
+      <Dialog open={sharingPhoto !== null} onOpenChange={() => setSharingPhoto(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              Share {sharingPhoto === "gallery" ? "Gallery Collage" : sharingPhoto === "baby" ? "Baby Photo" : `Week ${sharingPhoto} Photo`}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="share-message">Message (optional)</Label>
+              <Textarea
+                id="share-message"
+                placeholder="Add a message to share with your photo..."
+                value={shareMessage}
+                onChange={(e) => setShareMessage(e.target.value)}
+                className="mt-2"
+                rows={3}
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="watermark"
+                checked={shareWithWatermark}
+                onChange={(e) => setShareWithWatermark(e.target.checked)}
+                className="w-4 h-4"
+              />
+              <Label htmlFor="watermark" className="cursor-pointer">
+                Add watermark (recommended for privacy)
+              </Label>
+            </div>
+            <div className="bg-muted p-3 rounded-lg text-sm">
+              <p className="font-semibold mb-1">Privacy Note:</p>
+              <p className="text-muted-foreground">
+                {shareWithWatermark 
+                  ? "Watermark will be added to protect your photos when sharing online."
+                  : "Photos will be shared without watermark. Consider adding one for privacy."}
+              </p>
+            </div>
+            <div className="flex gap-2">
+              <Button 
+                onClick={() => sharingPhoto === "gallery" ? shareGallery() : sharePhoto(sharingPhoto as number | "baby")} 
+                className="flex-1"
+              >
+                <Share2 className="w-4 h-4 mr-2" />
+                Share Now
+              </Button>
+              <Button variant="outline" onClick={() => setSharingPhoto(null)}>
                 Cancel
               </Button>
             </div>
