@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { X, Plus, Trash2, Download, Baby, Filter, MessageSquare, Mic, Camera, ArrowLeftRight, Play, Pause, Edit, Tag, FileDown, Share2 } from "lucide-react";
+import { X, Plus, Trash2, Download, Baby, Filter, MessageSquare, Mic, Camera, ArrowLeftRight, Play, Pause, Edit, Tag, FileDown, Share2, CheckSquare, Square, MoveRight } from "lucide-react";
 import { saveToLocalStorage, loadFromLocalStorage } from "@/lib/storage";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -77,6 +77,9 @@ export const BumpGallery = ({ onClose }: BumpGalleryProps) => {
   const [sharingPhoto, setSharingPhoto] = useState<number | "baby" | "gallery" | null>(null);
   const [shareWithWatermark, setShareWithWatermark] = useState(true);
   const [shareMessage, setShareMessage] = useState("");
+  const [selectionMode, setSelectionMode] = useState(false);
+  const [selectedWeeks, setSelectedWeeks] = useState<Set<number>>(new Set());
+  const [selectedBabyPhoto, setSelectedBabyPhoto] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -663,6 +666,141 @@ export const BumpGallery = ({ onClose }: BumpGalleryProps) => {
     setShareMessage("");
   };
 
+  const toggleSelectionMode = () => {
+    setSelectionMode(!selectionMode);
+    setSelectedWeeks(new Set());
+    setSelectedBabyPhoto(false);
+  };
+
+  const toggleWeekSelection = (week: number) => {
+    const newSelected = new Set(selectedWeeks);
+    if (newSelected.has(week)) {
+      newSelected.delete(week);
+    } else {
+      newSelected.add(week);
+    }
+    setSelectedWeeks(newSelected);
+  };
+
+  const selectAll = () => {
+    const allWeeks = new Set<number>();
+    for (let week = 1; week <= 40; week++) {
+      if (weekPhotos[week]) {
+        allWeeks.add(week);
+      }
+    }
+    setSelectedWeeks(allWeeks);
+    if (babyPhoto) {
+      setSelectedBabyPhoto(true);
+    }
+  };
+
+  const deselectAll = () => {
+    setSelectedWeeks(new Set());
+    setSelectedBabyPhoto(false);
+  };
+
+  const deleteSelected = () => {
+    if (selectedWeeks.size === 0 && !selectedBabyPhoto) return;
+
+    const confirmed = window.confirm(
+      `Delete ${selectedWeeks.size + (selectedBabyPhoto ? 1 : 0)} photo(s)?`
+    );
+    
+    if (!confirmed) return;
+
+    // Delete selected week photos
+    const updatedPhotos = { ...weekPhotos };
+    selectedWeeks.forEach(week => {
+      delete updatedPhotos[week];
+    });
+    setWeekPhotos(updatedPhotos);
+    saveToLocalStorage(PREGNANCY_PHOTOS_KEY, updatedPhotos);
+
+    // Delete baby photo if selected
+    if (selectedBabyPhoto) {
+      setBabyPhoto(null);
+      localStorage.removeItem(BABY_BORN_PHOTO_KEY);
+    }
+
+    toast.success(`${selectedWeeks.size + (selectedBabyPhoto ? 1 : 0)} photo(s) deleted`);
+    setSelectionMode(false);
+    setSelectedWeeks(new Set());
+    setSelectedBabyPhoto(false);
+  };
+
+  const moveToBabyAlbum = () => {
+    if (selectedWeeks.size === 0 && !selectedBabyPhoto) return;
+
+    const confirmed = window.confirm(
+      `Move ${selectedWeeks.size + (selectedBabyPhoto ? 1 : 0)} photo(s) to Baby Album?`
+    );
+    
+    if (!confirmed) return;
+
+    // Load existing baby album photos
+    const existingBabyPhotos = loadFromLocalStorage<Array<{
+      id: string;
+      imageData: string;
+      timestamp: Date;
+      caption?: string;
+      tags?: string[];
+      filters?: { brightness: number; contrast: number; saturation: number };
+    }>>("baby-album-photos") || [];
+
+    // Convert selected photos to baby album format
+    const newBabyPhotos: any[] = [];
+
+    selectedWeeks.forEach(week => {
+      const photo = weekPhotos[week];
+      if (photo) {
+        newBabyPhotos.push({
+          id: `${Date.now()}-${week}-${Math.random()}`,
+          imageData: photo.imageData,
+          timestamp: photo.timestamp,
+          caption: photo.caption || `Week ${week}`,
+          tags: photo.tags || [],
+          filters: photo.filters
+        });
+      }
+    });
+
+    if (selectedBabyPhoto && babyPhoto) {
+      newBabyPhotos.push({
+        id: `${Date.now()}-baby-${Math.random()}`,
+        imageData: babyPhoto.imageData,
+        timestamp: babyPhoto.timestamp,
+        caption: babyPhoto.caption || "Baby Born",
+        tags: babyPhoto.tags || [],
+        filters: babyPhoto.filters
+      });
+    }
+
+    // Save to baby album
+    const updatedBabyAlbum = [...existingBabyPhotos, ...newBabyPhotos].sort((a, b) => 
+      new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+    );
+    saveToLocalStorage("baby-album-photos", updatedBabyAlbum);
+
+    // Delete from bump gallery
+    const updatedPhotos = { ...weekPhotos };
+    selectedWeeks.forEach(week => {
+      delete updatedPhotos[week];
+    });
+    setWeekPhotos(updatedPhotos);
+    saveToLocalStorage(PREGNANCY_PHOTOS_KEY, updatedPhotos);
+
+    if (selectedBabyPhoto) {
+      setBabyPhoto(null);
+      localStorage.removeItem(BABY_BORN_PHOTO_KEY);
+    }
+
+    toast.success(`${newBabyPhotos.length} photo(s) moved to Baby Album`);
+    setSelectionMode(false);
+    setSelectedWeeks(new Set());
+    setSelectedBabyPhoto(false);
+  };
+
   const getWeekBadges = (week: number) => {
     const badges = [];
     if (weekPhotos[week]) badges.push({ icon: Camera, color: "text-primary" });
@@ -681,8 +819,18 @@ export const BumpGallery = ({ onClose }: BumpGalleryProps) => {
     return (
       <div 
         key={week}
-        className="relative aspect-square bg-background border-2 border-border rounded-lg overflow-hidden cursor-pointer hover:border-primary transition-colors"
-        onClick={() => setSelectedWeek(isSelected ? null : week)}
+        className={`relative aspect-square bg-background border-2 rounded-lg overflow-hidden cursor-pointer transition-colors ${
+          selectionMode && selectedWeeks.has(week)
+            ? 'border-primary ring-2 ring-primary'
+            : 'border-border hover:border-primary'
+        }`}
+        onClick={() => {
+          if (selectionMode) {
+            toggleWeekSelection(week);
+          } else {
+            setSelectedWeek(isSelected ? null : week);
+          }
+        }}
       >
         {photo ? (
           <>
@@ -692,7 +840,20 @@ export const BumpGallery = ({ onClose }: BumpGalleryProps) => {
               className="w-full h-full object-cover"
               style={getPhotoStyle(photo)}
             />
-            {badges.length > 0 && !isSelected && (
+            {selectionMode && (
+              <div className="absolute top-2 left-2 z-10">
+                <div className={`w-6 h-6 rounded flex items-center justify-center ${
+                  selectedWeeks.has(week) ? 'bg-primary text-white' : 'bg-white/90 text-gray-600'
+                }`}>
+                  {selectedWeeks.has(week) ? (
+                    <CheckSquare className="w-4 h-4" />
+                  ) : (
+                    <Square className="w-4 h-4" />
+                  )}
+                </div>
+              </div>
+            )}
+            {badges.length > 0 && !isSelected && !selectionMode && (
               <div className="absolute top-2 right-2 flex gap-1">
                 {badges.map((badge, idx) => (
                   <div key={idx} className="bg-white/90 rounded-full p-1">
@@ -701,12 +862,12 @@ export const BumpGallery = ({ onClose }: BumpGalleryProps) => {
                 ))}
               </div>
             )}
-            {photo.caption && !isSelected && (
+            {photo.caption && !isSelected && !selectionMode && (
               <div className="absolute bottom-8 left-0 right-0 bg-black/70 text-white text-xs p-2 line-clamp-2">
                 {photo.caption}
               </div>
             )}
-            {isSelected && (
+            {isSelected && !selectionMode && (
               <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center gap-2">
                 <div className="flex gap-2 flex-wrap justify-center">
                   <Button
@@ -824,42 +985,103 @@ export const BumpGallery = ({ onClose }: BumpGalleryProps) => {
               <h2 className="text-xl font-semibold">Bump Gallery</h2>
             </div>
             <div className="flex gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setShowComparison(true)}
-                className="gap-2"
-              >
-                <ArrowLeftRight className="w-4 h-4" />
-                Compare
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={isSlideshow ? () => setIsSlideshow(false) : startSlideshow}
-                className="gap-2"
-              >
-                {isSlideshow ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
-                {isSlideshow ? "Pause" : "Slideshow"}
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={exportToPDF}
-                className="gap-2"
-              >
-                <FileDown className="w-4 h-4" />
-                Export PDF
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => openShareDialog("gallery")}
-                className="gap-2"
-              >
-                <Share2 className="w-4 h-4" />
-                Share Gallery
-              </Button>
+              {!selectionMode ? (
+                <>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setShowComparison(true)}
+                    className="gap-2"
+                  >
+                    <ArrowLeftRight className="w-4 h-4" />
+                    Compare
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={isSlideshow ? () => setIsSlideshow(false) : startSlideshow}
+                    className="gap-2"
+                  >
+                    {isSlideshow ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
+                    {isSlideshow ? "Pause" : "Slideshow"}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={exportToPDF}
+                    className="gap-2"
+                  >
+                    <FileDown className="w-4 h-4" />
+                    PDF
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => openShareDialog("gallery")}
+                    className="gap-2"
+                  >
+                    <Share2 className="w-4 h-4" />
+                    Share
+                  </Button>
+                  <Button
+                    variant="default"
+                    size="sm"
+                    onClick={toggleSelectionMode}
+                    className="gap-2"
+                  >
+                    <CheckSquare className="w-4 h-4" />
+                    Select
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={selectAll}
+                    className="gap-2"
+                  >
+                    <CheckSquare className="w-4 h-4" />
+                    All
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={deselectAll}
+                    className="gap-2"
+                  >
+                    <Square className="w-4 h-4" />
+                    None
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={moveToBabyAlbum}
+                    disabled={selectedWeeks.size === 0 && !selectedBabyPhoto}
+                    className="gap-2"
+                  >
+                    <MoveRight className="w-4 h-4" />
+                    Move ({selectedWeeks.size + (selectedBabyPhoto ? 1 : 0)})
+                  </Button>
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={deleteSelected}
+                    disabled={selectedWeeks.size === 0 && !selectedBabyPhoto}
+                    className="gap-2"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                    Delete ({selectedWeeks.size + (selectedBabyPhoto ? 1 : 0)})
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={toggleSelectionMode}
+                  >
+                    Cancel
+                  </Button>
+                </>
+              )}
             </div>
           </div>
           
@@ -928,8 +1150,18 @@ export const BumpGallery = ({ onClose }: BumpGalleryProps) => {
               Baby Born Photo
             </h3>
             <div 
-              className="relative aspect-video max-w-md bg-background border-2 border-border rounded-lg overflow-hidden cursor-pointer hover:border-primary transition-colors"
-              onClick={() => setSelectedWeek(selectedWeek === "baby" ? null : "baby")}
+              className={`relative aspect-video max-w-md bg-background border-2 rounded-lg overflow-hidden cursor-pointer transition-colors ${
+                selectionMode && selectedBabyPhoto
+                  ? 'border-primary ring-2 ring-primary'
+                  : 'border-border hover:border-primary'
+              }`}
+              onClick={() => {
+                if (selectionMode) {
+                  setSelectedBabyPhoto(!selectedBabyPhoto);
+                } else {
+                  setSelectedWeek(selectedWeek === "baby" ? null : "baby");
+                }
+              }}
             >
               {babyPhoto ? (
                 <>
@@ -939,12 +1171,25 @@ export const BumpGallery = ({ onClose }: BumpGalleryProps) => {
                     className="w-full h-full object-cover"
                     style={getPhotoStyle(babyPhoto)}
                   />
-                  {babyPhoto.caption && selectedWeek !== "baby" && (
+                  {selectionMode && (
+                    <div className="absolute top-2 left-2 z-10">
+                      <div className={`w-6 h-6 rounded flex items-center justify-center ${
+                        selectedBabyPhoto ? 'bg-primary text-white' : 'bg-white/90 text-gray-600'
+                      }`}>
+                        {selectedBabyPhoto ? (
+                          <CheckSquare className="w-4 h-4" />
+                        ) : (
+                          <Square className="w-4 h-4" />
+                        )}
+                      </div>
+                    </div>
+                  )}
+                  {babyPhoto.caption && selectedWeek !== "baby" && !selectionMode && (
                     <div className="absolute bottom-0 left-0 right-0 bg-black/70 text-white text-sm p-3 line-clamp-2">
                       {babyPhoto.caption}
                     </div>
                   )}
-                  {selectedWeek === "baby" && (
+                  {selectedWeek === "baby" && !selectionMode && (
                     <div className="absolute inset-0 bg-black/60 flex items-center justify-center gap-2">
                       <Button
                         size="icon"
