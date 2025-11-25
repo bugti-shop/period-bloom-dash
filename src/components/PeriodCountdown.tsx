@@ -24,25 +24,27 @@ export const PeriodCountdown = ({ lastPeriodDate, cycleLength }: PeriodCountdown
   };
 
   return (
-    <div className={`p-6 bg-gradient-to-br ${getCountdownColor()} rounded-2xl`}>
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className={`p-3 bg-white rounded-xl ${getTextColor()}`}>
-            <Calendar className="w-6 h-6" />
-          </div>
-          <div>
-            <p className="text-sm text-muted-foreground mb-1">Next Period In</p>
-            <p className={`text-3xl font-bold ${getTextColor()}`}>
-              {daysUntilPeriod > 0 ? daysUntilPeriod : 0} days
-            </p>
-          </div>
-        </div>
-        <div className="text-right">
-          <p className="text-xs text-muted-foreground mb-1">Expected Date</p>
-          <p className="text-sm font-semibold text-foreground">
-            {format(nextPeriodDate, "MMM d, yyyy")}
+    <div className="flex flex-col items-center">
+      <div 
+        className="relative w-40 h-40 rounded-full flex items-center justify-center"
+        style={{ 
+          backgroundColor: '#eb4899',
+          boxShadow: '0 0 0 12px rgba(235, 72, 153, 0.1)'
+        }}
+      >
+        <div className="text-center">
+          <Calendar className="w-8 h-8 text-white mx-auto mb-2" />
+          <p className="text-4xl font-bold text-white">
+            {daysUntilPeriod > 0 ? daysUntilPeriod : 0}
           </p>
+          <p className="text-sm text-white/90 mt-1">days</p>
         </div>
+      </div>
+      <div className="mt-4 text-center">
+        <p className="text-sm text-muted-foreground mb-1">Next Period</p>
+        <p className="text-base font-semibold text-foreground">
+          {format(nextPeriodDate, "MMM d, yyyy")}
+        </p>
       </div>
     </div>
   );

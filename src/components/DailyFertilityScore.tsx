@@ -86,44 +86,29 @@ export const DailyFertilityScore = ({ lastPeriodDate, cycleLength }: DailyFertil
     };
   };
 
-  const { score, level, color, bgGradient, tip } = getFertilityData();
+  const fertilityData = getFertilityData();
 
   return (
-    <div className={`p-6 bg-gradient-to-br ${bgGradient} rounded-2xl`}>
-      {/* Header */}
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-3">
-          <div className={`p-3 bg-white rounded-xl ${color}`}>
-            <Heart className="w-6 h-6" />
-          </div>
-          <div>
-            <p className="text-sm text-muted-foreground">Daily Fertility Score</p>
-            <p className={`text-4xl font-bold ${color}`}>{score}</p>
-          </div>
-        </div>
-        <div className="text-right">
-          <div className="flex items-center gap-2 mb-1">
-            <TrendingUp className={`w-4 h-4 ${color}`} />
-            <p className={`text-sm font-semibold ${color}`}>{level}</p>
-          </div>
-          <p className="text-xs text-muted-foreground">Day {dayInCycle} of cycle</p>
+    <div className="flex flex-col items-center">
+      <div 
+        className="relative w-40 h-40 rounded-full flex items-center justify-center"
+        style={{ 
+          backgroundColor: '#eb4899',
+          boxShadow: '0 0 0 12px rgba(235, 72, 153, 0.1)'
+        }}
+      >
+        <div className="text-center">
+          <p className="text-4xl font-bold text-white">
+            {fertilityData.score}
+          </p>
+          <p className="text-sm text-white/90 mt-1">{fertilityData.level}</p>
         </div>
       </div>
-
-      {/* Progress Bar */}
-      <div className="mb-4">
-        <Progress value={score} className="h-3" />
-      </div>
-
-      {/* Tip Card */}
-      <div className="bg-white/80 backdrop-blur-sm p-4 rounded-xl">
-        <div className="flex items-start gap-2">
-          <Info className={`w-5 h-5 ${color} flex-shrink-0 mt-0.5`} />
-          <div>
-            <p className="text-xs font-semibold text-foreground mb-1">Conception Tip</p>
-            <p className="text-xs text-muted-foreground leading-relaxed">{tip}</p>
-          </div>
-        </div>
+      <div className="mt-4 text-center">
+        <p className="text-sm text-muted-foreground mb-1">Fertility Score</p>
+        <p className="text-base font-semibold text-foreground">
+          Day {dayInCycle} of cycle
+        </p>
       </div>
     </div>
   );

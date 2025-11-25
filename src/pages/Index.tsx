@@ -259,16 +259,16 @@ const Index = () => {
 
             {/* Period Countdown & Pregnancy Chances - Only for Regular Cycles */}
             {periodData.cycleType === 'regular' && (
-              <div className="grid grid-cols-1 gap-4">
+              <div className="grid grid-cols-3 gap-4">
+                <DailyFertilityScore 
+                  lastPeriodDate={periodData.lastPeriodDate}
+                  cycleLength={periodData.cycleLength}
+                />
                 <PeriodCountdown 
                   lastPeriodDate={periodData.lastPeriodDate}
                   cycleLength={periodData.cycleLength}
                 />
                 <PregnancyChances 
-                  lastPeriodDate={periodData.lastPeriodDate}
-                  cycleLength={periodData.cycleLength}
-                />
-                <DailyFertilityScore 
                   lastPeriodDate={periodData.lastPeriodDate}
                   cycleLength={periodData.cycleLength}
                 />
@@ -335,7 +335,7 @@ const Index = () => {
             {/* Cycle Insights Button */}
             <button
               onClick={() => setShowCycleInsights(true)}
-              className="w-full py-4 font-semibold text-white text-sm transition-colors bg-[#eb4899] hover:bg-[#db2777] rounded-xl shadow-lg"
+              className="w-full py-4 font-semibold text-white text-sm transition-colors bg-[#eb4899] hover:bg-[#db2777] rounded-xl"
             >
               View Cycle Insights & Trends
             </button>

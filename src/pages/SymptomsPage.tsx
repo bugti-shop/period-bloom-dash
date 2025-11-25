@@ -13,9 +13,7 @@ import { generateSymptomPDF } from "@/lib/symptomPdfExport";
 import { MoodTracker } from "@/components/MoodTracker";
 import { MoodSymptomCorrelation } from "@/components/MoodSymptomCorrelation";
 import { SymptomsChecker } from "@/components/SymptomsChecker";
-import { SymptomPatternPredictor } from "@/components/SymptomPatternPredictor";
 import { SymptomReminders } from "@/components/SymptomReminders";
-import { UnifiedDashboard } from "@/components/UnifiedDashboard";
 import { FileDown } from "lucide-react";
 import intimacyImg from "@/assets/tracker-intimacy.jpg";
 import bbtImg from "@/assets/tracker-bbt.jpg";
@@ -165,9 +163,6 @@ export const SymptomsPage = () => {
             </Button>
           </div>
 
-          {/* Unified Dashboard */}
-          <UnifiedDashboard />
-
           {/* Mood Tracker */}
           <MoodTracker selectedDate={selectedDate} />
 
@@ -176,9 +171,6 @@ export const SymptomsPage = () => {
 
           {/* Symptoms Checker */}
           {visibility.symptomsChecker && <SymptomsChecker />}
-
-          {/* ML Pattern Predictor */}
-          <SymptomPatternPredictor />
 
           {/* Symptom Reminders */}
           <SymptomReminders />
