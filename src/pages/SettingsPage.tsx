@@ -1,4 +1,4 @@
-import { Layers, ChevronRight, Moon, Calendar, Bell, Folder, Download, Upload, Trash2, Baby, Palette, Users } from "lucide-react";
+import { Layers, ChevronRight, Moon, Calendar, Bell, Folder, Download, Upload, Trash2, Baby, Palette } from "lucide-react";
 import { format } from "date-fns";
 import { getPeriodHistory, clearPeriodHistory } from "@/lib/periodHistory";
 import { useState } from "react";
@@ -12,7 +12,6 @@ import { ReminderSettings } from "@/components/ReminderSettings";
 import { exportAllData, importData } from "@/lib/dataExport";
 import { Button } from "@/components/ui/button";
 import { useRef } from "react";
-import { PartnerCodeGenerator } from "@/components/PartnerCodeGenerator";
 
 export const SettingsPage = () => {
   const [pregnancyMode, setPregnancyMode] = useState(loadPregnancyMode());
@@ -23,7 +22,6 @@ export const SettingsPage = () => {
   const [showDatesDialog, setShowDatesDialog] = useState(false);
   const [showRemindersDialog, setShowRemindersDialog] = useState(false);
   const [showDataDialog, setShowDataDialog] = useState(false);
-  const [showPartnerDialog, setShowPartnerDialog] = useState(false);
   const [history, setHistory] = useState(getPeriodHistory());
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -255,22 +253,6 @@ export const SettingsPage = () => {
               <ChevronRight className="w-5 h-5 text-primary" />
             </button>
           </div>
-
-          {/* Partner Sharing Section */}
-          <div className="space-y-0">
-            <div className="flex items-center gap-3 mb-4 px-2">
-              <Users className="w-5 h-5 text-primary" />
-              <h2 className="text-lg font-semibold text-primary">Partner Sharing</h2>
-            </div>
-            
-            <button
-              onClick={() => setShowPartnerDialog(true)}
-              className="w-full flex items-center justify-between px-4 py-4 border-b border-border hover:bg-muted/30 transition-colors"
-            >
-              <span className="text-foreground text-base">Generate Partner Code</span>
-              <ChevronRight className="w-5 h-5 text-primary" />
-            </button>
-          </div>
         </div>
       </div>
 
@@ -432,21 +414,6 @@ export const SettingsPage = () => {
                 </div>
               </button>
             ))}
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Partner Sharing Dialog */}
-      <Dialog open={showPartnerDialog} onOpenChange={setShowPartnerDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Partner Sharing</DialogTitle>
-            <DialogDescription>
-              Share your partner code to invite others and earn rewards
-            </DialogDescription>
-          </DialogHeader>
-          <div className="py-4">
-            <PartnerCodeGenerator />
           </div>
         </DialogContent>
       </Dialog>

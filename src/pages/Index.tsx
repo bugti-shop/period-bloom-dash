@@ -11,16 +11,11 @@ import { PeriodCalendar } from "@/components/PeriodCalendar";
 import { SymptomInsights } from "@/components/SymptomInsights";
 import { schedulePeriodReminder } from "@/lib/notifications";
 import { CycleEntry } from "@/lib/irregularCycle";
-import { PartnerClaimDialog } from "@/components/PartnerClaimDialog";
-import { trackUserAction, UserActions } from "@/lib/referralTracking";
-import { useRewardNotifications } from "@/hooks/useRewardNotifications";
-import { CampaignBanner } from "@/components/CampaignBanner";
 
 import { SymptomsPage } from "@/pages/SymptomsPage";
 import { SettingsPage } from "@/pages/SettingsPage";
 import { HistoryPage } from "@/pages/HistoryPage";
 import { ToolsPage } from "@/pages/ToolsPage";
-import PartnerSharingPage from "@/pages/PartnerSharingPage";
 import { PregnancyTracker } from "@/components/PregnancyTracker";
 import { loadPregnancyMode } from "@/lib/pregnancyMode";
 import { ArticlesPage } from "@/pages/ArticlesPage";
@@ -45,14 +40,11 @@ type PeriodData = RegularPeriodData | IrregularPeriodData;
 
 const Index = () => {
   const [periodData, setPeriodData] = useState<PeriodData | null>(null);
-  const [activeTab, setActiveTab] = useState<"home" | "symptoms" | "settings" | "tools" | "partner">("home");
+  const [activeTab, setActiveTab] = useState<"home" | "symptoms" | "settings" | "tools">("home");
   const [selectedMonth, setSelectedMonth] = useState<Date | null>(null);
   const [showHistory, setShowHistory] = useState(false);
   const [isArticlesMode, setIsArticlesMode] = useState(false);
   const pregnancyMode = loadPregnancyMode();
-
-  // Enable reward notifications
-  useRewardNotifications();
 
   // Load saved period data on mount
   useEffect(() => {
@@ -92,8 +84,6 @@ const Index = () => {
   const handleFormSubmit = (data: PeriodData) => {
     setPeriodData(data);
     
-    const isFirstLog = !loadFromLocalStorage("current-period-data");
-    
     if (data.cycleType === 'regular') {
       savePeriodHistory({
         lastPeriodDate: data.lastPeriodDate,
@@ -103,11 +93,6 @@ const Index = () => {
     }
     
     saveToLocalStorage("current-period-data", data);
-    
-    // Track first period log for referral rewards
-    if (isFirstLog) {
-      trackUserAction(UserActions.FIRST_PERIOD_LOG);
-    }
     
     // Schedule notifications
     if (data.cycleType === 'regular') {
@@ -120,7 +105,7 @@ const Index = () => {
     }
   };
 
-  const handleTabChange = (tab: "home" | "symptoms" | "settings" | "tools" | "partner") => {
+  const handleTabChange = (tab: "home" | "symptoms" | "settings" | "tools") => {
     setActiveTab(tab);
   };
 
@@ -175,7 +160,6 @@ const Index = () => {
           onArticlesToggle={() => setIsArticlesMode(true)}
           isArticlesMode={false}
         />
-        <CampaignBanner />
         <div className="max-w-7xl mx-auto py-6 px-4">
           <div className="max-w-md mx-auto">
             <header className="text-center mb-8">
@@ -222,7 +206,6 @@ const Index = () => {
       {/* Render content based on active tab */}
       {activeTab === "home" && (
         <div className="max-w-7xl mx-auto py-3 px-3 pb-20">
-          <CampaignBanner />
           <div className="space-y-4">
             {/* Floral Calendar Header */}
             <div className="relative bg-gradient-to-br from-pink-50 to-purple-50 rounded-2xl overflow-hidden">
@@ -336,13 +319,6 @@ const Index = () => {
       {activeTab === "tools" && (
         <ToolsPage />
       )}
-
-      {activeTab === "partner" && (
-        <PartnerSharingPage />
-      )}
-      
-      {/* Partner Claim Dialog */}
-      <PartnerClaimDialog />
       
       {/* Bottom Navigation */}
       <BottomNav 

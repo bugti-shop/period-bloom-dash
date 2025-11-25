@@ -1,7 +1,7 @@
-import { Home, Calendar, Activity, Settings, Calculator, Users } from "lucide-react";
+import { Home, Calendar, Activity, Settings, Calculator } from "lucide-react";
 import { useState } from "react";
 
-type NavItem = "home" | "symptoms" | "tools" | "partner" | "settings";
+type NavItem = "home" | "symptoms" | "tools" | "settings";
 
 interface BottomNavProps {
   activeTab?: NavItem;
@@ -20,7 +20,6 @@ export const BottomNav = ({ activeTab = "home", onTabChange }: BottomNavProps) =
     { id: "home" as NavItem, label: "Home", icon: Home },
     { id: "symptoms" as NavItem, label: "Symptoms", icon: Activity },
     { id: "tools" as NavItem, label: "Tools", icon: Calculator },
-    { id: "partner" as NavItem, label: "Partner", icon: Users },
     { id: "settings" as NavItem, label: "Settings", icon: Settings },
   ];
 
