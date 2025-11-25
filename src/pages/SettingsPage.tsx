@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { ThemeVariant, loadTheme, saveTheme } from "@/lib/themeStorage";
 import { notifySuccess, notifyError } from "@/lib/notificationWithHaptics";
 import { ReminderSettings } from "@/components/ReminderSettings";
+import { FertilityReminderSettings } from "@/components/FertilityReminderSettings";
 import { exportAllData, importData } from "@/lib/dataExport";
 import { Button } from "@/components/ui/button";
 import { useRef } from "react";
@@ -21,6 +22,7 @@ export const SettingsPage = () => {
   const [showThemeDialog, setShowThemeDialog] = useState(false);
   const [showDatesDialog, setShowDatesDialog] = useState(false);
   const [showRemindersDialog, setShowRemindersDialog] = useState(false);
+  const [showFertilityRemindersDialog, setShowFertilityRemindersDialog] = useState(false);
   const [showDataDialog, setShowDataDialog] = useState(false);
   const [history, setHistory] = useState(getPeriodHistory());
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -156,6 +158,14 @@ export const SettingsPage = () => {
               <Bell className="w-5 h-5 text-primary" />
               <h2 className="text-lg font-semibold text-primary">Reminders & Notifications</h2>
             </div>
+            
+            <button
+              onClick={() => setShowFertilityRemindersDialog(true)}
+              className="w-full flex items-center justify-between px-4 py-4 border-b border-border hover:bg-muted/30 transition-colors"
+            >
+              <span className="text-foreground text-base">Fertility & Period reminders</span>
+              <ChevronRight className="w-5 h-5 text-primary" />
+            </button>
             
             <button
               onClick={() => setShowRemindersDialog(true)}
@@ -356,6 +366,21 @@ export const SettingsPage = () => {
           </DialogHeader>
           <div className="py-4">
             <ReminderSettings />
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Fertility Reminders Dialog */}
+      <Dialog open={showFertilityRemindersDialog} onOpenChange={setShowFertilityRemindersDialog}>
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Fertility & Period Reminders</DialogTitle>
+            <DialogDescription>
+              Get notified about your fertile window, ovulation, and period
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4">
+            <FertilityReminderSettings />
           </div>
         </DialogContent>
       </Dialog>
