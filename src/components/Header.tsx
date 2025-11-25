@@ -7,11 +7,9 @@ import { supabase } from "@/integrations/supabase/client";
 
 interface HeaderProps {
   showArticlesToggle?: boolean;
-  onArticlesToggle?: () => void;
-  isArticlesMode?: boolean;
 }
 
-export const Header = ({ showArticlesToggle = false, onArticlesToggle, isArticlesMode = false }: HeaderProps) => {
+export const Header = ({ showArticlesToggle = false }: HeaderProps) => {
   const navigate = useNavigate();
   const [hasPartnerCode, setHasPartnerCode] = useState(false);
   const [referralCount, setReferralCount] = useState(0);
@@ -78,9 +76,9 @@ export const Header = ({ showArticlesToggle = false, onArticlesToggle, isArticle
             
             {showArticlesToggle && (
               <Button
-                variant={isArticlesMode ? "default" : "ghost"}
+                variant="ghost"
                 size="sm"
-                onClick={onArticlesToggle}
+                onClick={() => navigate('/articles')}
                 className="gap-2"
               >
                 <BookOpen className="h-4 w-4" />

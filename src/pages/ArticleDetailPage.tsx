@@ -1,6 +1,10 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Clock, Calendar, BookOpen } from "lucide-react";
+import { ArrowLeft, Clock, Calendar, BookOpen, Bookmark } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { toggleBookmark, isBookmarked } from "@/lib/articleBookmarks";
+import { useState, useEffect } from "react";
+import { toast } from "sonner";
 
 const articleContent: Record<string, {
   id: number;
@@ -183,8 +187,31 @@ const articleContent: Record<string, {
 export const ArticleDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [bookmarked, setBookmarked] = useState(false);
   
   const article = id ? articleContent[id] : null;
+
+  useEffect(() => {
+    if (id) {
+      setBookmarked(isBookmarked(id));
+    }
+  }, [id]);
+
+  const handleBookmarkToggle = () => {
+    if (!id) return;
+    const newBookmarked = toggleBookmark(id);
+    setBookmarked(newBookmarked);
+    toast.success(newBookmarked ? "Article bookmarked!" : "Bookmark removed");
+  };
+
+  const getRelatedArticles = () => {
+    if (!article) return [];
+    return Object.values(articleContent)
+      .filter(a => a.category === article.category && a.id !== article.id)
+      .slice(0, 3);
+  };
+
+  const relatedArticles = getRelatedArticles();
 
   if (!article) {
     return (
@@ -202,14 +229,24 @@ export const ArticleDetailPage = () => {
       {/* Header */}
       <header className="sticky top-0 z-50 w-full border-b border-border bg-white shadow-sm">
         <div className="max-w-4xl mx-auto px-4 py-3">
-          <Button
-            variant="ghost"
-            onClick={() => navigate(-1)}
-            className="flex items-center gap-2"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Back to Articles
-          </Button>
+          <div className="flex items-center justify-between">
+            <Button
+              variant="ghost"
+              onClick={() => navigate("/articles")}
+              className="flex items-center gap-2"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Back to Articles
+            </Button>
+            <Button
+              variant={bookmarked ? "default" : "outline"}
+              size="icon"
+              onClick={handleBookmarkToggle}
+              className="ml-auto"
+            >
+              <Bookmark className={`h-4 w-4 ${bookmarked ? "fill-current" : ""}`} />
+            </Button>
+          </div>
         </div>
       </header>
 
@@ -269,6 +306,47 @@ export const ArticleDetailPage = () => {
             about your medical care.
           </p>
         </div>
+
+        {/* Related Articles */}
+        {relatedArticles.length > 0 && (
+          <div className="mt-12 pt-12 border-t border-border">
+            <h2 className="text-2xl font-bold text-foreground mb-6">Related Articles</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {relatedArticles.map((relatedArticle) => (
+                <article
+                  key={relatedArticle.id}
+                  onClick={() => {
+                    navigate(`/article/${relatedArticle.id}`);
+                    window.scrollTo(0, 0);
+                  }}
+                  className="bg-white rounded-xl overflow-hidden shadow-sm border border-border hover:shadow-md transition-shadow cursor-pointer"
+                >
+                  <div className="aspect-video w-full overflow-hidden">
+                    <img
+                      src={relatedArticle.image}
+                      alt={relatedArticle.title}
+                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                    />
+                  </div>
+                  <div className="p-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <Badge variant="secondary" className="text-xs">
+                        {relatedArticle.category}
+                      </Badge>
+                      <span className="text-xs text-muted-foreground">{relatedArticle.readTime}</span>
+                    </div>
+                    <h3 className="text-base font-bold text-foreground mb-2 line-clamp-2">
+                      {relatedArticle.title}
+                    </h3>
+                    <p className="text-sm text-muted-foreground line-clamp-2">
+                      {relatedArticle.content[0].substring(0, 100)}...
+                    </p>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+        )}
       </article>
     </div>
   );

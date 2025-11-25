@@ -1,8 +1,11 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { Menu, X, Home, Heart, Baby, Calendar, BookOpen, Stethoscope } from "lucide-react";
+import { Menu, X, BookOpen, Baby, Calendar, Heart, Stethoscope, Search, Bookmark } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { isBookmarked } from "@/lib/articleBookmarks";
 
 const articles = [
   {
@@ -60,17 +63,40 @@ const categories = [
   { name: "Pregnancy", icon: Baby },
   { name: "Period Health", icon: Calendar },
   { name: "Wellness", icon: Heart },
-  { name: "Medical", icon: Stethoscope }
+  { name: "Medical", icon: Stethoscope },
+  { name: "Bookmarked", icon: Bookmark }
 ];
 
 export const ArticlesPage = () => {
   const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState("All Articles");
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [bookmarkRefresh, setBookmarkRefresh] = useState(0);
 
-  const filteredArticles = selectedCategory === "All Articles" 
-    ? articles 
-    : articles.filter(article => article.category === selectedCategory);
+  const filteredArticles = useMemo(() => {
+    let filtered = articles;
+    
+    // Filter by category
+    if (selectedCategory === "Bookmarked") {
+      const bookmarks = articles.filter(article => isBookmarked(article.id.toString()));
+      filtered = bookmarks;
+    } else if (selectedCategory !== "All Articles") {
+      filtered = articles.filter(article => article.category === selectedCategory);
+    }
+    
+    // Filter by search query
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(article => 
+        article.title.toLowerCase().includes(query) ||
+        article.excerpt.toLowerCase().includes(query) ||
+        article.category.toLowerCase().includes(query)
+      );
+    }
+    
+    return filtered;
+  }, [selectedCategory, searchQuery, bookmarkRefresh]);
 
   const DrawerContent = () => (
     <div className="py-4">
@@ -135,6 +161,20 @@ export const ArticlesPage = () => {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 py-6">
+        {/* Search Bar */}
+        <div className="mb-6">
+          <div className="relative max-w-md">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              type="text"
+              placeholder="Search articles..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+        </div>
+
         {/* Category Pills - Mobile horizontal scroll */}
         <div className="mb-6 overflow-x-auto pb-2 -mx-4 px-4">
           <div className="flex gap-2 min-w-max">
