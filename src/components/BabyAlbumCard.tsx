@@ -25,29 +25,27 @@ export const BabyAlbumCard = ({ onClick }: BabyAlbumCardProps) => {
 
   return (
     <Card 
-      className="p-6 cursor-pointer hover:shadow-lg transition-all"
+      className="p-6 cursor-pointer hover:shadow-md transition-shadow border"
       onClick={onClick}
     >
-      <div className="flex items-start justify-between gap-4">
+      <div className="flex items-center gap-4">
         <div className="flex-1">
-          <h3 className="text-xl font-bold text-foreground mb-2">Baby Album</h3>
+          <h3 className="text-xl font-semibold text-card-foreground mb-1">Baby Album</h3>
           <p className="text-sm text-muted-foreground">
             View and manage all your baby photos
           </p>
         </div>
-        {latestPhoto ? (
-          <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
+        <div className="w-20 h-20 rounded-xl overflow-hidden bg-muted flex items-center justify-center flex-shrink-0">
+          {latestPhoto ? (
             <img 
               src={latestPhoto.imageData} 
               alt="Latest baby photo" 
               className="w-full h-full object-cover"
             />
-          </div>
-        ) : (
-          <div className="w-16 h-16 rounded-lg bg-muted flex items-center justify-center flex-shrink-0">
+          ) : (
             <Camera className="w-8 h-8 text-muted-foreground" />
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </Card>
   );
