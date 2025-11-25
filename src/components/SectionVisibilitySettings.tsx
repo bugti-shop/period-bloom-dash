@@ -22,11 +22,13 @@ export const SectionVisibilitySettings = () => {
     { key: "intimacy", label: "Intimacy Tracker" },
     { key: "bbt", label: "BBT Tracker" },
     { key: "appetite", label: "Appetite Tracker" },
+    { key: "health", label: "Health Tracker" },
     { key: "conceiving", label: "Conceiving Tracker" },
     { key: "medications", label: "Medications" },
     { key: "flowIntensity", label: "Flow Intensity" },
     { key: "stickyNotes", label: "Sticky Notes" },
     { key: "insights", label: "Insights" },
+    { key: "symptomsChecker", label: "Symptom Checker" },
   ];
 
   return (
