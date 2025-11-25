@@ -9,9 +9,7 @@ import { BottomNav } from "@/components/BottomNav";
 import { Header } from "@/components/Header";
 import { PeriodCalendar } from "@/components/PeriodCalendar";
 import { SymptomInsights } from "@/components/SymptomInsights";
-import { PeriodCountdown } from "@/components/PeriodCountdown";
-import { PregnancyChances } from "@/components/PregnancyChances";
-import { DailyFertilityScore } from "@/components/DailyFertilityScore";
+import { UnifiedFertilityWidget } from "@/components/UnifiedFertilityWidget";
 import { schedulePeriodReminder } from "@/lib/notifications";
 import { scheduleFertilityReminders } from "@/lib/fertilityNotifications";
 import { CycleEntry } from "@/lib/irregularCycle";
@@ -257,18 +255,10 @@ const Index = () => {
               onMonthChange={handleMonthChange}
             />
 
-            {/* Period Countdown & Pregnancy Chances - Only for Regular Cycles */}
+            {/* Unified Fertility Widget - Only for Regular Cycles */}
             {periodData.cycleType === 'regular' && (
-              <div className="grid grid-cols-3 gap-4">
-                <DailyFertilityScore 
-                  lastPeriodDate={periodData.lastPeriodDate}
-                  cycleLength={periodData.cycleLength}
-                />
-                <PeriodCountdown 
-                  lastPeriodDate={periodData.lastPeriodDate}
-                  cycleLength={periodData.cycleLength}
-                />
-                <PregnancyChances 
+              <div className="flex justify-center">
+                <UnifiedFertilityWidget 
                   lastPeriodDate={periodData.lastPeriodDate}
                   cycleLength={periodData.cycleLength}
                 />
