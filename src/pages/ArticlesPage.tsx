@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { Menu, X, BookOpen, Baby, Calendar, Heart, Stethoscope, Search, Bookmark, CheckCircle, Clock, Download } from "lucide-react";
+import { Menu, X, BookOpen, Baby, Calendar, Heart, Stethoscope, Search, Bookmark, CheckCircle, Clock, Download, BarChart2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
@@ -10,6 +10,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { isBookmarked } from "@/lib/articleBookmarks";
 import { getAllProgress, ArticleProgress } from "@/lib/articleProgress";
 import { isArticleOffline } from "@/lib/offlineArticles";
+import { ArticleRecommendations } from "@/components/ArticleRecommendations";
+import { ReadingHistoryDashboard } from "@/components/ReadingHistoryDashboard";
 import { formatDistanceToNow } from "date-fns";
 
 const articles = [
@@ -78,8 +80,13 @@ export const ArticlesPage = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [bookmarkRefresh, setBookmarkRefresh] = useState(0);
+  const [showHistoryDashboard, setShowHistoryDashboard] = useState(false);
   
   const articleProgress = getAllProgress();
+
+  if (showHistoryDashboard) {
+    return <ReadingHistoryDashboard onBack={() => setShowHistoryDashboard(false)} />;
+  }
 
   // Get continue reading articles (5-95% progress, sorted by most recent)
   const continueReadingArticles = useMemo(() => {
@@ -177,7 +184,17 @@ export const ArticlesPage = () => {
               </div>
             </div>
             
-            <BookOpen className="h-6 w-6 text-primary" />
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => setShowHistoryDashboard(true)}
+                title="View Reading History"
+              >
+                <BarChart2 className="h-5 w-5" />
+              </Button>
+              <BookOpen className="h-6 w-6 text-primary" />
+            </div>
           </div>
         </div>
       </header>
@@ -264,6 +281,13 @@ export const ArticlesPage = () => {
                 </div>
               </CardContent>
             </Card>
+          </div>
+        )}
+
+        {/* AI Recommendations */}
+        {!searchQuery && selectedCategory === "All Articles" && (
+          <div className="mb-8">
+            <ArticleRecommendations articles={articles} />
           </div>
         )}
 
