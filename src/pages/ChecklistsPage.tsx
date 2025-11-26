@@ -1,4 +1,3 @@
-import { Card } from "@/components/ui/card";
 import todoImg from "@/assets/checklist-todo.png";
 import shoppingImg from "@/assets/checklist-shopping.png";
 import hospitalBagImg from "@/assets/checklist-hospital-bag.png";
@@ -55,15 +54,15 @@ export const ChecklistsPage = () => {
 
         <div className="grid grid-cols-2 gap-4">
           {checklists.map((checklist) => (
-            <Card
+            <div
               key={checklist.id}
-              className={`${checklist.bgColor} border-none shadow-lg rounded-3xl overflow-hidden cursor-pointer hover:scale-105 transition-transform duration-200 ${
+              className={`${checklist.bgColor} rounded-3xl overflow-hidden cursor-pointer hover:scale-105 transition-transform duration-200 shadow-lg ${
                 checklist.id === "hospital-bag" || checklist.id === "names"
                   ? "col-span-2"
                   : ""
               }`}
             >
-              <div className="p-6 flex flex-col h-full min-h-[180px]">
+              <div className="p-6 flex flex-col min-h-[220px]">
                 <h3 className="text-xl font-bold text-foreground mb-4">
                   {checklist.title}
                 </h3>
@@ -71,11 +70,11 @@ export const ChecklistsPage = () => {
                   <img
                     src={checklist.image}
                     alt={checklist.title}
-                    className="w-full h-auto max-h-[140px] object-contain"
+                    className="w-full h-auto max-h-[200px] object-contain"
                   />
                 </div>
               </div>
-            </Card>
+            </div>
           ))}
         </div>
       </div>
