@@ -172,7 +172,7 @@ export const ChecklistDetailPage = () => {
                       id={`checkbox-${item.id}`}
                       checked={item.completed}
                       onCheckedChange={() => handleToggle(item.id)}
-                      className="h-5 w-5"
+                      className="h-5 w-5 shrink-0 cursor-pointer"
                     />
                     {editingId === item.id ? (
                       <Input
@@ -226,7 +226,7 @@ export const ChecklistDetailPage = () => {
                   id={`checkbox-${item.id}`}
                   checked={item.completed}
                   onCheckedChange={() => handleToggle(item.id)}
-                  className="h-5 w-5"
+                  className="h-5 w-5 shrink-0 cursor-pointer"
                 />
                 {editingId === item.id ? (
                   <Input
