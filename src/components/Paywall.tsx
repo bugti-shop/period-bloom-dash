@@ -18,51 +18,85 @@ export const Paywall = ({ onStartTrial }: PaywallProps) => {
         </h1>
 
         {/* Timeline */}
-        <div className="space-y-1.5 py-4">
-          {/* Today */}
-          <div className="flex gap-3">
-            <div className="flex flex-col items-center">
-              <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: '#ee5ea6' }}>
-                <Lock className="w-4 h-4 text-white" />
+        <div 
+          className="py-4"
+          style={{
+            '--connector-width': '8px',
+            '--connector-color': '#d1d5db',
+            '--icon-gap': '56px'
+          } as React.CSSProperties}
+        >
+          <div className="flex flex-col gap-3">
+            {/* Today */}
+            <div className="flex gap-3 relative">
+              {/* Icon Column with Connector Line */}
+              <div className="relative flex flex-col items-center" style={{ width: '40px' }}>
+                {/* Vertical Connector Line - Absolutely Positioned Behind Icons */}
+                <div 
+                  className="absolute left-1/2 -translate-x-1/2 pointer-events-none"
+                  style={{
+                    width: 'var(--connector-width)',
+                    height: 'calc(var(--icon-gap) * 2 + 12px)',
+                    top: '20px',
+                    backgroundColor: 'var(--connector-color)',
+                    borderRadius: '999px',
+                    zIndex: 0
+                  }}
+                />
+                
+                {/* Icon */}
+                <div 
+                  className="w-10 h-10 rounded-full flex items-center justify-center relative"
+                  style={{ backgroundColor: '#ee5ea6', zIndex: 1 }}
+                >
+                  <Lock className="w-4 h-4 text-white" />
+                </div>
               </div>
-              <div className="w-3 h-12 bg-gray-300 mt-1" />
+              
+              <div className="flex-1 pt-1">
+                <h3 className="text-base font-semibold text-black mb-0.5">Today</h3>
+                <p className="text-xs text-black">
+                  Unlock all app features like Calculating, Adding Notes, Unlimited Goals and more.
+                </p>
+              </div>
             </div>
-            <div className="flex-1 pt-1">
-              <h3 className="text-base font-semibold text-black mb-0.5">Today</h3>
-              <p className="text-xs text-gray-600">
-                Unlock all app features like Calculating, Adding Notes, Unlimited Goals and more.
-              </p>
-            </div>
-          </div>
 
-          {/* In 2 Days */}
-          <div className="flex gap-3">
-            <div className="flex flex-col items-center">
-              <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: '#ee5ea6' }}>
-                <Bell className="w-4 h-4 text-white" />
+            {/* In 2 Days */}
+            <div className="flex gap-3 relative">
+              <div className="relative flex flex-col items-center" style={{ width: '40px' }}>
+                <div 
+                  className="w-10 h-10 rounded-full flex items-center justify-center relative"
+                  style={{ backgroundColor: '#ee5ea6', zIndex: 1 }}
+                >
+                  <Bell className="w-4 h-4 text-white" />
+                </div>
               </div>
-              <div className="w-3 h-12 bg-gray-300 mt-1" />
+              
+              <div className="flex-1 pt-1">
+                <h3 className="text-base font-semibold text-black mb-0.5">In 2 Days - Reminder</h3>
+                <p className="text-xs text-black">
+                  We'll send you a reminder before your trial ends.
+                </p>
+              </div>
             </div>
-            <div className="flex-1 pt-1">
-              <h3 className="text-base font-semibold text-black mb-0.5">In 2 Days - Reminder</h3>
-              <p className="text-xs text-gray-600">
-                We'll send you a reminder before your trial ends.
-              </p>
-            </div>
-          </div>
 
-          {/* In 3 Days */}
-          <div className="flex gap-3">
-            <div className="flex flex-col items-center">
-              <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: '#ee5ea6' }}>
-                <Crown className="w-4 h-4 text-white" />
+            {/* In 3 Days */}
+            <div className="flex gap-3 relative">
+              <div className="relative flex flex-col items-center" style={{ width: '40px' }}>
+                <div 
+                  className="w-10 h-10 rounded-full flex items-center justify-center relative"
+                  style={{ backgroundColor: '#ee5ea6', zIndex: 1 }}
+                >
+                  <Crown className="w-4 h-4 text-white" />
+                </div>
               </div>
-            </div>
-            <div className="flex-1 pt-1">
-              <h3 className="text-base font-semibold text-black mb-0.5">In 3 Days - Billing Starts</h3>
-              <p className="text-xs text-gray-600">
-                You'll be charged after 3 days unless you cancel anytime before.
-              </p>
+              
+              <div className="flex-1 pt-1">
+                <h3 className="text-base font-semibold text-black mb-0.5">In 3 Days - Billing Starts</h3>
+                <p className="text-xs text-black">
+                  You'll be charged after 3 days unless you cancel anytime before.
+                </p>
+              </div>
             </div>
           </div>
         </div>
