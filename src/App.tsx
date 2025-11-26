@@ -12,6 +12,9 @@ import { WaterPage } from "./pages/WaterPage";
 import { SleepPage } from "./pages/SleepPage";
 import { ExercisePage } from "./pages/ExercisePage";
 import { CervicalMucusPage } from "./pages/CervicalMucusPage";
+import PeriodProductPage from "./pages/PeriodProductPage";
+import WeightPage from "./pages/WeightPage";
+import BirthControlPage from "./pages/BirthControlPage";
 import { ArticlesPage } from "./pages/ArticlesPage";
 import { ArticleDetailPage } from "./pages/ArticleDetailPage";
 import { ChecklistDetailPage } from "./pages/ChecklistDetailPage";
@@ -35,6 +38,9 @@ const App = () => (
           <Route path="/sleep" element={<SleepPage />} />
           <Route path="/exercise" element={<ExercisePage />} />
           <Route path="/cervical-mucus" element={<CervicalMucusPage />} />
+          <Route path="/period-product" element={<PeriodProductPage />} />
+          <Route path="/weight" element={<WeightPage />} />
+          <Route path="/birth-control" element={<BirthControlPage />} />
           <Route path="/articles" element={<ArticlesPage />} />
           <Route path="/article/:id" element={<ArticleDetailPage />} />
           <Route path="/checklists/:id" element={<ChecklistDetailPage />} />

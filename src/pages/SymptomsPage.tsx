@@ -12,6 +12,7 @@ import { SymptomHistoryPage } from "@/pages/SymptomHistoryPage";
 import { generateSymptomPDF } from "@/lib/symptomPdfExport";
 import { MoodTracker } from "@/components/MoodTracker";
 import { MoodSymptomCorrelation } from "@/components/MoodSymptomCorrelation";
+import { PMSSeverityPredictor } from "@/components/PMSSeverityPredictor";
 import { SymptomsChecker } from "@/components/SymptomsChecker";
 import { SymptomReminders } from "@/components/SymptomReminders";
 import { FileDown } from "lucide-react";
@@ -173,6 +174,14 @@ export const SymptomsPage = () => {
           {/* Mood & Symptom Correlation */}
           <MoodSymptomCorrelation />
 
+          {/* PMS Severity Predictor */}
+          {periodData && (
+            <PMSSeverityPredictor 
+              lastPeriodDate={periodData.lastPeriodDate}
+              cycleLength={periodData.cycleLength}
+            />
+          )}
+
           {/* Symptoms Checker */}
           {visibility.symptomsChecker && <SymptomsChecker />}
 
@@ -322,6 +331,51 @@ export const SymptomsPage = () => {
               <div className="absolute inset-0 flex flex-col justify-end p-4 text-white">
                 <h3 className="text-xl font-bold mb-1">Cervical Mucus</h3>
                 <p className="text-sm opacity-90">Track Fertility</p>
+              </div>
+            </div>
+
+            {/* Period Product Tracker Card */}
+            <div 
+              className="relative rounded-2xl overflow-hidden shadow-md cursor-pointer h-48 group"
+              onClick={() => navigate('/period-product')}
+            >
+              <div className="absolute inset-0 w-full h-full bg-gradient-to-br from-pink-400 to-pink-600 flex items-center justify-center">
+                <span className="text-6xl">🩸</span>
+              </div>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+              <div className="absolute inset-0 flex flex-col justify-end p-4 text-white">
+                <h3 className="text-xl font-bold mb-1">Period Products</h3>
+                <p className="text-sm opacity-90">Usage & Cost</p>
+              </div>
+            </div>
+
+            {/* Weight Tracker Card */}
+            <div 
+              className="relative rounded-2xl overflow-hidden shadow-md cursor-pointer h-48 group"
+              onClick={() => navigate('/weight')}
+            >
+              <div className="absolute inset-0 w-full h-full bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center">
+                <span className="text-6xl">⚖️</span>
+              </div>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+              <div className="absolute inset-0 flex flex-col justify-end p-4 text-white">
+                <h3 className="text-xl font-bold mb-1">Weight Tracker</h3>
+                <p className="text-sm opacity-90">Monitor Trends</p>
+              </div>
+            </div>
+
+            {/* Birth Control Pill Reminder Card */}
+            <div 
+              className="relative rounded-2xl overflow-hidden shadow-md cursor-pointer h-48 group"
+              onClick={() => navigate('/birth-control')}
+            >
+              <div className="absolute inset-0 w-full h-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center">
+                <span className="text-6xl">💊</span>
+              </div>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+              <div className="absolute inset-0 flex flex-col justify-end p-4 text-white">
+                <h3 className="text-xl font-bold mb-1">Birth Control</h3>
+                <p className="text-sm opacity-90">Daily Reminders</p>
               </div>
             </div>
           </div>
