@@ -23,6 +23,9 @@ export const AstrologyCalendar = ({
   const [currentDayIndex, setCurrentDayIndex] = useState(0);
   const svgRef = useRef<SVGSVGElement>(null);
   const lastAngleRef = useRef(0);
+  const velocityRef = useRef(0);
+  const lastTimeRef = useRef(0);
+  const momentumRef = useRef<number | null>(null);
 
   // Calculate all dates for current cycle
   const calculateAllDates = () => {
@@ -80,9 +83,18 @@ export const AstrologyCalendar = ({
     return { dayNumber, date, isPeriod, isOvulation, isFertile, isToday };
   });
 
-  // Handle mouse/touch events for spinning
+  // Handle mouse/touch events for spinning with momentum
   const handlePointerDown = (e: React.PointerEvent) => {
     setIsDragging(true);
+    velocityRef.current = 0;
+    lastTimeRef.current = Date.now();
+    
+    // Cancel any ongoing momentum
+    if (momentumRef.current) {
+      cancelAnimationFrame(momentumRef.current);
+      momentumRef.current = null;
+    }
+    
     const svg = svgRef.current;
     if (!svg) return;
     
@@ -105,13 +117,37 @@ export const AstrologyCalendar = ({
     const angle = Math.atan2(e.clientY - centerY, e.clientX - centerX) * (180 / Math.PI);
     
     const delta = angle - lastAngleRef.current;
+    const now = Date.now();
+    const timeDelta = now - lastTimeRef.current;
+    
+    if (timeDelta > 0) {
+      velocityRef.current = delta / timeDelta * 16; // Normalize to 60fps
+    }
+    
     lastAngleRef.current = angle;
+    lastTimeRef.current = now;
     
     setRotation(prev => prev + delta);
   };
 
   const handlePointerUp = () => {
     setIsDragging(false);
+    
+    // Apply momentum
+    if (Math.abs(velocityRef.current) > 0.5) {
+      const applyMomentum = () => {
+        velocityRef.current *= 0.95; // Friction
+        
+        if (Math.abs(velocityRef.current) > 0.1) {
+          setRotation(prev => prev + velocityRef.current);
+          momentumRef.current = requestAnimationFrame(applyMomentum);
+        } else {
+          momentumRef.current = null;
+        }
+      };
+      
+      momentumRef.current = requestAnimationFrame(applyMomentum);
+    }
   };
 
   // Calculate positions for circular layout
@@ -140,7 +176,7 @@ export const AstrologyCalendar = ({
     return phase;
   };
 
-  // Moon phase SVG component
+  // Moon phase SVG component with glow
   const MoonPhase = ({ phase, size, color, x, y, isToday, onClick }: {
     phase: number;
     size: number;
@@ -156,8 +192,27 @@ export const AstrologyCalendar = ({
     // Waxing (0 to 0.5) or Waning (0.5 to 1)
     const isWaxing = phase < 0.5;
     
+    const glowId = `glow-${x}-${y}`;
+    
     return (
       <g onClick={onClick} style={{ cursor: onClick ? "pointer" : "default" }}>
+        <defs>
+          {/* Glow filter for illuminated moons */}
+          <filter id={glowId} x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur" />
+            <feColorMatrix
+              in="blur"
+              type="matrix"
+              values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 ${illumination * 0.8} 0"
+              result="glow"
+            />
+            <feMerge>
+              <feMergeNode in="glow" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+        </defs>
+        
         {/* Outer circle - moon body */}
         <circle
           cx={x}
@@ -169,7 +224,7 @@ export const AstrologyCalendar = ({
           opacity={0.9}
         />
         
-        {/* Illuminated portion */}
+        {/* Illuminated portion with glow */}
         {illumination > 0.05 && (
           <>
             <defs>
@@ -199,6 +254,7 @@ export const AstrologyCalendar = ({
               r={size / 2}
               fill={color}
               clipPath={`url(#moon-clip-${x}-${y})`}
+              filter={illumination > 0.3 ? `url(#${glowId})` : undefined}
             />
           </>
         )}
@@ -220,50 +276,12 @@ export const AstrologyCalendar = ({
     return addDays(currentDate, offset);
   });
 
+  // Calculate parallax offset based on rotation
+  const parallaxX = (rotation % 360) / 360 * 10;
+  const parallaxY = Math.sin((rotation * Math.PI) / 180) * 5;
+
   return (
     <div className="bg-card p-6 rounded-2xl border border-border">
-      {/* Horizontal Date Scroll */}
-      <div className="mb-6 overflow-x-auto scrollbar-hide">
-        <div className="flex gap-4 justify-center min-w-max px-4">
-          {visibleDates.map((date, index) => {
-            const isCenter = index === 7;
-            const dayName = format(date, "EEE");
-            const dayNum = format(date, "d");
-            
-            return (
-              <button
-                key={date.toString()}
-                onClick={() => {
-                  const daysDiff = Math.floor((date.getTime() - lastPeriodDate.getTime()) / (1000 * 60 * 60 * 24));
-                  const targetIndex = daysDiff % cycleLength;
-                  const rotationNeeded = ((baseDayInCycle - targetIndex) / cycleLength) * 360;
-                  setRotation(rotationNeeded);
-                }}
-                className={`flex flex-col items-center transition-all ${
-                  isCenter 
-                    ? "opacity-100 scale-110" 
-                    : "opacity-50 scale-90"
-                }`}
-              >
-                <span className={`text-xs font-medium mb-1 ${
-                  isCenter ? "text-foreground" : "text-muted-foreground"
-                }`}>
-                  {dayName}
-                </span>
-                <span className={`text-lg font-bold ${
-                  isCenter ? "text-primary" : "text-muted-foreground"
-                }`}>
-                  {dayNum}
-                </span>
-                <div className={`w-1 h-16 mt-2 rounded-full ${
-                  isCenter ? "bg-primary" : "bg-muted"
-                }`} />
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
       {/* Circular Moon Phase Calendar */}
       <div 
         className="relative w-full aspect-square max-w-[360px] mx-auto touch-none select-none"
@@ -305,8 +323,13 @@ export const AstrologyCalendar = ({
           })}
         </svg>
 
-        {/* Center text (not rotated) */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+        {/* Center text with parallax effect */}
+        <div 
+          className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none transition-transform duration-300"
+          style={{
+            transform: `translate(${parallaxX}px, ${parallaxY}px)`
+          }}
+        >
           <p className="text-xs text-muted-foreground tracking-wider mb-2">{periodStatus}</p>
           <p className="text-3xl font-light text-foreground">
             {daysUntilNextPeriod > 0 ? `${daysUntilNextPeriod} days` : "Today"}
@@ -325,6 +348,48 @@ export const AstrologyCalendar = ({
         <p className="text-xs text-muted-foreground">
           Day {currentDayInCycle} of {cycleLength}
         </p>
+      </div>
+
+      {/* Horizontal Date Scroll - Bottom */}
+      <div className="mt-6 overflow-x-auto scrollbar-hide">
+        <div className="flex gap-4 justify-center min-w-max px-4">
+          {visibleDates.map((date, index) => {
+            const isCenter = index === 7;
+            const dayName = format(date, "EEE");
+            const dayNum = format(date, "d");
+            
+            return (
+              <button
+                key={date.toString()}
+                onClick={() => {
+                  const daysDiff = Math.floor((date.getTime() - lastPeriodDate.getTime()) / (1000 * 60 * 60 * 24));
+                  const targetIndex = daysDiff % cycleLength;
+                  const rotationNeeded = ((baseDayInCycle - targetIndex) / cycleLength) * 360;
+                  setRotation(rotationNeeded);
+                }}
+                className={`flex flex-col items-center transition-all ${
+                  isCenter 
+                    ? "opacity-100 scale-110" 
+                    : "opacity-50 scale-90"
+                }`}
+              >
+                <div className={`w-1 h-16 mb-2 rounded-full ${
+                  isCenter ? "bg-primary" : "bg-muted"
+                }`} />
+                <span className={`text-xs font-medium mb-1 ${
+                  isCenter ? "text-foreground" : "text-muted-foreground"
+                }`}>
+                  {dayName}
+                </span>
+                <span className={`text-lg font-bold ${
+                  isCenter ? "text-primary" : "text-muted-foreground"
+                }`}>
+                  {dayNum}
+                </span>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {/* Legend */}
