@@ -1,10 +1,9 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Plus, Settings2, GripVertical } from "lucide-react";
+import { Settings2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   loadChecklists,
-  reorderChecklists,
   type Checklist,
 } from "@/lib/checklistStorage";
 import { ChecklistCustomization } from "@/components/ChecklistCustomization";
@@ -28,7 +27,6 @@ export const ChecklistsPage = () => {
   const navigate = useNavigate();
   const [checklists, setChecklists] = useState<Checklist[]>([]);
   const [showCustomization, setShowCustomization] = useState(false);
-  const [draggedId, setDraggedId] = useState<string | null>(null);
 
   useEffect(() => {
     setChecklists(loadChecklists());
@@ -36,33 +34,6 @@ export const ChecklistsPage = () => {
 
   const refreshChecklists = () => {
     setChecklists(loadChecklists());
-  };
-
-  const handleDragStart = (id: string) => {
-    setDraggedId(id);
-  };
-
-  const handleDragOver = (e: React.DragEvent, targetId: string) => {
-    e.preventDefault();
-    if (!draggedId || draggedId === targetId) return;
-
-    const newOrder = [...checklists];
-    const draggedIndex = newOrder.findIndex((c) => c.id === draggedId);
-    const targetIndex = newOrder.findIndex((c) => c.id === targetId);
-
-    if (draggedIndex === -1 || targetIndex === -1) return;
-
-    const [removed] = newOrder.splice(draggedIndex, 1);
-    newOrder.splice(targetIndex, 0, removed);
-
-    setChecklists(newOrder);
-  };
-
-  const handleDragEnd = () => {
-    if (draggedId) {
-      reorderChecklists(checklists);
-      setDraggedId(null);
-    }
   };
 
   return (
@@ -92,12 +63,8 @@ export const ChecklistsPage = () => {
             return (
               <div
                 key={checklist.id}
-                draggable
-                onDragStart={() => handleDragStart(checklist.id)}
-                onDragOver={(e) => handleDragOver(e, checklist.id)}
-                onDragEnd={handleDragEnd}
                 onClick={() => navigate(`/checklists/${checklist.id}`)}
-                className="bg-card rounded-2xl p-4 cursor-pointer hover:shadow-md transition-all duration-200 border border-border/50 relative"
+                className="bg-card rounded-2xl p-4 cursor-pointer hover:shadow-md transition-all duration-200 border border-border/50"
               >
                 <div className="flex items-center justify-between gap-4">
                   <div className="flex-1 min-w-0">
@@ -126,10 +93,6 @@ export const ChecklistsPage = () => {
                       </div>
                     ) : null}
                   </div>
-                </div>
-                
-                <div className="absolute top-3 left-3 opacity-30">
-                  <GripVertical className="h-4 w-4 text-muted-foreground" />
                 </div>
               </div>
             );
