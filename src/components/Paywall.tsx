@@ -25,7 +25,7 @@ export const Paywall = ({ onStartTrial }: PaywallProps) => {
               <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: '#ee5ea6' }}>
                 <Lock className="w-4 h-4 text-white" />
               </div>
-              <div className="w-3 h-12 bg-gray-300 mt-1" />
+              <div className="w-1 h-16 bg-gray-200 -mt-1" />
             </div>
             <div className="flex-1 pt-1">
               <h3 className="text-base font-semibold text-black mb-0.5">Today</h3>
@@ -41,7 +41,7 @@ export const Paywall = ({ onStartTrial }: PaywallProps) => {
               <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: '#ee5ea6' }}>
                 <Bell className="w-4 h-4 text-white" />
               </div>
-              <div className="w-3 h-12 bg-gray-300 mt-1" />
+              <div className="w-1 h-16 bg-gray-200 -mt-1" />
             </div>
             <div className="flex-1 pt-1">
               <h3 className="text-base font-semibold text-black mb-0.5">In 2 Days - Reminder</h3>
@@ -57,6 +57,7 @@ export const Paywall = ({ onStartTrial }: PaywallProps) => {
               <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: '#ee5ea6' }}>
                 <Crown className="w-4 h-4 text-white" />
               </div>
+              <div className="w-2.5 h-2.5 rounded-full bg-gray-200 -mt-1" />
             </div>
             <div className="flex-1 pt-1">
               <h3 className="text-base font-semibold text-black mb-0.5">In 3 Days - Billing Starts</h3>
