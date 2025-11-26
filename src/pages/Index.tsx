@@ -13,8 +13,6 @@ import { Calendar, Heart } from "lucide-react";
 import { schedulePeriodReminder } from "@/lib/notifications";
 import { scheduleFertilityReminders } from "@/lib/fertilityNotifications";
 import { CycleEntry } from "@/lib/irregularCycle";
-import { Onboarding } from "@/components/Onboarding";
-import { isOnboardingCompleted } from "@/lib/onboardingStorage";
 
 import { SymptomsPage } from "@/pages/SymptomsPage";
 import { SettingsPage } from "@/pages/SettingsPage";
@@ -49,7 +47,6 @@ const Index = () => {
   const [selectedMonth, setSelectedMonth] = useState<Date | null>(null);
   const [showHistory, setShowHistory] = useState(false);
   const [showCycleInsights, setShowCycleInsights] = useState(false);
-  const [showOnboarding, setShowOnboarding] = useState<boolean>(!isOnboardingCompleted());
   const pregnancyMode = loadPregnancyMode();
   const visibility = loadSectionVisibility();
 
@@ -154,15 +151,6 @@ const Index = () => {
   };
 
   const periodDates = calculatePeriodDates();
-
-  // Show onboarding if not completed
-  if (showOnboarding) {
-    return <Onboarding onComplete={() => {
-      setShowOnboarding(false);
-      // Reload pregnancy mode after onboarding completes
-      window.location.reload();
-    }} />;
-  }
 
   // Check if pregnancy mode is active
   if (pregnancyMode.isPregnancyMode && pregnancyMode.lastPeriodDate) {
