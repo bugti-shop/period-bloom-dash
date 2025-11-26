@@ -108,7 +108,7 @@ export const AstrologyCalendar = ({
     : "PERIOD IS due";
 
   return (
-    <div className="glass-card p-6 rounded-2xl">
+    <div className="bg-card p-6 rounded-2xl border border-border">
       {/* Circular Moon Phase Calendar */}
       <div className="relative w-full aspect-square max-w-[360px] mx-auto">
         <svg viewBox="0 0 360 360" className="w-full h-full">
