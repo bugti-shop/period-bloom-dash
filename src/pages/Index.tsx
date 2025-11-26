@@ -236,8 +236,9 @@ const Index = () => {
             {/* Astrology-Themed Header - Shows in Astrology Theme */}
             {currentTheme === "astrology" && (
               <div className="relative bg-gradient-to-b from-[#1a1d3a] to-[#0f1123] rounded-2xl overflow-hidden border border-border/50">
-                {/* Animated Stars Background */}
+                {/* Animated Stars Background with Constellations */}
                 <div className="absolute inset-0 overflow-hidden">
+                  {/* Stars */}
                   {Array.from({ length: 30 }).map((_, i) => (
                     <div
                       key={i}
@@ -253,18 +254,102 @@ const Index = () => {
                       }}
                     />
                   ))}
+                  
+                  {/* Constellation Lines */}
+                  <svg className="absolute inset-0 w-full h-full" style={{ pointerEvents: 'none' }}>
+                    <defs>
+                      <linearGradient id="constellation-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style={{ stopColor: '#a78bfa', stopOpacity: 0.4 }} />
+                        <stop offset="100%" style={{ stopColor: '#ec4899', stopOpacity: 0.2 }} />
+                      </linearGradient>
+                    </defs>
+                    {/* Big Dipper constellation pattern */}
+                    <line x1="20%" y1="30%" x2="35%" y2="28%" stroke="url(#constellation-gradient)" strokeWidth="1" opacity="0.6" />
+                    <line x1="35%" y1="28%" x2="45%" y2="25%" stroke="url(#constellation-gradient)" strokeWidth="1" opacity="0.6" />
+                    <line x1="45%" y1="25%" x2="55%" y2="30%" stroke="url(#constellation-gradient)" strokeWidth="1" opacity="0.6" />
+                    <line x1="45%" y1="25%" x2="50%" y2="15%" stroke="url(#constellation-gradient)" strokeWidth="1" opacity="0.6" />
+                    <line x1="50%" y1="15%" x2="60%" y2="18%" stroke="url(#constellation-gradient)" strokeWidth="1" opacity="0.6" />
+                    <line x1="60%" y1="18%" x2="70%" y2="20%" stroke="url(#constellation-gradient)" strokeWidth="1" opacity="0.6" />
+                    
+                    {/* Orion's Belt */}
+                    <line x1="15%" y1="70%" x2="25%" y2="72%" stroke="url(#constellation-gradient)" strokeWidth="1" opacity="0.5" />
+                    <line x1="25%" y1="72%" x2="35%" y2="70%" stroke="url(#constellation-gradient)" strokeWidth="1" opacity="0.5" />
+                    
+                    {/* Small triangle constellation */}
+                    <line x1="75%" y1="45%" x2="85%" y2="50%" stroke="url(#constellation-gradient)" strokeWidth="1" opacity="0.5" />
+                    <line x1="85%" y1="50%" x2="80%" y2="60%" stroke="url(#constellation-gradient)" strokeWidth="1" opacity="0.5" />
+                    <line x1="80%" y1="60%" x2="75%" y2="45%" stroke="url(#constellation-gradient)" strokeWidth="1" opacity="0.5" />
+                    
+                    {/* Constellation stars (brighter) */}
+                    <circle cx="20%" cy="30%" r="2" fill="#fff" opacity="0.9" />
+                    <circle cx="35%" cy="28%" r="2" fill="#fff" opacity="0.9" />
+                    <circle cx="45%" cy="25%" r="2" fill="#fff" opacity="0.9" />
+                    <circle cx="55%" cy="30%" r="2" fill="#fff" opacity="0.9" />
+                    <circle cx="50%" cy="15%" r="2" fill="#fff" opacity="0.9" />
+                    <circle cx="60%" cy="18%" r="2" fill="#fff" opacity="0.9" />
+                    <circle cx="70%" cy="20%" r="2" fill="#fff" opacity="0.9" />
+                    <circle cx="15%" cy="70%" r="2" fill="#fff" opacity="0.8" />
+                    <circle cx="25%" cy="72%" r="2" fill="#fff" opacity="0.8" />
+                    <circle cx="35%" cy="70%" r="2" fill="#fff" opacity="0.8" />
+                    <circle cx="75%" cy="45%" r="2" fill="#fff" opacity="0.8" />
+                    <circle cx="85%" cy="50%" r="2" fill="#fff" opacity="0.8" />
+                    <circle cx="80%" cy="60%" r="2" fill="#fff" opacity="0.8" />
+                  </svg>
                 </div>
 
-                {/* Moon Icon */}
+                {/* Moon Phase Indicator */}
                 <div className="relative px-4 py-6">
                   <div className="text-center">
-                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-purple-400/20 to-pink-400/20 mb-3 relative">
-                      <div className="absolute inset-0 rounded-full bg-gradient-to-br from-purple-500/30 to-pink-500/30 blur-xl animate-pulse" />
-                      <svg className="w-10 h-10 text-primary relative z-10" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M21.64,13a1,1,0,0,0-1.05-.14,8.05,8.05,0,0,1-3.37.73A8.15,8.15,0,0,1,9.08,5.49a8.59,8.59,0,0,1,.25-2A1,1,0,0,0,8,2.36,10.14,10.14,0,1,0,22,14.05,1,1,0,0,0,21.64,13Z"/>
-                      </svg>
-                    </div>
-                    <p className="text-xs text-primary uppercase tracking-widest mb-2 font-semibold">Today</p>
+                    {(() => {
+                      // Calculate current moon phase
+                      const today = new Date();
+                      const knownNewMoon = new Date(2000, 0, 6, 18, 14); // Known new moon date
+                      const lunarCycle = 29.53059; // Days in lunar cycle
+                      const daysSinceNew = (today.getTime() - knownNewMoon.getTime()) / (1000 * 60 * 60 * 24);
+                      const phase = (daysSinceNew % lunarCycle) / lunarCycle;
+                      
+                      let phaseName = "";
+                      let phaseEmoji = "";
+                      
+                      if (phase < 0.03 || phase > 0.97) {
+                        phaseName = "New Moon";
+                        phaseEmoji = "🌑";
+                      } else if (phase < 0.22) {
+                        phaseName = "Waxing Crescent";
+                        phaseEmoji = "🌒";
+                      } else if (phase < 0.28) {
+                        phaseName = "First Quarter";
+                        phaseEmoji = "🌓";
+                      } else if (phase < 0.47) {
+                        phaseName = "Waxing Gibbous";
+                        phaseEmoji = "🌔";
+                      } else if (phase < 0.53) {
+                        phaseName = "Full Moon";
+                        phaseEmoji = "🌕";
+                      } else if (phase < 0.72) {
+                        phaseName = "Waning Gibbous";
+                        phaseEmoji = "🌖";
+                      } else if (phase < 0.78) {
+                        phaseName = "Last Quarter";
+                        phaseEmoji = "🌗";
+                      } else {
+                        phaseName = "Waning Crescent";
+                        phaseEmoji = "🌘";
+                      }
+                      
+                      return (
+                        <>
+                          <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-purple-400/20 to-pink-400/20 mb-3 relative">
+                            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-purple-500/30 to-pink-500/30 blur-xl animate-pulse" />
+                            <div className="text-5xl relative z-10">{phaseEmoji}</div>
+                          </div>
+                          <p className="text-xs text-primary uppercase tracking-widest mb-1 font-semibold">
+                            {phaseName}
+                          </p>
+                        </>
+                      );
+                    })()}
+                    <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">Today</p>
                     <h1 className="text-3xl font-bold text-foreground mb-1 tracking-tight">
                       {format(new Date(), "MMMM d")}
                     </h1>
