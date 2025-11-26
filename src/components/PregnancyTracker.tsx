@@ -9,6 +9,7 @@ import { FamilyAlbumCard } from "@/components/FamilyAlbumCard";
 import { FamilyAlbum } from "@/components/FamilyAlbum";
 import { UltrasoundAlbumCard } from "@/components/UltrasoundAlbumCard";
 import { UltrasoundAlbum } from "@/components/UltrasoundAlbum";
+import { AppointmentCard, PregnancyWeightCard, BloodPressureCard, GlucoseCard } from "@/components/HealthTrackerCards";
 import { Header } from "@/components/Header";
 import { BottomNav } from "@/components/BottomNav";
 import { SymptomsPage } from "@/pages/SymptomsPage";
@@ -110,6 +111,10 @@ export const PregnancyTracker = ({ lastPeriodDate: initialLastPeriodDate }: Preg
             <BabyAlbumCard onClick={() => setShowBabyAlbum(true)} />
             <FamilyAlbumCard onClick={() => setShowFamilyAlbum(true)} />
             <UltrasoundAlbumCard onClick={() => setShowUltrasoundAlbum(true)} />
+            <AppointmentCard />
+            <PregnancyWeightCard />
+            <BloodPressureCard />
+            <GlucoseCard />
             <StickyNotes />
           </div>
         </div>
