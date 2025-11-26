@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Plus, Settings2, GripVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
 import {
   loadChecklists,
   reorderChecklists,
@@ -80,7 +79,7 @@ export const ChecklistsPage = () => {
           </Button>
         </header>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-3">
           {checklists.map((checklist) => {
             const allItems = checklist.categories
               ? checklist.categories.flatMap((cat) => cat.items)
@@ -89,8 +88,6 @@ export const ChecklistsPage = () => {
               (item) => item.completed
             ).length;
             const totalCount = allItems.length;
-            const progressPercent =
-              totalCount > 0 ? (completedCount / totalCount) * 100 : 0;
 
             return (
               <div
@@ -100,45 +97,39 @@ export const ChecklistsPage = () => {
                 onDragOver={(e) => handleDragOver(e, checklist.id)}
                 onDragEnd={handleDragEnd}
                 onClick={() => navigate(`/checklists/${checklist.id}`)}
-                style={{ backgroundColor: checklist.bgColor }}
-                className={`rounded-3xl p-4 cursor-pointer hover:scale-105 transition-transform duration-200 shadow-lg flex flex-col min-h-[180px] relative ${
-                  checklist.id === "hospital-bag" || checklist.id === "names"
-                    ? "col-span-2"
-                    : ""
-                }`}
+                className="bg-card rounded-2xl p-4 cursor-pointer hover:shadow-md transition-all duration-200 border border-border/50 relative"
               >
-                <div className="absolute top-2 right-2 opacity-50">
-                  <GripVertical className="h-5 w-5 text-foreground" />
+                <div className="flex items-center justify-between gap-4">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-lg font-semibold text-card-foreground mb-1">
+                      {checklist.title}
+                    </h3>
+                    {totalCount > 0 && (
+                      <p className="text-sm text-muted-foreground">
+                        {completedCount} / {totalCount} completed
+                      </p>
+                    )}
+                  </div>
+                  
+                  <div className="flex-shrink-0">
+                    {checklist.image && imageMap[checklist.image] ? (
+                      <div className="w-16 h-16 rounded-full overflow-hidden bg-muted flex items-center justify-center">
+                        <img
+                          src={imageMap[checklist.image]}
+                          alt={checklist.title}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    ) : checklist.icon ? (
+                      <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                        <span className="text-3xl">{checklist.icon}</span>
+                      </div>
+                    ) : null}
+                  </div>
                 </div>
                 
-                <div className="flex items-start gap-2 mb-2">
-                  {checklist.icon && (
-                    <span className="text-2xl">{checklist.icon}</span>
-                  )}
-                  <h3 className="text-lg font-bold text-foreground flex-1">
-                    {checklist.title}
-                  </h3>
-                </div>
-
-                {totalCount > 0 && (
-                  <div className="mb-2">
-                    <Progress value={progressPercent} className="h-1.5 mb-1" />
-                    <p className="text-xs text-foreground/70">
-                      {completedCount} / {totalCount} completed
-                    </p>
-                  </div>
-                )}
-
-                <div className="flex-1 flex items-center justify-center">
-                  {checklist.image && imageMap[checklist.image] ? (
-                    <img
-                      src={imageMap[checklist.image]}
-                      alt={checklist.title}
-                      className="w-full h-auto max-h-[120px] object-contain"
-                    />
-                  ) : checklist.icon ? (
-                    <span className="text-6xl">{checklist.icon}</span>
-                  ) : null}
+                <div className="absolute top-3 left-3 opacity-30">
+                  <GripVertical className="h-4 w-4 text-muted-foreground" />
                 </div>
               </div>
             );
