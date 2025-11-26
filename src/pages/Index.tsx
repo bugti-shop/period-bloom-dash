@@ -26,6 +26,8 @@ import floralDecoration from "@/assets/floral-decoration.png";
 import { Paywall } from "@/components/Paywall";
 import { hasStartedTrial, startTrial } from "@/lib/trialStorage";
 import { loadTheme } from "@/lib/themeStorage";
+import { getCachedHoroscope, cacheHoroscope } from "@/lib/horoscopeStorage";
+import { supabase } from "@/integrations/supabase/client";
 
 interface RegularPeriodData {
   cycleType: 'regular';
@@ -54,10 +56,36 @@ const Index = () => {
   const pregnancyMode = loadPregnancyMode();
   const visibility = loadSectionVisibility();
   const currentTheme = loadTheme();
+  const [dailyHoroscope, setDailyHoroscope] = useState<string>("");
 
   const handleStartTrial = () => {
     startTrial();
     setTrialStarted(true);
+  };
+
+  const fetchHoroscope = async (zodiacSign: string) => {
+    // Check cache first
+    const cached = getCachedHoroscope(zodiacSign);
+    if (cached) {
+      setDailyHoroscope(cached);
+      return;
+    }
+
+    try {
+      const { data, error } = await supabase.functions.invoke('daily-horoscope', {
+        body: { zodiacSign, date: new Date().toDateString() }
+      });
+
+      if (error) throw error;
+
+      if (data?.horoscope) {
+        setDailyHoroscope(data.horoscope);
+        cacheHoroscope(zodiacSign, data.horoscope);
+      }
+    } catch (error) {
+      console.error('Error fetching horoscope:', error);
+      setDailyHoroscope("Your stars are aligned for a wonderful day ahead!");
+    }
   };
 
   // Load saved period data on mount
@@ -381,6 +409,11 @@ const Index = () => {
                         zodiacEmoji = "♓";
                       }
                       
+                      // Fetch horoscope on mount or when zodiac changes
+                      if (!dailyHoroscope && zodiacSign) {
+                        fetchHoroscope(zodiacSign);
+                      }
+                      
                       return (
                         <>
                           <div className="flex items-center justify-center gap-6 mb-4">
@@ -406,6 +439,17 @@ const Index = () => {
                               </p>
                             </div>
                           </div>
+                          
+                          {/* Daily Horoscope */}
+                          {dailyHoroscope && (
+                            <div className="px-4 mb-3">
+                              <div className="bg-muted/30 rounded-xl p-3 border border-border/50 backdrop-blur-sm">
+                                <p className="text-xs text-foreground leading-relaxed italic">
+                                  "{dailyHoroscope}"
+                                </p>
+                              </div>
+                            </div>
+                          )}
                           
                           <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">Today</p>
                         </>
