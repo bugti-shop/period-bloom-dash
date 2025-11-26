@@ -337,19 +337,80 @@ const Index = () => {
                         phaseEmoji = "🌘";
                       }
                       
+                      // Calculate zodiac sign
+                      const month = today.getMonth() + 1;
+                      const day = today.getDate();
+                      let zodiacSign = "";
+                      let zodiacEmoji = "";
+                      
+                      if ((month === 3 && day >= 21) || (month === 4 && day <= 19)) {
+                        zodiacSign = "Aries";
+                        zodiacEmoji = "♈";
+                      } else if ((month === 4 && day >= 20) || (month === 5 && day <= 20)) {
+                        zodiacSign = "Taurus";
+                        zodiacEmoji = "♉";
+                      } else if ((month === 5 && day >= 21) || (month === 6 && day <= 20)) {
+                        zodiacSign = "Gemini";
+                        zodiacEmoji = "♊";
+                      } else if ((month === 6 && day >= 21) || (month === 7 && day <= 22)) {
+                        zodiacSign = "Cancer";
+                        zodiacEmoji = "♋";
+                      } else if ((month === 7 && day >= 23) || (month === 8 && day <= 22)) {
+                        zodiacSign = "Leo";
+                        zodiacEmoji = "♌";
+                      } else if ((month === 8 && day >= 23) || (month === 9 && day <= 22)) {
+                        zodiacSign = "Virgo";
+                        zodiacEmoji = "♍";
+                      } else if ((month === 9 && day >= 23) || (month === 10 && day <= 22)) {
+                        zodiacSign = "Libra";
+                        zodiacEmoji = "♎";
+                      } else if ((month === 10 && day >= 23) || (month === 11 && day <= 21)) {
+                        zodiacSign = "Scorpio";
+                        zodiacEmoji = "♏";
+                      } else if ((month === 11 && day >= 22) || (month === 12 && day <= 21)) {
+                        zodiacSign = "Sagittarius";
+                        zodiacEmoji = "♐";
+                      } else if ((month === 12 && day >= 22) || (month === 1 && day <= 19)) {
+                        zodiacSign = "Capricorn";
+                        zodiacEmoji = "♑";
+                      } else if ((month === 1 && day >= 20) || (month === 2 && day <= 18)) {
+                        zodiacSign = "Aquarius";
+                        zodiacEmoji = "♒";
+                      } else {
+                        zodiacSign = "Pisces";
+                        zodiacEmoji = "♓";
+                      }
+                      
                       return (
                         <>
-                          <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-purple-400/20 to-pink-400/20 mb-3 relative">
-                            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-purple-500/30 to-pink-500/30 blur-xl animate-pulse" />
-                            <div className="text-5xl relative z-10">{phaseEmoji}</div>
+                          <div className="flex items-center justify-center gap-6 mb-4">
+                            {/* Moon Phase */}
+                            <div className="flex flex-col items-center">
+                              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-purple-400/20 to-pink-400/20 mb-2 relative">
+                                <div className="absolute inset-0 rounded-full bg-gradient-to-br from-purple-500/30 to-pink-500/30 blur-xl animate-pulse" />
+                                <div className="text-4xl relative z-10">{phaseEmoji}</div>
+                              </div>
+                              <p className="text-xs text-primary uppercase tracking-wider font-semibold">
+                                {phaseName}
+                              </p>
+                            </div>
+                            
+                            {/* Zodiac Sign */}
+                            <div className="flex flex-col items-center">
+                              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-pink-400/20 to-purple-400/20 mb-2 relative">
+                                <div className="absolute inset-0 rounded-full bg-gradient-to-br from-pink-500/30 to-purple-500/30 blur-xl animate-pulse" style={{ animationDelay: '1s' }} />
+                                <div className="text-4xl relative z-10">{zodiacEmoji}</div>
+                              </div>
+                              <p className="text-xs text-primary uppercase tracking-wider font-semibold">
+                                {zodiacSign}
+                              </p>
+                            </div>
                           </div>
-                          <p className="text-xs text-primary uppercase tracking-widest mb-1 font-semibold">
-                            {phaseName}
-                          </p>
+                          
+                          <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">Today</p>
                         </>
                       );
                     })()}
-                    <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">Today</p>
                     <h1 className="text-3xl font-bold text-foreground mb-1 tracking-tight">
                       {format(new Date(), "MMMM d")}
                     </h1>
