@@ -117,7 +117,7 @@ export const ChecklistDetailPage = () => {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => navigate("/checklists")}
+            onClick={() => navigate("/")}
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
