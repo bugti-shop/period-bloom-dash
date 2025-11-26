@@ -1,5 +1,6 @@
 import { format, addDays, isSameDay, addMonths } from "date-fns";
 import { useState, useRef, useEffect } from "react";
+import { Haptics, ImpactStyle } from "@capacitor/haptics";
 
 interface AstrologyCalendarProps {
   periodDates: Date[];
@@ -26,6 +27,7 @@ export const AstrologyCalendar = ({
   const velocityRef = useRef(0);
   const lastTimeRef = useRef(0);
   const momentumRef = useRef<number | null>(null);
+  const lastHapticDayRef = useRef(-1);
 
   // Calculate all dates for current cycle
   const calculateAllDates = () => {
@@ -61,12 +63,32 @@ export const AstrologyCalendar = ({
   const daysSinceLastPeriod = Math.floor((today.getTime() - lastPeriodDate.getTime()) / (1000 * 60 * 60 * 24));
   const baseDayInCycle = (daysSinceLastPeriod % cycleLength);
 
-  // Update current day based on rotation
+  // Update current day based on rotation and trigger haptics
   useEffect(() => {
     const rotationDays = Math.round((rotation / 360) * cycleLength);
     const newDayIndex = (baseDayInCycle - rotationDays + cycleLength) % cycleLength;
     setCurrentDayIndex(newDayIndex);
-  }, [rotation, baseDayInCycle, cycleLength]);
+    
+    // Trigger haptic feedback when switching to a new day
+    if (newDayIndex !== lastHapticDayRef.current && (isDragging || momentumRef.current)) {
+      lastHapticDayRef.current = newDayIndex;
+      
+      // Check if it's a special day (period, ovulation, fertile)
+      const currentDate = addDays(lastPeriodDate, newDayIndex);
+      const isPeriod = allPeriodDates.some((pDate) => isSameDay(pDate, currentDate));
+      const isOvulation = allOvulationDates.some((oDate) => isSameDay(oDate, currentDate));
+      const isFertile = allFertileDates.some((fDate) => isSameDay(fDate, currentDate)) && !isPeriod && !isOvulation;
+      
+      // Different haptic intensities for different phases
+      if (isPeriod || isOvulation) {
+        Haptics.impact({ style: ImpactStyle.Medium }).catch(() => {});
+      } else if (isFertile) {
+        Haptics.impact({ style: ImpactStyle.Light }).catch(() => {});
+      } else {
+        Haptics.impact({ style: ImpactStyle.Light }).catch(() => {});
+      }
+    }
+  }, [rotation, baseDayInCycle, cycleLength, isDragging, lastPeriodDate, allPeriodDates, allOvulationDates, allFertileDates]);
 
   const currentDayInCycle = currentDayIndex + 1;
   const currentDate = addDays(lastPeriodDate, currentDayIndex);
@@ -162,12 +184,18 @@ export const AstrologyCalendar = ({
     return "hsl(250, 40%, 40%)";
   };
 
-  const getMoonPhaseSize = (phase: typeof moonPhases[0]) => {
+  const getMoonPhaseSize = (phase: typeof moonPhases[0], isCenter: boolean) => {
     const baseSize = 18;
-    if (phase.isPeriod) return baseSize + 4;
-    if (phase.isOvulation) return baseSize + 6;
-    if (phase.isFertile) return baseSize + 2;
-    return baseSize;
+    let size = baseSize;
+    
+    if (phase.isPeriod) size = baseSize + 4;
+    else if (phase.isOvulation) size = baseSize + 6;
+    else if (phase.isFertile) size = baseSize + 2;
+    
+    // Make center moon bigger
+    if (isCenter) size = size * 1.6;
+    
+    return size;
   };
 
   const getMoonShape = (dayNumber: number, totalDays: number) => {
@@ -177,14 +205,15 @@ export const AstrologyCalendar = ({
   };
 
   // Moon phase SVG component with glow
-  const MoonPhase = ({ phase, size, color, x, y, isToday, onClick }: {
+  const MoonPhase = ({ phase, size, color, x, y, isToday, isCenter, onClick }: {
     phase: number;
     size: number;
     color: string;
     x: number;
     y: number;
     isToday: boolean;
-    onClick?: () => void;
+    isCenter: boolean;
+    onClick?: (e: React.MouseEvent) => void;
   }) => {
     // Calculate illumination percentage (0 = new moon, 0.5 = full moon)
     const illumination = phase < 0.5 ? phase * 2 : 2 - (phase * 2);
@@ -195,15 +224,19 @@ export const AstrologyCalendar = ({
     const glowId = `glow-${x}-${y}`;
     
     return (
-      <g onClick={onClick} style={{ cursor: onClick ? "pointer" : "default" }}>
+      <g 
+        onClick={onClick} 
+        style={{ cursor: onClick ? "pointer" : "default" }}
+        className={isCenter ? "transition-transform duration-300" : ""}
+      >
         <defs>
           {/* Glow filter for illuminated moons */}
           <filter id={glowId} x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur" />
+            <feGaussianBlur in="SourceGraphic" stdDeviation={isCenter ? "5" : "3"} result="blur" />
             <feColorMatrix
               in="blur"
               type="matrix"
-              values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 ${illumination * 0.8} 0"
+              values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 ${illumination * (isCenter ? 1.2 : 0.8)} 0"
               result="glow"
             />
             <feMerge>
@@ -219,9 +252,9 @@ export const AstrologyCalendar = ({
           cy={y}
           r={size / 2}
           fill={`hsl(245, 30%, ${15 + illumination * 50}%)`}
-          stroke={isToday ? "white" : color}
-          strokeWidth={isToday ? 2.5 : 1}
-          opacity={0.9}
+          stroke={isCenter || isToday ? "white" : color}
+          strokeWidth={isCenter ? 3 : isToday ? 2.5 : 1}
+          opacity={isCenter ? 1 : 0.9}
         />
         
         {/* Illuminated portion with glow */}
@@ -296,7 +329,7 @@ export const AstrologyCalendar = ({
           className="w-full h-full"
           style={{ 
             transform: `rotate(${rotation}deg)`,
-            transition: isDragging ? "none" : "transform 0.3s ease-out",
+            transition: isDragging ? "none" : "transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)",
             cursor: isDragging ? "grabbing" : "grab"
           }}
         >
@@ -304,9 +337,38 @@ export const AstrologyCalendar = ({
             const angle = (index / cycleLength) * 360 - 90;
             const x = centerX + radius * Math.cos((angle * Math.PI) / 180);
             const y = centerY + radius * Math.sin((angle * Math.PI) / 180);
-            const size = getMoonPhaseSize(phase);
+            
+            // Determine if this is the center/active moon
+            const normalizedRotation = ((rotation % 360) + 360) % 360;
+            const moonAngle = ((angle + 90 + 360) % 360);
+            const angleDiff = Math.abs(normalizedRotation - moonAngle);
+            const isCenter = angleDiff < (360 / cycleLength / 2) || angleDiff > (360 - 360 / cycleLength / 2);
+            
+            const size = getMoonPhaseSize(phase, isCenter);
             const color = getMoonPhaseColor(phase);
             const moonPhase = getMoonShape(phase.dayNumber, cycleLength);
+
+            const handleMoonClick = (e: React.MouseEvent) => {
+              e.stopPropagation();
+              
+              // Trigger haptic feedback
+              Haptics.impact({ style: ImpactStyle.Medium }).catch(() => {});
+              
+              // Calculate rotation needed to center this moon
+              const targetAngle = -angle - 90;
+              const currentNormalizedRotation = ((rotation % 360) + 360) % 360;
+              const targetNormalizedRotation = ((targetAngle % 360) + 360) % 360;
+              
+              // Find shortest rotation path
+              let rotationDelta = targetNormalizedRotation - currentNormalizedRotation;
+              if (rotationDelta > 180) rotationDelta -= 360;
+              if (rotationDelta < -180) rotationDelta += 360;
+              
+              setRotation(rotation + rotationDelta);
+              
+              // Call the original onClick if provided
+              onDateSelect?.(phase.date);
+            };
 
             return (
               <MoonPhase
@@ -317,7 +379,8 @@ export const AstrologyCalendar = ({
                 x={x}
                 y={y}
                 isToday={phase.isToday}
-                onClick={() => onDateSelect?.(phase.date)}
+                isCenter={isCenter}
+                onClick={handleMoonClick}
               />
             );
           })}
