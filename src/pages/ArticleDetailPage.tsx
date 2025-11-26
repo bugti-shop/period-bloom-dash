@@ -675,6 +675,357 @@ const articleContent: Record<string, {
       "Warning Signs\nPersistent headaches, vision changes, upper abdominal pain, sudden swelling require immediate evaluation.",
       "Delivery is the Cure\nThe only cure is delivering the baby. Close monitoring allows safe pregnancy continuation when mild."
     ]
+  },
+  "19": {
+    id: 19,
+    category: "Partner Support",
+    title: "Partner Support During Pregnancy",
+    image: "https://images.unsplash.com/photo-1511895426328-dc8714191300?w=800&auto=format&fit=crop",
+    readTime: "10 min read",
+    date: "November 10, 2025",
+    author: "Family Support Specialists",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1578946956088-940880540823?w=1200&auto=format&fit=crop",
+        alt: "Expecting couple attending prenatal appointment together",
+        credit: "Photo by Dragana Gordic on Unsplash",
+        creditLink: "https://unsplash.com/@dragangordic",
+        position: 2
+      },
+      {
+        url: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=1200&auto=format&fit=crop",
+        alt: "Partner supporting pregnant person during medical check",
+        credit: "Photo by Hisu lee on Unsplash",
+        creditLink: "https://unsplash.com/@lee_hisu",
+        position: 5
+      }
+    ],
+    content: [
+      "Supporting your partner through pregnancy is one of the most meaningful ways to strengthen your relationship and prepare for parenthood together. Non-birthing partners play a crucial role in the pregnancy journey, even though they aren't experiencing the physical changes firsthand.",
+      
+      "Understanding the Physical Journey\nYour partner's body is undergoing remarkable changes every day. Morning sickness, fatigue, hormonal fluctuations, and physical discomfort are real and can be overwhelming. Educate yourself about each trimester's changes so you can anticipate needs and offer appropriate support. Read pregnancy books, attend prenatal appointments, and ask questions to understand what's happening.",
+      
+      "Emotional Support Matters Most\nPregnancy brings a rollercoaster of emotions - excitement, anxiety, fear, joy, and uncertainty often all in the same day. Listen without trying to fix everything. Sometimes your partner just needs you to acknowledge their feelings without judgment. Validate their experiences, even if you don't fully understand them. Simple phrases like 'That sounds really hard' or 'I'm here for you' can mean everything.",
+      
+      "Attend Prenatal Appointments\nBeing present at medical appointments shows commitment and allows you to ask questions, hear the baby's heartbeat, see ultrasound images, and stay informed about your partner's health. Take time off work if needed - these moments are irreplaceable. Take notes during appointments so your partner doesn't have to remember everything.",
+      
+      "Help with Daily Tasks\nFatigue during pregnancy can be debilitating, especially in the first and third trimesters. Take on more household responsibilities without being asked. Cook meals, do laundry, clean the house, run errands, and handle tasks that require bending or heavy lifting. Don't wait to be told what needs doing - observe and take initiative.",
+      
+      "Prepare Together\nAttend childbirth classes, tour the hospital or birth center, help set up the nursery, research baby gear, and create a birth plan together. Being involved in preparation helps you feel more connected to the process and better prepared for parenthood. Read books about newborn care and discuss parenting philosophies so you're aligned.",
+      
+      "Respect Food Aversions and Cravings\nPregnancy can completely change taste preferences. If your partner suddenly can't stand the smell of coffee or desperately needs pickles at midnight, respond with compassion not criticism. Keep snacks available and be flexible about meal planning. Don't take it personally if foods you cook suddenly become unappealing.",
+      
+      "Physical Comfort Support\nOffer foot massages, back rubs, help with putting on shoes as the belly grows, adjust pillows for better sleep, and run warm baths. Physical discomfort increases as pregnancy progresses, and small gestures of physical care can provide significant relief.",
+      
+      "Create Special Moments\nPregnancy goes by quickly despite feeling long at times. Plan date nights, take belly photos together, talk to the baby, create playlists for labor, and find ways to celebrate this unique time in your relationship. These memories will be treasured for years.",
+      
+      "Educate Yourself About Birth\nUnderstand the stages of labor, learn comfort measures and breathing techniques, know the signs of labor, understand pain management options, and be prepared to advocate for your partner's wishes during delivery. Being a knowledgeable birth partner reduces your anxiety and increases your usefulness during labor.",
+      
+      "Manage Your Own Anxiety\nIt's normal to feel nervous about becoming a parent. Talk to other parents, consider counseling if anxiety feels overwhelming, exercise and maintain your own health, and remember that feeling unprepared is universal - no one truly feels ready for parenthood.",
+      
+      "Remember: Your support during pregnancy sets the foundation for co-parenting. The care, attention, and partnership you provide now establish patterns that will serve your family well long after the baby arrives. Your involvement matters more than you know."
+    ]
+  },
+  "20": {
+    id: 20,
+    category: "Partner Support",
+    title: "Supporting Your Partner Postpartum",
+    image: "https://images.unsplash.com/photo-1476703993599-0035a21b17a9?w=800&auto=format&fit=crop",
+    readTime: "11 min read",
+    date: "November 8, 2025",
+    author: "Postpartum Care Specialists",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1492725764893-90b379c2b6e7?w=1200&auto=format&fit=crop",
+        alt: "Partner caring for newborn while supporting postpartum parent",
+        credit: "Photo by Garrett Jackson on Unsplash",
+        creditLink: "https://unsplash.com/@garrettjackson",
+        position: 3
+      },
+      {
+        url: "https://images.unsplash.com/photo-1516302752625-fcc3c50ae61f?w=1200&auto=format&fit=crop",
+        alt: "New parents working together during postpartum period",
+        credit: "Photo by Derek Thomson on Unsplash",
+        creditLink: "https://unsplash.com/@derekthomson",
+        position: 7
+      }
+    ],
+    content: [
+      "The postpartum period - often called the 'fourth trimester' - is a critical time when your partner needs support more than ever. While everyone focuses on the new baby, the birthing parent is recovering from one of the most physically demanding experiences of their life while learning to care for a newborn. Your role as a supportive partner is absolutely essential.",
+      
+      "Understand Postpartum Recovery\nBirth is physically traumatic regardless of whether it was vaginal or cesarean. Your partner is healing from significant tissue damage, hormonal shifts, sleep deprivation, and emotional adjustment. Recovery takes weeks, not days. Vaginal birth may involve stitches, hemorrhoids, and pelvic floor weakness. C-section recovery involves major abdominal surgery with a 6-8 week healing timeline. Either way, your partner needs rest, nutrition, and support.",
+      
+      "Take Maximum Parental Leave\nUse every day of leave available. The first weeks are the hardest - exhaustion peaks, breastfeeding establishes, routines form, and your partner needs hands-on help. If leave is limited, consider staggering with your partner so support continues longer. This time is an investment in your family's wellbeing and your bond with your baby.",
+      
+      "Manage Visitors and Boundaries\nProtect your partner from being overwhelmed by well-meaning visitors. Ask guests to bring meals, keep visits short (30 minutes or less in early weeks), require advance notice before coming over, and don't hesitate to say no to visitors if your partner needs rest. You are the gatekeeper - use that power to protect your partner's recovery.",
+      
+      "Take On Household Management\nYour partner's only job should be recovering and feeding the baby. You handle everything else. This includes cooking all meals, cleaning, laundry, dishes, grocery shopping, paying bills, and responding to messages. Hire help if you can afford it - housekeeping services, meal delivery, or a postpartum doula can be invaluable.",
+      
+      "Support Feeding\nWhether your partner is breastfeeding, pumping, formula feeding, or combination feeding, your support matters. For breastfeeding: bring water and snacks during feeds, learn proper latch technique to help troubleshoot, attend lactation appointments, burp and change the baby afterward. For bottle feeding: prepare bottles, wash pump parts, share nighttime feedings, warm bottles properly.",
+      
+      "Take Night Duty Seriously\nEven if your partner is breastfeeding, you can help at night. Bring baby to your partner for feeds, change diapers before and after, put baby back to sleep, handle any settling needed, and let your partner sleep. If bottle feeding, split nights - you take first half, partner takes second, or alternate nights entirely.",
+      
+      "Watch for Postpartum Depression and Anxiety\nUp to 20% of new parents experience postpartum depression or anxiety. Warning signs include persistent sadness or crying, anxiety or panic attacks, difficulty bonding with baby, thoughts of harming self or baby, inability to sleep even when baby sleeps, feelings of failure or hopelessness. If you notice these signs, talk to your partner with compassion and help them get professional support immediately. Postpartum mood disorders are medical conditions, not character flaws.",
+      
+      "Encourage Rest and Recovery\nSleep deprivation is a serious health issue. Encourage naps when the baby sleeps, take the baby for walks so your partner can rest undisturbed, handle night duties when possible, and don't expect your partner to entertain you or maintain previous household standards. Rest is not laziness - it's essential for physical healing and mental health.",
+      
+      "Validate All Feelings\nPostpartum emotions are intense and unpredictable due to hormones, exhaustion, and adjustment. Your partner might cry over small things, feel overwhelmed by love, experience regret or ambivalence, mourn their pre-baby life, or feel inadequate. Listen without judgment, validate their feelings ('That sounds really hard'), and remind them they're doing great even when it doesn't feel that way.",
+      
+      "Bond With Your Baby\nYour relationship with your baby is separate from your partner's. Do skin-to-skin contact, talk and sing to your baby, take baby wearing seriously, learn diaper changing and bathing, become an expert in your baby's cues and needs. Don't rely on your partner to interpret the baby for you - develop your own connection and confidence.",
+      
+      "Maintain Household Support\nAs the acute postpartum period ends, don't suddenly stop helping. Gradually return to shared responsibilities as your partner heals, but remember that childcare is work. When you're both home, childcare and household tasks should be split. If you're working outside the home and your partner is home with baby, remember that caring for an infant all day is exhausting work - come home ready to share responsibilities, not to relax while your partner continues working.",
+      
+      "Take Care of Yourself\nYou can't support your partner if you're burned out. Sleep when you can, eat nutritious food, maintain basic hygiene, ask for help from family or friends, consider your own therapy or support group for new parents, and communicate with your partner about how you're doing too. Postpartum adjustment is challenging for all parents, not just birthing parents.",
+      
+      "Remember: The postpartum period is temporary but foundational. The support, partnership, and care you provide now build the framework for your family's future. Your partner will remember how you showed up during this vulnerable time. Be the partner they need, and you'll strengthen your relationship while creating a healthy environment for your child."
+    ]
+  },
+  "21": {
+    id: 21,
+    category: "Infant Nutrition",
+    title: "Introducing Solids: A Complete Guide",
+    image: "https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?w=800&auto=format&fit=crop",
+    readTime: "10 min read",
+    date: "November 5, 2025",
+    author: "Pediatric Nutrition Team",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1490725763681-25e578fca2c7?w=1200&auto=format&fit=crop",
+        alt: "Baby eating first solid foods in high chair",
+        credit: "Photo by Aditya Romansa on Unsplash",
+        creditLink: "https://unsplash.com/@adityaromansa",
+        position: 2
+      },
+      {
+        url: "https://images.unsplash.com/photo-1519889959834-c7c64c21a0e4?w=1200&auto=format&fit=crop",
+        alt: "Variety of healthy first foods for babies",
+        credit: "Photo by Randy Fath on Unsplash",
+        creditLink: "https://unsplash.com/@randyfath",
+        position: 6
+      }
+    ],
+    content: [
+      "Starting solid foods is an exciting milestone in your baby's development. Most babies are ready to begin solids around 6 months of age, though readiness signs matter more than the exact date on the calendar. This guide will help you navigate this important transition with confidence.",
+      
+      "Signs of Readiness for Solids\nYour baby should show several signs before starting solids: can sit up with minimal support, has good head and neck control, shows interest in food (reaches for your food, watches you eat), has lost the tongue-thrust reflex that automatically pushes food out, can move food to the back of mouth and swallow. All these signs typically align around 6 months. Starting earlier can increase allergy and choking risks.",
+      
+      "First Foods to Offer\nTraditional first foods like iron-fortified infant cereal, pureed vegetables (sweet potato, butternut squash, peas), pureed fruits (banana, avocado, apple), and pureed meats (chicken, beef) are all excellent choices. You can also practice baby-led weaning by offering soft, graspable foods like banana spears, roasted sweet potato wedges, or soft-cooked broccoli florets. There's no required order - you can start with vegetables, fruits, grains, or proteins.",
+      
+      "Baby-Led Weaning vs. Purees\nBaby-led weaning (BLW) means offering whole foods baby can self-feed instead of spoon-feeding purees. Benefits include developing motor skills, encouraging independence, and reducing picky eating. Traditional puree feeding allows more control over intake and may feel safer for anxious parents. Many families do a combination approach - offering both purees and finger foods. Choose the method that feels right for your family.",
+      
+      "Texture Progression\nStart with smooth purees or very soft foods. Around 7-8 months, introduce slightly thicker textures and small, soft lumps. By 9-10 months, most babies can handle minced or finely chopped foods. By 12 months, babies can typically eat most family foods cut appropriately. Progress at your baby's pace - some babies advance quickly, others need more time with smoother textures.",
+      
+      "How Much to Feed\nAt first, solids are practice, not primary nutrition. Breast milk or formula remains the main source of nutrition through the first year. Start with 1-2 tablespoons once a day, gradually increasing to 3 meals a day with snacks by 8-9 months. Watch for fullness cues like turning head away, closing mouth, or pushing food away. Never force feeding - babies are excellent at self-regulating intake.",
+      
+      "Feeding Schedule Sample\n6-7 months: 1-2 small meals daily plus breast milk/formula on demand. 7-9 months: 2-3 small meals plus snacks, with breast milk/formula 4-6 times daily. 9-12 months: 3 meals plus 1-2 snacks, with breast milk/formula 3-4 times daily. 12+ months: 3 meals plus 2 snacks, continuing breast milk/formula as desired.",
+      
+      "Choking Prevention\nAlways supervise eating. Avoid choking hazards including whole grapes (cut into quarters), whole cherry tomatoes (cut into quarters), hot dogs (cut lengthwise and into small pieces), hard raw vegetables (cook until soft), nuts (can offer nut butters thinly spread), popcorn, hard candy, and large chunks of meat or cheese. Learn infant CPR before starting solids.",
+      
+      "Managing the Mess\nEating is a sensory experience - expect mess! Use a splat mat under the high chair, let baby touch and explore food, dress baby in just a diaper or old clothes for meals, have damp cloths ready for cleanup, and remember that playing with food is actually important learning. Stay calm about mess - your reaction influences baby's relationship with food.",
+      
+      "Common Concerns\nRefusing food is normal - it can take 10-15 exposures before baby accepts a new food. Keep offering without pressure. Gagging looks alarming but is a protective reflex - stay calm and let baby work through it. Constipation can happen with solids - ensure adequate water intake and offer high-fiber foods like prunes. Preferring certain foods is normal - continue offering variety without forcing.",
+      
+      "Foods to Avoid Before Age One\nDo not give honey (botulism risk), cow's milk as main drink (breast milk or formula until 12 months), excessive salt or sugar, processed meats, raw or undercooked eggs, fish high in mercury (shark, swordfish), or unpasteurized cheeses. However, well-cooked eggs, properly prepared fish, and yogurt/cheese are fine before one year.",
+      
+      "Allergenic Foods - Early Introduction Recommended\nCurrent research shows introducing common allergens early (around 6 months) may reduce allergy risk. Introduce peanut butter, eggs, dairy, wheat, soy, tree nuts, fish, and shellfish one at a time every few days. Watch for reactions (rash, vomiting, difficulty breathing). If family history of severe allergies, consult your pediatrician before introduction.",
+      
+      "Remember: Starting solids is about exploration and learning, not achieving a certain intake. Trust your baby's appetite, offer nutritious options without pressure, and enjoy this messy, fun milestone together!"
+    ]
+  },
+  "22": {
+    id: 22,
+    category: "Infant Nutrition",
+    title: "Safe Allergen Introduction: Evidence-Based Guide",
+    image: "https://images.unsplash.com/photo-1587049016823-69c2f2bb86c8?w=800&auto=format&fit=crop",
+    readTime: "9 min read",
+    date: "November 3, 2025",
+    author: "Pediatric Allergy Specialists",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1602172445704-f9f8ea0bc2f9?w=1200&auto=format&fit=crop",
+        alt: "Common allergenic foods including peanuts, eggs, and dairy",
+        credit: "Photo by Melissa Walker Horn on Unsplash",
+        creditLink: "https://unsplash.com/@sugercoatit",
+        position: 2
+      }
+    ],
+    content: [
+      "For years, parents were told to delay introducing allergenic foods until after age one or even three. Current research has completely reversed this guidance: early introduction of allergenic foods (starting around 6 months) may actually help prevent food allergies. This evidence-based guide will help you introduce allergens safely.",
+      
+      "The Science Behind Early Introduction\nGroundbreaking studies, including the LEAP study on peanut introduction, showed that early exposure to allergens significantly reduces allergy development. Babies' immune systems are learning which substances are safe. Early, repeated exposure teaches the immune system to tolerate common food proteins rather than treating them as threats. This window of opportunity is critical and shouldn't be missed.",
+      
+      "The Top 9 Allergenic Foods\nThese foods cause 90% of food allergies: peanuts, tree nuts (almonds, cashews, walnuts, etc.), milk/dairy, eggs, wheat, soy, fish, shellfish, and sesame. All should be introduced in age-appropriate forms starting around 6 months, once baby has tried a few basic first foods and shows readiness for solids.",
+      
+      "When to Start Allergen Introduction\nBegin around 6 months of age, once your baby shows readiness for solids (sitting with support, good head control, interest in food). Don't wait for baby to be eating solids perfectly - allergen introduction can begin alongside other first foods. If your baby has severe eczema or already has a diagnosed food allergy, consult an allergist before introducing allergens at home.",
+      
+      "How to Introduce Allergens Safely\nIntroduce one new allergen every 3-5 days. This spacing allows you to identify which food caused a reaction if one occurs. Offer the allergenic food at home, not at daycare or restaurants, so you can monitor for reactions. Introduce new allergens during daytime hours when medical offices are open. Give full servings (2 tablespoons for peanut products, 1 whole egg, etc.) - tiny tastes may not be enough to promote tolerance.",
+      
+      "Age-Appropriate Forms of Allergens\nPeanuts: smooth peanut butter thinned with water, breast milk, or formula; peanut puff snacks; peanut butter mixed into oatmeal. Tree nuts: smooth nut butters thinly spread, mixed into purees, or thinned for dipping. Eggs: well-cooked scrambled eggs, hard-boiled eggs mashed, egg mixed into other foods. Dairy: yogurt, cheese, milk mixed into foods. Wheat: bread, pasta, cereals. Soy: tofu, edamame mashed, soy yogurt. Fish/shellfish: fully cooked, flaked, boneless fish pieces; fully cooked, small pieces of shrimp.",
+      
+      "Recognizing Allergic Reactions\nMild reactions include new rash around mouth or body, few hives, mild itching, or mild belly discomfort. Moderate reactions include several hives, swelling, vomiting, or worsening eczema. Severe reactions (anaphylaxis) include difficulty breathing, swelling of lips/tongue/throat, pale skin, blue lips, significant drop in blood pressure, loss of consciousness. Severe reactions require immediate emergency care - call 911. For mild reactions, stop the food and contact your pediatrician.",
+      
+      "Common Myths About Allergen Introduction\nMyth: Waiting to introduce allergens prevents allergies. Fact: Delaying increases allergy risk. Myth: Don't give allergens if parent has allergies. Fact: Early introduction may be even more important for high-risk babies. Myth: A little bit of allergen is enough. Fact: Regular, sustained exposure in significant amounts is key. Myth: Once introduced, you don't need to offer it again. Fact: Continued regular exposure (2-3 times per week minimum) maintains tolerance.",
+      
+      "Creating an Allergen Introduction Schedule\nWeek 1: Introduce peanut butter. Week 2-3: Continue peanut 2-3x weekly, introduce egg. Week 3-4: Continue peanut and egg, introduce dairy (yogurt). Week 4-5: Continue previous, introduce wheat. Week 5-6: Continue previous, introduce soy. Continue adding allergens every few days until all are introduced. Once introduced, continue offering each allergen 2-3 times weekly to maintain tolerance.",
+      
+      "Special Considerations for High-Risk Babies\nBabies with severe eczema, existing food allergies, or strong family history of allergies are at higher risk. For these babies, early introduction is especially important but should be done under medical guidance. Your pediatrician or allergist may recommend introducing peanut products as early as 4-6 months after appropriate testing. Don't avoid allergens out of fear - avoidance increases risk.",
+      
+      "Maintaining Tolerance\nIntroduction isn't enough - regular exposure is essential. Once an allergen is introduced successfully, offer it 2-3 times per week minimum to maintain tolerance. This doesn't need to be complicated - peanut butter on toast, eggs for breakfast, cheese on pasta, etc. Irregular or infrequent exposure may not maintain tolerance.",
+      
+      "What If Reactions Occur\nIf mild reaction occurs: discontinue that food and contact your pediatrician. They may refer you to an allergist for testing. Don't automatically avoid related foods unless advised - for example, peanut allergy doesn't mean all nuts are unsafe. Follow up testing and oral food challenges under medical supervision can clarify true allergies versus tolerance issues.",
+      
+      "Remember: Early allergen introduction is one of the most evidence-based ways to prevent food allergies. Don't let fear keep you from protecting your child's future health. When in doubt, consult your pediatrician or a pediatric allergist for personalized guidance."
+    ]
+  },
+  "23": {
+    id: 23,
+    category: "Infant Nutrition",
+    title: "Picky Eating: Prevention and Management Strategies",
+    image: "https://images.unsplash.com/photo-1609220136736-443140cffec6?w=800&auto=format&fit=crop",
+    readTime: "9 min read",
+    date: "November 1, 2025",
+    author: "Pediatric Feeding Specialists",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=1200&auto=format&fit=crop",
+        alt: "Toddler at mealtime exploring different foods",
+        credit: "Photo by Anna Pelzer on Unsplash",
+        creditLink: "https://unsplash.com/@annapelzer",
+        position: 3
+      }
+    ],
+    content: [
+      "Picky eating is one of the most common concerns for parents of toddlers and young children. While some food selectivity is developmentally normal, extreme pickiness can impact nutrition and create family stress. Understanding why picky eating happens and how to respond can transform mealtimes from battlegrounds to positive experiences.",
+      
+      "Why Toddlers Become Picky Eaters\nPicky eating peaks between 18 months and 3 years for evolutionary reasons - newfound mobility meant toddlers needed caution about what they put in their mouths. Other factors include: natural neophobia (fear of new foods), asserting independence by refusing food, decreased growth rate and appetite, heightened sensory sensitivities, and control issues around eating. Understanding that pickiness is normal helps parents stay calm and respond appropriately.",
+      
+      "Prevention Strategies: Start Early\nOffer variety from the beginning - expose babies to many flavors and textures during first year. Practice baby-led weaning to allow self-feeding and exploration. Eat meals together as a family - children model what they see. Avoid pressure, bribing, or making separate 'kid meals' - these actually increase pickiness. Maintain neutral responses to all foods - don't label foods 'good' or 'bad.' Keep offering rejected foods without pressure - acceptance often takes 10-15+ exposures.",
+      
+      "The Division of Responsibility\nFeeding expert Ellyn Satter's Division of Responsibility framework reduces conflict: Parents decide WHAT foods are offered, WHEN meals and snacks happen, and WHERE eating occurs. Children decide WHETHER to eat and HOW MUCH to eat. Trusting children to regulate their own intake reduces power struggles and promotes healthy eating behaviors long-term.",
+      
+      "Creating a Positive Mealtime Environment\nServe family-style meals where everyone eats the same foods. Sit together for meals without screens or distractions. Keep meals relatively short (20-30 minutes) and end when child is done, not when plate is clean. Offer at least one familiar food alongside new foods so child isn't faced with entirely unfamiliar meal. Involve children in food prep - kids are more likely to try foods they helped prepare. Stay calm and neutral about what child eats or doesn't eat.",
+      
+      "Exposure Without Pressure\nKeep offering foods child has rejected - repeated exposure increases acceptance. Don't force, pressure, bribe, or punish. Encouraging even looking at, touching, or smelling new foods is progress. Let child see YOU eating and enjoying all foods. Describe foods neutrally ('this is crunchy' rather than 'you'll love this'). Allow child to spit out food they don't like without comment.",
+      
+      "Addressing Sensory Sensitivities\nSome pickiness stems from sensory processing differences. Children may be sensitive to: texture (aversion to mushy, slimy, or mixed textures), temperature (only eating foods at specific temperatures), color (refusing foods of certain colors), or smell (overwhelmed by strong food odors). Respect genuine sensory issues while gently encouraging exposure. Occupational therapy can help children with significant sensory feeding challenges.",
+      
+      "What NOT to Do\nAvoid these common mistakes that worsen pickiness: Don't short-order cook separate meals for picky eaters. Don't force, bribe, or reward eating ('three more bites for dessert'). Don't label child as 'picky eater' in front of them. Don't show frustration or make eating a battle. Don't restrict access to preferred foods to force eating disliked foods. Don't use dessert as reward - this makes sweets more desirable and vegetables less.",
+      
+      "Nutritional Adequacy Despite Pickiness\nMost picky eaters get adequate nutrition even with limited variety. Offer multivitamin if concerned, but most aren't necessary. Focus on what child DOES eat over days/weeks, not individual meals. Ensure regular meal and snack times so child comes to table hungry. Offer full-fat dairy, nut butters, and calorie-dense foods if weight gain is concern. Consult pediatrician if child is losing weight, eating fewer than 20 foods, has nutritional deficiencies, or shows extreme anxiety around food.",
+      
+      "Making Meals Less Stressful\nLower your expectations - not every meal needs to be perfect. Celebrate small wins like touching new food or taking a tiny taste. Remember that appetite varies day to day. Avoid commenting on how much child eats or doesn't eat. Stay calm even if child eats nothing - they won't starve from missing one meal. Focus on making mealtimes pleasant, not on intake.",
+      
+      "Expanding Food Variety Gradually\nOffer new foods alongside accepted foods. Present tiny portions of new foods to make them less intimidating. Try different preparations of rejected foods - raw, cooked, roasted, pureed, etc. Use familiar vehicles - if child loves pasta, add small amounts of vegetables to pasta dishes. Make food exploration playful - let child help shop, prep, cook, and serve food.",
+      
+      "When to Seek Professional Help\nConsult pediatrician, dietitian, or feeding therapist if: child eats fewer than 20 different foods, child eliminates entire food groups, mealtimes involve extreme anxiety or meltdowns, child is losing weight or not growing, eating is impacting social situations significantly, you suspect sensory processing disorder, or feeding issues are causing family stress and conflict.",
+      
+      "Remember: Picky eating is a phase for most children. Staying calm, avoiding pressure, and trusting your child's appetite is the best approach. Your job is to offer nutritious foods regularly; their job is to decide what and how much to eat. Most picky eaters grow into adults with varied, healthy diets."
+    ]
+  },
+  "24": {
+    id: 24,
+    category: "Baby Sleep",
+    title: "Baby Sleep Training Methods: Complete Guide",
+    image: "https://images.unsplash.com/photo-1555252333-9f8e92e65df9?w=800&auto=format&fit=crop",
+    readTime: "12 min read",
+    date: "October 28, 2025",
+    author: "Pediatric Sleep Consultants",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1520483601346-d666e35df36c?w=1200&auto=format&fit=crop",
+        alt: "Peaceful baby sleeping in crib",
+        credit: "Photo by Picsea on Unsplash",
+        creditLink: "https://unsplash.com/@picsea",
+        position: 2
+      },
+      {
+        url: "https://images.unsplash.com/photo-1531353826977-0941b4779a1c?w=1200&auto=format&fit=crop",
+        alt: "Parent establishing bedtime routine with baby",
+        credit: "Photo by Jordan Whitt on Unsplash",
+        creditLink: "https://unsplash.com/@jwwhitt",
+        position: 7
+      }
+    ],
+    content: [
+      "Sleep training is one of the most debated topics in parenting. While some swear by it, others oppose any form of sleep training. This comprehensive guide covers various sleep training methods, allowing you to make an informed decision based on your family's needs, values, and circumstances.",
+      
+      "What is Sleep Training?\nSleep training teaches babies to fall asleep independently without extensive parental intervention. The goal is self-soothing - baby's ability to fall asleep without being rocked, fed, or held, and to return to sleep independently during normal night wakings. Sleep training is NOT ignoring baby's needs, forced independence, or harmful to attachment. It's teaching a valuable life skill within a secure, loving relationship.",
+      
+      "Is Your Baby Ready for Sleep Training?\nMost experts recommend waiting until at least 4-6 months when: baby weighs at least 14-15 pounds, can go longer stretches without feeding, has no medical issues affecting sleep, and shows developmental readiness for self-soothing. Earlier than 4 months, babies often genuinely need nighttime feeds and comfort. After 6 months, sleep training often becomes easier as babies are developmentally ready. Always consult your pediatrician before starting.",
+      
+      "Pre-Sleep Training Essentials\nBefore any sleep training method, establish these foundations: consistent bedtime routine (bath, book, song, etc.), appropriate wake windows for age, dark, cool sleep environment (68-72°F), white noise machine, safe sleep space (crib or bassinet), age-appropriate nap schedule, full tummy before bed (last feed before sleep).",
+      
+      "Method 1: Cry It Out (CIO) / Extinction\nHow it works: Put baby in crib awake, say goodnight, leave room, and don't return until morning or scheduled night feed. Pros: often works quickly (3-7 days), clear and consistent. Cons: emotionally difficult for parents, not suitable for all babies or families. Best for: parents who struggle with consistency in gentler methods, babies who escalate crying when parents check on them. Not recommended for: babies under 6 months, medically fragile babies, or parents uncomfortable with crying.",
+      
+      "Method 2: Ferber Method / Graduated Extinction\nHow it works: Put baby in crib awake and leave room. Return at increasing intervals (3 min, 5 min, 10 min, etc.) to briefly reassure without picking up. Repeat until baby sleeps. Pros: provides parental reassurance, often effective within 3-7 days, less extreme than full CIO. Cons: some babies escalate when parents check, can confuse some babies. Best for: parents who want to sleep train but find pure CIO too difficult, babies who respond well to parental reassurance.",
+      
+      "Method 3: Chair Method / Sleep Lady Shuffle\nHow it works: Sit in chair next to crib while baby falls asleep. Every few nights, move chair farther from crib until you're outside the room. Provide reassurance without picking up. Pros: gentle transition, parents remain present, works well for anxious babies or parents. Cons: takes longer (2-3 weeks), requires significant time commitment. Best for: parents prioritizing gentleness over speed, babies with separation anxiety.",
+      
+      "Method 4: Pick Up, Put Down (PUPD)\nHow it works: Pick up baby when crying, soothe until calm, put back down while awake. Repeat as needed until baby sleeps. Pros: very responsive, no sustained crying, builds trust. Cons: can take weeks or months, physically exhausting, may frustrate some babies. Best for: younger babies (4-6 months), parents uncomfortable with any crying, babies who respond well to physical comfort.",
+      
+      "Method 5: Fading Method\nHow it works: Gradually reduce sleep associations (rocking, feeding, holding) by doing them less intensely or for shorter periods over time. Pros: gentle and gradual, maintains closeness, flexible approach. Cons: takes longest (weeks to months), requires patience and consistency. Best for: parents wanting very gradual approach, families practicing attachment parenting principles.",
+      
+      "Method 6: No-Cry Solution\nHow it works: Focus on gentle techniques including dream feeds, swaddling transitions, gradual routine changes, and responding immediately to cries while gradually teaching self-soothing. Pros: no sustained crying, maintains responsive parenting, respectful of baby's emotional needs. Cons: can take months, may not work for all babies, requires significant parental presence. Best for: parents philosophically opposed to cry-based methods.",
+      
+      "Common Sleep Training Mistakes\nInconsistency - switching methods or giving up too soon undermines progress. Starting during developmental leaps, teething, or illness. Not addressing sleep environment issues. Unrealistic expectations about timeline or overnight success. Not having both parents on same page about approach. Sleep training naps and nights simultaneously (too overwhelming). Comparing your baby to others - all babies are different.",
+      
+      "Managing Sleep Regressions\nSleep regressions (4 months, 8 months, 12 months, 18 months, 2 years) are temporary disruptions caused by developmental leaps. During regressions: maintain consistency in routine and boundaries, offer extra daytime comfort, avoid creating new sleep associations, be patient - regressions typically last 2-4 weeks, consider adjusting schedule if wake windows have changed. Don't abandon sleep training during regressions - consistency helps baby return to good sleep faster.",
+      
+      "Handling Setbacks\nIllness, travel, time changes, and developmental changes can disrupt sleep. Respond to genuine needs during illness. Return to sleep training basics after travel. Gradually adjust for time changes. Remember that setbacks are normal and temporary. Stay calm and consistent - most babies return to good sleep quickly once disruption passes.",
+      
+      "When Sleep Training Doesn't Work\nIf sleep training fails after 2-3 weeks of consistency: consult pediatrician to rule out medical issues (reflux, allergies, sleep apnea), evaluate sleep schedule - over or undertiredness affects sleep, consider sleep environment factors, assess whether method fits your baby's temperament, seek professional help from pediatric sleep consultant.",
+      
+      "Remember: There is no 'right' method - the best approach is one that aligns with your family's values and your baby's temperament. Sleep training isn't required - some families prefer to wait for baby to naturally develop sleep skills. Whatever you choose, be consistent, stay informed, and trust your instincts as your baby's parent."
+    ]
+  },
+  "25": {
+    id: 25,
+    category: "Baby Sleep",
+    title: "Baby Sleep Schedules and Common Sleep Challenges by Age",
+    image: "https://images.unsplash.com/photo-1519785448607-12c7d020f7bc?w=800&auto=format&fit=crop",
+    readTime: "11 min read",
+    date: "October 25, 2025",
+    author: "Pediatric Sleep Specialists",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1502086223501-7ea6ecd79368?w=1200&auto=format&fit=crop",
+        alt: "Baby sleeping peacefully following age-appropriate schedule",
+        credit: "Photo by Garrett Jackson on Unsplash",
+        creditLink: "https://unsplash.com/@garrettjackson",
+        position: 3
+      }
+    ],
+    content: [
+      "Understanding age-appropriate sleep needs and common challenges helps parents set realistic expectations and create schedules that work. While every baby is unique, these guidelines provide a framework for supporting healthy sleep development from newborn through toddlerhood.",
+      
+      "Newborn (0-3 Months): Survival Mode\nTotal sleep: 14-17 hours per 24 hours. Naps: 4-6 short naps, 30 minutes to 2 hours. Night sleep: 8-10 hours with 2-4+ wakings. Wake windows: 45-90 minutes. Key challenges: day/night confusion, frequent feeding needs, short sleep cycles (45 min), inability to self-soothe. Focus on: establishing basic routines, teaching day vs night, safe sleep practices, responding to all needs promptly. Don't expect: sleeping through night, predictable schedule, long stretches of sleep.",
+      
+      "3-4 Months: The Dreaded Regression\nTotal sleep: 12-16 hours. Naps: 3-4 naps, 1-2 hours each. Night sleep: 10-12 hours with 2-3 wakings. Wake windows: 1.5-2 hours. Key challenges: 4-month sleep regression (permanent change in sleep architecture), increased awareness of surroundings, rolling and mobility changes, emerging object permanence. Focus on: consistent bedtime routine, beginning sleep environment optimization, practicing crib naps, patience during transition. Sleep training: can begin after 4 months if desired.",
+      
+      "5-7 Months: Establishing Patterns\nTotal sleep: 12-15 hours. Naps: 3 naps (transition to 2 naps around 6-9 months), 1-2 hours each. Night sleep: 10-12 hours with 1-2 wakings. Wake windows: 2-3 hours. Key challenges: teething pain, rolling both ways, sitting up, increased separation awareness, dropping third nap causes temporary disruption. Focus on: consistent schedule, sleep training if desired, addressing sleep associations, longer wake windows before bed. This is prime sleep training age if you choose to sleep train.",
+      
+      "8-10 Months: Separation and Movement\nTotal sleep: 12-15 hours. Naps: 2 naps, 1.5-2 hours each. Night sleep: 10-12 hours, may still have 1 waking. Wake windows: 2.5-3.5 hours. Key challenges: 8-month sleep regression, separation anxiety peaks, pulling to stand (and getting stuck), increased mobility, learning to drop down from standing. Focus on: practicing standing in crib during day, extra comfort during separation anxiety, consistent boundaries, patience during regression. Sleep regressions pass - stay consistent.",
+      
+      "11-14 Months: One Nap Transition\nTotal sleep: 12-14 hours. Naps: 2 naps transitioning to 1 (most around 15-18 months), 1-3 hours total. Night sleep: 10-12 hours, ideally sleeping through. Wake windows: 3-4 hours. Key challenges: nap transition causes temporary disruption, increased independence and limit-testing, 12-month sleep regression, molars teething. Focus on: flexible transition period - some days 1 nap, some 2 naps, earlier bedtime during transition, consistent boundaries.",
+      
+      "15-18 Months: The One-Nap Life\nTotal sleep: 11-14 hours. Naps: 1 nap, 2-3 hours. Night sleep: 10-12 hours. Wake windows: 5-6 hours before nap, 4-5 hours after nap to bedtime. Key challenges: 18-month sleep regression, separation anxiety resurges, language explosion affects sleep, testing boundaries. Focus on: maintaining one good nap, consistent bedtime routine, clear boundaries, patience during regression phase.",
+      
+      "18 Months - 3 Years: Toddler Sleep Challenges\nTotal sleep: 11-14 hours. Naps: 1 nap, 1-3 hours (some drop nap around 3 years). Night sleep: 10-12 hours. Wake windows: 5-6 hours. Key challenges: bedtime battles and stalling, climbing out of crib, fears and nightmares, resistance to naps, potty training affects nighttime sleep. Focus on: transitioning to toddler bed when climbing out, maintaining boundaries with empathy, addressing fears, consistent consequences for stalling.",
+      
+      "Sample Schedules by Age\n4 months: 7am wake, 8:30 nap 1, 11:30 nap 2, 2:30 nap 3, 4:30 catnap, 7pm bedtime. 6 months: 7am wake, 9am nap 1, 1pm nap 2, 7pm bedtime. 9 months: 7am wake, 9:30 nap 1, 2pm nap 2, 7:30pm bedtime. 12 months: 7am wake, 12pm nap (2-3 hours), 7:30pm bedtime. 2 years: 7am wake, 1pm nap (1.5-2 hours), 8pm bedtime.",
+      
+      "Wake Windows Explained\nWake windows are the amount of time baby can stay awake before needing sleep. Following age-appropriate wake windows prevents overtiredness, which actually makes sleep harder. Under-tired babies also struggle to sleep. Watch for sleep cues: yawning, rubbing eyes, fussiness, looking away, decreased activity. Use wake windows as guide, sleep cues as confirmation.",
+      
+      "Addressing Common Sleep Problems\nEarly morning waking (before 6am): ensure age-appropriate bedtime (not too early), room is very dark, white noise helps, sleep training needed if calling for you. Short naps (under 45 min): common under 6 months, after 6 months may indicate overtiredness, undertiredness, or need for sleep training. Night wakings: ensure no hunger, check sleep environment, consider sleep training after 6 months, address sleep associations. Bedtime battles: consistent routine, appropriate bedtime, clear boundaries, avoid screens before bed.",
+      
+      "When to Adjust Schedule\nSigns baby needs schedule change: consistently fighting naps or bedtime, waking much earlier than usual, unusually long night wakings, increased night wakings, naps suddenly getting very short. Adjustment might mean: pushing bedtime earlier or later, extending wake windows, dropping a nap, adjusting nap timing.",
+      
+      "Sleep Props and Associations\nSleep associations are things baby needs to fall asleep - feeding, rocking, pacifier, holding, etc. Some associations are problematic if they require parental intervention every sleep cycle. Decide which associations you're comfortable maintaining. If associations are exhausting you, sleep training can help establish independent sleep. Some families happily maintain associations for years - there's no 'right' answer.",
+      
+      "Safe Sleep Throughout First Year\nAlways follow AAP safe sleep guidelines: back to sleep, firm mattress with fitted sheet only, no blankets, pillows, bumpers, or toys in crib, room sharing (not bed sharing) for first 6-12 months, no overheating, pacifier offered for naps and night sleep. Transitional objects (lovey) can be introduced after 12 months.",
+      
+      "Remember: These schedules are guidelines, not rigid rules. Some babies need more sleep, others less. Watch your individual baby's cues and adjust accordingly. Consistency in routine matters more than exact timing. When in doubt, follow your baby's lead while providing structure and boundaries."
+    ]
   }
 };
 
