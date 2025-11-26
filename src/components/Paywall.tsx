@@ -11,56 +11,56 @@ export const Paywall = ({ onStartTrial }: PaywallProps) => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6">
-      <div className="max-w-md w-full space-y-8">
+      <div className="max-w-md w-full space-y-6">
         {/* Main Heading */}
-        <h1 className="text-3xl font-bold text-center text-foreground leading-tight">
-          Start your 3-day FREE trial to continue.
+        <h1 className="text-2xl font-bold text-center text-black leading-tight">
+          Start your 3-day FREE<br />trial to continue.
         </h1>
 
         {/* Timeline */}
-        <div className="space-y-6 py-8">
+        <div className="space-y-3 py-6">
           {/* Today */}
-          <div className="flex gap-4">
+          <div className="flex gap-3">
             <div className="flex flex-col items-center">
-              <div className="w-12 h-12 rounded-full bg-foreground flex items-center justify-center">
-                <Lock className="w-6 h-6 text-background" />
+              <div className="w-10 h-10 rounded-full bg-black flex items-center justify-center">
+                <Lock className="w-4 h-4 text-white" />
               </div>
-              <div className="w-0.5 h-16 bg-muted-foreground/30 mt-2" />
+              <div className="w-1 h-14 bg-gray-300 mt-1" />
             </div>
-            <div className="flex-1 pt-2">
-              <h3 className="text-lg font-semibold text-foreground mb-1">Today</h3>
-              <p className="text-sm text-muted-foreground">
+            <div className="flex-1 pt-1">
+              <h3 className="text-base font-semibold text-black mb-0.5">Today</h3>
+              <p className="text-xs text-gray-600">
                 Unlock all app features like Calculating, Adding Notes, Unlimited Goals and more.
               </p>
             </div>
           </div>
 
           {/* In 2 Days */}
-          <div className="flex gap-4">
+          <div className="flex gap-3">
             <div className="flex flex-col items-center">
-              <div className="w-12 h-12 rounded-full bg-foreground flex items-center justify-center">
-                <Bell className="w-6 h-6 text-background" />
+              <div className="w-10 h-10 rounded-full bg-black flex items-center justify-center">
+                <Bell className="w-4 h-4 text-white" />
               </div>
-              <div className="w-0.5 h-16 bg-muted-foreground/30 mt-2" />
+              <div className="w-1 h-14 bg-gray-300 mt-1" />
             </div>
-            <div className="flex-1 pt-2">
-              <h3 className="text-lg font-semibold text-foreground mb-1">In 2 Days - Reminder</h3>
-              <p className="text-sm text-muted-foreground">
+            <div className="flex-1 pt-1">
+              <h3 className="text-base font-semibold text-black mb-0.5">In 2 Days - Reminder</h3>
+              <p className="text-xs text-gray-600">
                 We'll send you a reminder before your trial ends.
               </p>
             </div>
           </div>
 
           {/* In 3 Days */}
-          <div className="flex gap-4">
+          <div className="flex gap-3">
             <div className="flex flex-col items-center">
-              <div className="w-12 h-12 rounded-full bg-foreground flex items-center justify-center">
-                <Crown className="w-6 h-6 text-background" />
+              <div className="w-10 h-10 rounded-full bg-black flex items-center justify-center">
+                <Crown className="w-4 h-4 text-white" />
               </div>
             </div>
-            <div className="flex-1 pt-2">
-              <h3 className="text-lg font-semibold text-foreground mb-1">In 3 Days - Billing Starts</h3>
-              <p className="text-sm text-muted-foreground">
+            <div className="flex-1 pt-1">
+              <h3 className="text-base font-semibold text-black mb-0.5">In 3 Days - Billing Starts</h3>
+              <p className="text-xs text-gray-600">
                 You'll be charged after 3 days unless you cancel anytime before.
               </p>
             </div>
