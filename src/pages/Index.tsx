@@ -21,6 +21,7 @@ import { ToolsPage } from "@/pages/ToolsPage";
 import { PregnancyTracker } from "@/components/PregnancyTracker";
 import { loadPregnancyMode } from "@/lib/pregnancyMode";
 import { CycleInsightsPage } from "@/pages/CycleInsightsPage";
+import { loadSectionVisibility } from "@/lib/sectionVisibility";
 import floralDecoration from "@/assets/floral-decoration.png";
 
 interface RegularPeriodData {
@@ -47,6 +48,7 @@ const Index = () => {
   const [showHistory, setShowHistory] = useState(false);
   const [showCycleInsights, setShowCycleInsights] = useState(false);
   const pregnancyMode = loadPregnancyMode();
+  const visibility = loadSectionVisibility();
 
   // Load saved period data on mount
   useEffect(() => {
@@ -215,21 +217,23 @@ const Index = () => {
             </div>
 
             {/* Period Calendar */}
-            <PeriodCalendar 
-              periodDates={periodDates}
-              cycleLength={periodData.cycleType === 'regular' ? periodData.cycleLength : periodData.mean}
-              lastPeriodDate={
-                periodData.cycleType === 'regular' 
-                  ? periodData.lastPeriodDate 
-                  : periodData.cycles[periodData.cycles.length - 1].endDate
-              }
-              periodDuration={
-                periodData.cycleType === 'regular' 
-                  ? periodData.periodDuration 
-                  : Math.round(periodData.cycles.reduce((sum, c) => sum + c.periodDuration, 0) / periodData.cycles.length)
-              }
-              onMonthChange={handleMonthChange}
-            />
+            {visibility.periodCalendar && (
+              <PeriodCalendar 
+                periodDates={periodDates}
+                cycleLength={periodData.cycleType === 'regular' ? periodData.cycleLength : periodData.mean}
+                lastPeriodDate={
+                  periodData.cycleType === 'regular' 
+                    ? periodData.lastPeriodDate 
+                    : periodData.cycles[periodData.cycles.length - 1].endDate
+                }
+                periodDuration={
+                  periodData.cycleType === 'regular' 
+                    ? periodData.periodDuration 
+                    : Math.round(periodData.cycles.reduce((sum, c) => sum + c.periodDuration, 0) / periodData.cycles.length)
+                }
+                onMonthChange={handleMonthChange}
+              />
+            )}
 
 
             {/* Confidence Score for Irregular Cycles */}
@@ -255,13 +259,15 @@ const Index = () => {
             )}
 
             {/* Info Cards - 2 Column Grid */}
-            <InfoCards 
-              periodData={periodData} 
-              displayMonth={selectedMonth || undefined} 
-            />
+            {visibility.periodInfoCards && (
+              <InfoCards 
+                periodData={periodData} 
+                displayMonth={selectedMonth || undefined} 
+              />
+            )}
 
             {/* Symptom Insights */}
-            {periodData.cycleType === 'regular' && (
+            {visibility.periodInsights && periodData.cycleType === 'regular' && (
               <SymptomInsights 
                 lastPeriodDate={periodData.lastPeriodDate}
                 cycleLength={periodData.cycleLength}
@@ -298,7 +304,7 @@ const Index = () => {
             </button>
 
             {/* Sticky Notes Section */}
-            <StickyNotes currentWeek={undefined} />
+            {visibility.periodStickyNotes && <StickyNotes currentWeek={undefined} />}
           </div>
         </div>
       )}

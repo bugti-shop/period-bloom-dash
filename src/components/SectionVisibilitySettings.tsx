@@ -15,8 +15,27 @@ export const SectionVisibilitySettings = () => {
     notifySuccess("Section visibility updated");
   };
 
-  const sections: { key: keyof SectionVisibility; label: string }[] = [
-    { key: "calendar", label: "Calendar" },
+  const periodSections: { key: keyof SectionVisibility; label: string }[] = [
+    { key: "periodCalendar", label: "Calendar" },
+    { key: "periodInfoCards", label: "Info Cards" },
+    { key: "periodInsights", label: "Symptom Insights" },
+    { key: "periodStickyNotes", label: "Sticky Notes" },
+  ];
+
+  const pregnancySections: { key: keyof SectionVisibility; label: string }[] = [
+    { key: "pregnancyProgress", label: "Pregnancy Progress" },
+    { key: "bumpGallery", label: "Bump Photo Gallery" },
+    { key: "babyAlbum", label: "Baby Album" },
+    { key: "familyAlbum", label: "Family Album" },
+    { key: "ultrasoundAlbum", label: "Ultrasound Album" },
+    { key: "appointmentCard", label: "Appointments" },
+    { key: "pregnancyWeightCard", label: "Weight Tracker" },
+    { key: "bloodPressureCard", label: "Blood Pressure" },
+    { key: "glucoseCard", label: "Glucose Tracker" },
+    { key: "pregnancyStickyNotes", label: "Sticky Notes" },
+  ];
+
+  const symptomsSections: { key: keyof SectionVisibility; label: string }[] = [
     { key: "symptoms", label: "Symptoms Tracker" },
     { key: "mood", label: "Mood Tracker" },
     { key: "intimacy", label: "Intimacy Tracker" },
@@ -26,8 +45,6 @@ export const SectionVisibilitySettings = () => {
     { key: "conceiving", label: "Conceiving Tracker" },
     { key: "medications", label: "Medications" },
     { key: "flowIntensity", label: "Flow Intensity" },
-    { key: "stickyNotes", label: "Sticky Notes" },
-    { key: "insights", label: "Insights" },
     { key: "symptomsChecker", label: "Symptom Checker" },
   ];
 
@@ -43,8 +60,54 @@ export const SectionVisibilitySettings = () => {
         </div>
       </div>
 
+      {/* Period Mode Sections */}
       <div className="glass-card rounded-xl p-4 space-y-3">
-        {sections.map(({ key, label }) => (
+        <h4 className="font-semibold text-sm text-muted-foreground mb-2">Period Mode Home</h4>
+        {periodSections.map(({ key, label }) => (
+          <div key={key} className="flex items-center justify-between py-2">
+            <Label htmlFor={`section-${key}`} className="flex items-center gap-2">
+              {visibility[key] ? (
+                <Eye className="w-4 h-4 text-green-600" />
+              ) : (
+                <EyeOff className="w-4 h-4 text-gray-400" />
+              )}
+              {label}
+            </Label>
+            <Switch
+              id={`section-${key}`}
+              checked={visibility[key]}
+              onCheckedChange={() => handleToggle(key)}
+            />
+          </div>
+        ))}
+      </div>
+
+      {/* Pregnancy Mode Sections */}
+      <div className="glass-card rounded-xl p-4 space-y-3">
+        <h4 className="font-semibold text-sm text-muted-foreground mb-2">Pregnancy Mode Home</h4>
+        {pregnancySections.map(({ key, label }) => (
+          <div key={key} className="flex items-center justify-between py-2">
+            <Label htmlFor={`section-${key}`} className="flex items-center gap-2">
+              {visibility[key] ? (
+                <Eye className="w-4 h-4 text-green-600" />
+              ) : (
+                <EyeOff className="w-4 h-4 text-gray-400" />
+              )}
+              {label}
+            </Label>
+            <Switch
+              id={`section-${key}`}
+              checked={visibility[key]}
+              onCheckedChange={() => handleToggle(key)}
+            />
+          </div>
+        ))}
+      </div>
+
+      {/* Symptoms Page Sections */}
+      <div className="glass-card rounded-xl p-4 space-y-3">
+        <h4 className="font-semibold text-sm text-muted-foreground mb-2">Symptoms Page (Both Modes)</h4>
+        {symptomsSections.map(({ key, label }) => (
           <div key={key} className="flex items-center justify-between py-2">
             <Label htmlFor={`section-${key}`} className="flex items-center gap-2">
               {visibility[key] ? (
