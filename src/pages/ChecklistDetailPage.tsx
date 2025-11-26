@@ -1,11 +1,16 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Plus, Trash2, Edit2 } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, Edit2, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import {
   loadChecklists,
   addChecklistItem,
@@ -34,6 +39,7 @@ export const ChecklistDetailPage = () => {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editText, setEditText] = useState("");
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [openCategories, setOpenCategories] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     const checklists = loadChecklists();
@@ -145,76 +151,95 @@ export const ChecklistDetailPage = () => {
         <div className="space-y-6">
           {checklist.categories ? (
             checklist.categories.map((category) => (
-              <div key={category.id} className="space-y-2">
-                <div className="flex items-center justify-between gap-2 mb-3">
-                  <div className="flex items-center gap-2">
-                    {category.icon && <span className="text-xl">{category.icon}</span>}
-                    <h3 className="text-lg font-semibold text-foreground">{category.title}</h3>
-                    <span className="text-sm text-muted-foreground">
-                      {category.items.filter((i) => i.completed).length}/{category.items.length}
-                    </span>
-                  </div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleMarkAllComplete(category.id)}
-                    className="text-xs"
-                  >
-                    Mark all complete
-                  </Button>
-                </div>
-                {category.items.map((item) => (
-                  <div
-                    key={item.id}
-                    className="p-4 rounded-lg bg-card border border-border flex items-center gap-3"
-                  >
-                    <Checkbox
-                      id={`checkbox-${item.id}`}
-                      checked={item.completed}
-                      onCheckedChange={() => handleToggle(item.id)}
-                      className="h-5 w-5 shrink-0 cursor-pointer"
-                    />
-                    {editingId === item.id ? (
-                      <Input
-                        value={editText}
-                        onChange={(e) => setEditText(e.target.value)}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") handleSaveEdit();
-                          if (e.key === "Escape") setEditingId(null);
-                        }}
-                        onBlur={handleSaveEdit}
-                        autoFocus
-                        className="flex-1"
-                      />
-                    ) : (
-                      <Label
-                        htmlFor={`checkbox-${item.id}`}
-                        className={`flex-1 cursor-pointer ${
-                          item.completed
-                            ? "line-through text-muted-foreground"
-                            : "text-foreground"
+              <Collapsible
+                key={category.id}
+                open={openCategories[category.id] || false}
+                onOpenChange={(isOpen) =>
+                  setOpenCategories((prev) => ({ ...prev, [category.id]: isOpen }))
+                }
+              >
+                <div className="bg-card rounded-lg border border-border p-4">
+                  <div className="flex items-center justify-between gap-2 mb-2">
+                    <CollapsibleTrigger className="flex items-center gap-2 flex-1 text-left hover:opacity-80">
+                      <ChevronDown
+                        className={`h-5 w-5 text-muted-foreground transition-transform ${
+                          openCategories[category.id] ? "rotate-180" : ""
                         }`}
-                      >
-                        {item.text}
-                      </Label>
-                    )}
+                      />
+                      {category.icon && <span className="text-xl">{category.icon}</span>}
+                      <h3 className="text-lg font-semibold text-foreground">{category.title}</h3>
+                      <span className="text-sm text-muted-foreground">
+                        {category.items.filter((i) => i.completed).length}/{category.items.length}
+                      </span>
+                    </CollapsibleTrigger>
                     <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleEdit(item.id, item.text)}
+                      variant="outline"
+                      size="sm"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleMarkAllComplete(category.id);
+                      }}
+                      className="text-xs"
                     >
-                      <Edit2 className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => setDeleteId(item.id)}
-                    >
-                      <Trash2 className="h-4 w-4 text-destructive" />
+                      Mark all complete
                     </Button>
                   </div>
-                ))}
-              </div>
+                  
+                  <CollapsibleContent className="space-y-2 mt-3">
+                    {category.items.map((item) => (
+                      <div
+                        key={item.id}
+                        className="p-4 rounded-lg bg-background border border-border flex items-center gap-3"
+                      >
+                        <Checkbox
+                          id={`checkbox-${item.id}`}
+                          checked={item.completed}
+                          onCheckedChange={() => handleToggle(item.id)}
+                          className="h-5 w-5 shrink-0 cursor-pointer"
+                        />
+                        {editingId === item.id ? (
+                          <Input
+                            value={editText}
+                            onChange={(e) => setEditText(e.target.value)}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") handleSaveEdit();
+                              if (e.key === "Escape") setEditingId(null);
+                            }}
+                            onBlur={handleSaveEdit}
+                            autoFocus
+                            className="flex-1"
+                          />
+                        ) : (
+                          <Label
+                            htmlFor={`checkbox-${item.id}`}
+                            className={`flex-1 cursor-pointer ${
+                              item.completed
+                                ? "line-through text-muted-foreground"
+                                : "text-foreground"
+                            }`}
+                          >
+                            {item.text}
+                          </Label>
+                        )}
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleEdit(item.id, item.text)}
+                        >
+                          <Edit2 className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => setDeleteId(item.id)}
+                        >
+                          <Trash2 className="h-4 w-4 text-destructive" />
+                        </Button>
+                      </div>
+                    ))}
+                  </CollapsibleContent>
+                </div>
+              </Collapsible>
             ))
           ) : (
             checklist.items.map((item) => (
