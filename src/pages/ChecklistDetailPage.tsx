@@ -4,6 +4,7 @@ import { ArrowLeft, Plus, Trash2, Edit2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import {
   loadChecklists,
@@ -149,8 +150,10 @@ export const ChecklistDetailPage = () => {
                     className="p-4 rounded-lg bg-card border border-border flex items-center gap-3"
                   >
                     <Checkbox
+                      id={`checkbox-${item.id}`}
                       checked={item.completed}
                       onCheckedChange={() => handleToggle(item.id)}
+                      className="h-5 w-5"
                     />
                     {editingId === item.id ? (
                       <Input
@@ -165,15 +168,16 @@ export const ChecklistDetailPage = () => {
                         className="flex-1"
                       />
                     ) : (
-                      <span
-                        className={`flex-1 ${
+                      <Label
+                        htmlFor={`checkbox-${item.id}`}
+                        className={`flex-1 cursor-pointer ${
                           item.completed
                             ? "line-through text-muted-foreground"
                             : "text-foreground"
                         }`}
                       >
                         {item.text}
-                      </span>
+                      </Label>
                     )}
                     <Button
                       variant="ghost"
@@ -200,8 +204,10 @@ export const ChecklistDetailPage = () => {
                 className="p-4 rounded-lg bg-card border border-border flex items-center gap-3"
               >
                 <Checkbox
+                  id={`checkbox-${item.id}`}
                   checked={item.completed}
                   onCheckedChange={() => handleToggle(item.id)}
+                  className="h-5 w-5"
                 />
                 {editingId === item.id ? (
                   <Input
@@ -216,15 +222,16 @@ export const ChecklistDetailPage = () => {
                     className="flex-1"
                   />
                 ) : (
-                  <span
-                    className={`flex-1 ${
+                  <Label
+                    htmlFor={`checkbox-${item.id}`}
+                    className={`flex-1 cursor-pointer ${
                       item.completed
                         ? "line-through text-muted-foreground"
                         : "text-foreground"
                     }`}
                   >
                     {item.text}
-                  </span>
+                  </Label>
                 )}
                 <Button
                   variant="ghost"
