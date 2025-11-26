@@ -546,6 +546,135 @@ const articleContent: Record<string, {
       
       "When in Doubt, Call\nPediatricians expect calls from new parents. It's better to call about something minor than miss a serious problem. Most offices have 24-hour nurse lines. For non-emergency questions, call during office hours. For fever in newborn under 3 months, difficulty breathing, lethargy, or other emergency signs, call immediately or go to ER. Keep pediatrician's number and nearest children's hospital location easily accessible. As you gain experience, you'll become more confident distinguishing normal from concerning—but err on the side of caution with newborns."
     ]
+  },
+  "11": {
+    id: 11,
+    category: "Baby Development",
+    title: "Baby Development: Months 2-4",
+    image: "https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?w=800&auto=format&fit=crop",
+    readTime: "8 min read",
+    date: "November 5, 2025",
+    author: "Pediatric Development Team",
+    images: [
+      {
+        url: "https://images.unsplash.com/photo-1566004100631-35d015d6a491?w=1200&auto=format&fit=crop",
+        alt: "Baby showing social development milestones",
+        credit: "Photo by Isaac Quesada on Unsplash",
+        creditLink: "https://unsplash.com/@isaacquesada",
+        position: 2
+      }
+    ],
+    content: [
+      "The first few months bring rapid developmental changes. Your baby transforms from a newborn into an interactive, social little person.",
+      "Month 2: Emerging Social Skills\nBy two months, babies become more alert and responsive. They track objects with their eyes and follow movement. Social smiles emerge around 6-8 weeks. They start cooing and may respond to loud noises. Neck muscles strengthen during tummy time.",
+      "Month 3: Growing Strength\nThree-month-olds show dramatic motor skill improvements. They hold their head steady when supported and push up during tummy time. Hand-eye coordination develops. Cooing becomes more frequent. They recognize familiar faces.",
+      "Month 4: Interactive and Playful\nFour months marks increased engagement. Babies laugh out loud and enjoy playing. Reaching becomes more deliberate. Many babies can roll from tummy to back. Vision improves significantly. Sleep patterns often become more predictable."
+    ]
+  },
+  "12": {
+    id: 12,
+    category: "Baby Development",
+    title: "Baby Development: Months 5-8",
+    image: "https://images.unsplash.com/photo-1607006095938-615c0ac25043?w=800&auto=format&fit=crop",
+    readTime: "9 min read",
+    date: "November 3, 2025",
+    author: "Pediatric Development Team",
+    images: [],
+    content: [
+      "Months 5-8 bring remarkable mobility and independence. Your baby transitions to sitting, reaching, grasping, and possibly crawling.",
+      "Month 5-6: Rolling and Sitting\nMost babies can roll both ways and begin sitting with support. Around six months, solid foods can be introduced. Object permanence begins developing.",
+      "Month 7-8: Mobility Increases\nSeven-month-olds become increasingly mobile through scooting or crawling. Some pull to standing. Pincer grasp develops. Babbling becomes complex with consonant-vowel combinations."
+    ]
+  },
+  "13": {
+    id: 13,
+    category: "Baby Development",
+    title: "Baby Development: Months 9-12",
+    image: "https://images.unsplash.com/photo-1555252333-9f8e92e65df9?w=800&auto=format&fit=crop",
+    readTime: "10 min read",
+    date: "November 1, 2025",
+    author: "Pediatric Development Team",
+    images: [],
+    content: [
+      "The transition from baby to toddler happens during months 9-12, bringing first words and steps for some.",
+      "Month 9-10: Problem Solving\nNine-month-olds understand cause and effect. They explore everything, pointing emerges, and imitation becomes sophisticated.",
+      "Month 11-12: First Birthday\nBy their first birthday, many babies take first steps. Vocabulary may include 1-3 words. They follow simple directions and enjoy pretend play."
+    ]
+  },
+  "14": {
+    id: 14,
+    category: "Mental Health",
+    title: "Understanding Postpartum Depression",
+    image: "https://images.unsplash.com/photo-1516302752625-fcc3c50ae61f?w=800&auto=format&fit=crop",
+    readTime: "10 min read",
+    date: "October 28, 2025",
+    author: "Perinatal Mental Health Specialists",
+    images: [],
+    content: [
+      "Postpartum depression affects 1 in 7 new mothers. Understanding PPD is the first step toward recognition, treatment, and recovery.",
+      "What is PPD?\nPPD is a serious mental health condition occurring after childbirth. It differs from baby blues and interferes with daily functioning and bonding.",
+      "Treatment is Highly Effective\nTherapy, medication, and support groups show excellent results. With proper treatment, most women fully recover."
+    ]
+  },
+  "15": {
+    id: 15,
+    category: "Mental Health",
+    title: "Managing Anxiety During Pregnancy",
+    image: "https://images.unsplash.com/photo-1544027993-37dbfe43562a?w=800&auto=format&fit=crop",
+    readTime: "8 min read",
+    date: "October 25, 2025",
+    author: "Perinatal Mental Health Specialists",
+    images: [],
+    content: [
+      "Pregnancy can trigger significant anxiety. Understanding and managing it ensures both your wellbeing and baby's healthy development.",
+      "Cognitive Strategies\nCBT techniques identify and challenge anxious thoughts. Replace catastrophic thinking with realistic assessment.",
+      "When to Seek Help\nIf anxiety interferes with daily functioning or you experience panic attacks, consult a mental health professional."
+    ]
+  },
+  "16": {
+    id: 16,
+    category: "Mental Health",
+    title: "Coping Strategies for Perinatal Mental Health",
+    image: "https://images.unsplash.com/photo-1499209974431-9dddcece7f88?w=800&auto=format&fit=crop",
+    readTime: "9 min read",
+    date: "October 22, 2025",
+    author: "Perinatal Mental Health Specialists",
+    images: [],
+    content: [
+      "The perinatal period presents unique mental health challenges. These evidence-based coping strategies help navigate this transformative time.",
+      "Build Support Networks\nSocial support is the most protective factor. Identify support people before crisis hits.",
+      "Practice Self-Compassion\nTreat yourself with kindness. Replace self-criticism with understanding."
+    ]
+  },
+  "17": {
+    id: 17,
+    category: "Pregnancy Complications",
+    title: "Understanding Gestational Diabetes",
+    image: "https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=800&auto=format&fit=crop",
+    readTime: "9 min read",
+    date: "October 20, 2025",
+    author: "Maternal-Fetal Medicine Team",
+    images: [],
+    content: [
+      "Gestational diabetes affects 6-9% of pregnancies. Proper management ensures healthy outcomes for mother and baby.",
+      "Managing Through Diet\nDiet is the cornerstone of management. Choose complex carbs and pair with protein and healthy fats.",
+      "After Delivery\nBlood sugar typically returns to normal after delivery, but lifetime diabetes risk increases."
+    ]
+  },
+  "18": {
+    id: 18,
+    category: "Pregnancy Complications",
+    title: "Preeclampsia: Recognition and Management",
+    image: "https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=800&auto=format&fit=crop",
+    readTime: "8 min read",
+    date: "October 18, 2025",
+    author: "Maternal-Fetal Medicine Team",
+    images: [],
+    content: [
+      "Preeclampsia is a serious complication with high blood pressure after 20 weeks. Early recognition and management are critical.",
+      "Warning Signs\nPersistent headaches, vision changes, upper abdominal pain, sudden swelling require immediate evaluation.",
+      "Delivery is the Cure\nThe only cure is delivering the baby. Close monitoring allows safe pregnancy continuation when mild."
+    ]
   }
 };
 

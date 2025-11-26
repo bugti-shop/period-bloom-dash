@@ -93,6 +93,70 @@ const articles = [
     excerpt: "Learn to identify warning signs of illness in newborns and when to seek immediate medical care.",
     image: "https://images.pexels.com/photos/8491929/pexels-photo-8491929.jpeg?w=800&auto=format&fit=crop",
     readTime: "7 min read"
+  },
+  {
+    id: 11,
+    category: "Baby Development",
+    title: "Baby Development: Months 2-4",
+    excerpt: "Discover the exciting milestones and rapid changes your baby experiences from two to four months.",
+    image: "https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?w=800&auto=format&fit=crop",
+    readTime: "8 min read"
+  },
+  {
+    id: 12,
+    category: "Baby Development",
+    title: "Baby Development: Months 5-8",
+    excerpt: "Learn about sitting, rolling, crawling, and starting solids during these transformative months.",
+    image: "https://images.unsplash.com/photo-1607006095938-615c0ac25043?w=800&auto=format&fit=crop",
+    readTime: "9 min read"
+  },
+  {
+    id: 13,
+    category: "Baby Development",
+    title: "Baby Development: Months 9-12",
+    excerpt: "Celebrate your baby's first year with milestones like first words, first steps, and growing independence.",
+    image: "https://images.unsplash.com/photo-1555252333-9f8e92e65df9?w=800&auto=format&fit=crop",
+    readTime: "10 min read"
+  },
+  {
+    id: 14,
+    category: "Mental Health",
+    title: "Understanding Postpartum Depression",
+    excerpt: "Recognize the signs, understand the causes, and learn about effective treatments for postpartum depression.",
+    image: "https://images.unsplash.com/photo-1516302752625-fcc3c50ae61f?w=800&auto=format&fit=crop",
+    readTime: "10 min read"
+  },
+  {
+    id: 15,
+    category: "Mental Health",
+    title: "Managing Anxiety During Pregnancy",
+    excerpt: "Practical strategies and professional insights for managing pregnancy-related anxiety and worry.",
+    image: "https://images.unsplash.com/photo-1544027993-37dbfe43562a?w=800&auto=format&fit=crop",
+    readTime: "8 min read"
+  },
+  {
+    id: 16,
+    category: "Mental Health",
+    title: "Coping Strategies for Perinatal Mental Health",
+    excerpt: "Evidence-based techniques to support your emotional wellbeing during pregnancy and postpartum.",
+    image: "https://images.unsplash.com/photo-1499209974431-9dddcece7f88?w=800&auto=format&fit=crop",
+    readTime: "9 min read"
+  },
+  {
+    id: 17,
+    category: "Pregnancy Complications",
+    title: "Understanding Gestational Diabetes",
+    excerpt: "Comprehensive guide to managing blood sugar during pregnancy and ensuring healthy outcomes.",
+    image: "https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=800&auto=format&fit=crop",
+    readTime: "9 min read"
+  },
+  {
+    id: 18,
+    category: "Pregnancy Complications",
+    title: "Preeclampsia: Recognition and Management",
+    excerpt: "Essential information about high blood pressure in pregnancy, warning signs, and treatment approaches.",
+    image: "https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=800&auto=format&fit=crop",
+    readTime: "8 min read"
   }
 ];
 
@@ -104,6 +168,9 @@ const categories = [
   { name: "Postpartum", icon: Heart },
   { name: "Breastfeeding", icon: Baby },
   { name: "Newborn Care", icon: Stethoscope },
+  { name: "Baby Development", icon: Baby },
+  { name: "Mental Health", icon: Heart },
+  { name: "Pregnancy Complications", icon: Stethoscope },
   { name: "Bookmarked", icon: Bookmark }
 ];
 
