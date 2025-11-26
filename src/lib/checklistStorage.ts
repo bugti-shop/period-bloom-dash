@@ -618,9 +618,21 @@ export const toggleChecklistItem = (
     if (c.id === checklistId) {
       return {
         ...c,
+        // Toggle in top-level items (for simple checklists)
         items: c.items.map((item) =>
           item.id === itemId ? { ...item, completed: !item.completed } : item
         ),
+        // Also toggle inside categories, if present
+        categories: c.categories
+          ? c.categories.map((cat) => ({
+              ...cat,
+              items: cat.items.map((item) =>
+                item.id === itemId
+                  ? { ...item, completed: !item.completed }
+                  : item
+              ),
+            }))
+          : c.categories,
       };
     }
     return c;
