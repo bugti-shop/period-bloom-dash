@@ -111,7 +111,7 @@ export const SymptomsPage = () => {
       <div className="space-y-4">
           {/* Period Calendar */}
           {periodData && (
-            <div className="bg-white rounded-xl p-4 shadow-sm">
+            <div className="bg-card rounded-xl p-4 shadow-sm border border-border">
               <PeriodCalendar
                 periodDates={periodDates}
                 cycleLength={periodData.cycleLength}
@@ -155,7 +155,7 @@ export const SymptomsPage = () => {
             </Button>
             <Button
               onClick={() => setShowHistory(true)}
-              className="py-4 rounded-xl font-semibold text-xs bg-white text-gray-600 border border-gray-300 hover:bg-gray-50"
+              className="py-4 rounded-xl font-semibold text-xs bg-muted text-foreground border border-border hover:bg-muted/80"
             >
               History
             </Button>

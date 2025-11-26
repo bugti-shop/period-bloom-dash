@@ -1239,7 +1239,7 @@ export const ArticleDetailPage = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Header with Progress Bar */}
-      <header className="sticky top-0 z-50 w-full border-b border-border bg-white shadow-sm">
+      <header className="sticky top-0 z-50 w-full border-b border-border bg-card shadow-sm">
         <div className="max-w-4xl mx-auto px-4 py-3">
           <div className="flex items-center justify-between mb-2">
             <Button
@@ -1460,7 +1460,7 @@ export const ArticleDetailPage = () => {
                     navigate(`/article/${relatedArticle.id}`);
                     window.scrollTo(0, 0);
                   }}
-                  className="bg-white rounded-xl overflow-hidden shadow-sm border border-border hover:shadow-md transition-shadow cursor-pointer"
+                  className="bg-card rounded-xl overflow-hidden shadow-sm border border-border hover:shadow-md transition-shadow cursor-pointer"
                 >
                   <div className="aspect-video w-full overflow-hidden">
                     <img

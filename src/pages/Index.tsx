@@ -173,7 +173,7 @@ const Index = () => {
   // Render different pages based on active tab
   if (!periodData) {
     return (
-      <div className="min-h-screen bg-white pb-20">
+      <div className="min-h-screen bg-background pb-20">
         <Header showArticlesToggle={true} />
         <div className="max-w-7xl mx-auto py-6 px-4">
           <div className="max-w-md mx-auto">
@@ -201,7 +201,7 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background">
       <Header showArticlesToggle={true} />
       
       {/* Render content based on active tab */}

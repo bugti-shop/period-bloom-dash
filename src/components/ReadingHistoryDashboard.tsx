@@ -34,7 +34,7 @@ export const ReadingHistoryDashboard = ({ onBack }: ReadingHistoryDashboardProps
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-50 w-full border-b border-border bg-white shadow-sm">
+      <header className="sticky top-0 z-50 w-full border-b border-border bg-card shadow-sm">
         <div className="max-w-7xl mx-auto px-4 py-3">
           <Button
             variant="ghost"

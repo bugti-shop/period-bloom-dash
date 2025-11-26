@@ -62,7 +62,7 @@ export const HistoryPage = ({ onBack }: HistoryPageProps) => {
             {history.map((entry, index) => (
               <div
                 key={entry.id}
-                className="bg-white rounded-2xl p-4 shadow-sm"
+                className="bg-card rounded-2xl p-4 shadow-sm border border-border"
               >
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-3">

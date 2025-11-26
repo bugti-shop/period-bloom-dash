@@ -172,7 +172,7 @@ export const PeriodCalendar = ({
           const isToday = isSameDay(day, today);
           const isSelected = selectedDate && isSameDay(day, selectedDate);
           
-          let bgClass = "bg-white/40 text-foreground";
+          let bgClass = "bg-muted/40 text-foreground";
           
           if (isPeriod) {
             const periodIndex = allPeriodDates.findIndex(pDate => isSameDay(pDate, day)) % periodDuration;
