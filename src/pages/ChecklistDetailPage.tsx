@@ -39,7 +39,7 @@ export const ChecklistDetailPage = () => {
     if (found) {
       setChecklist(found);
     } else {
-      navigate("/checklists");
+      navigate("/");
     }
   }, [id, navigate]);
 
@@ -100,7 +100,7 @@ export const ChecklistDetailPage = () => {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => navigate("/checklists")}
+            onClick={() => navigate(-1)}
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
