@@ -23,6 +23,8 @@ import { loadPregnancyMode } from "@/lib/pregnancyMode";
 import { CycleInsightsPage } from "@/pages/CycleInsightsPage";
 import { loadSectionVisibility } from "@/lib/sectionVisibility";
 import floralDecoration from "@/assets/floral-decoration.png";
+import { Paywall } from "@/components/Paywall";
+import { hasStartedTrial, startTrial } from "@/lib/trialStorage";
 
 interface RegularPeriodData {
   cycleType: 'regular';
@@ -47,8 +49,14 @@ const Index = () => {
   const [selectedMonth, setSelectedMonth] = useState<Date | null>(null);
   const [showHistory, setShowHistory] = useState(false);
   const [showCycleInsights, setShowCycleInsights] = useState(false);
+  const [trialStarted, setTrialStarted] = useState(hasStartedTrial());
   const pregnancyMode = loadPregnancyMode();
   const visibility = loadSectionVisibility();
+
+  const handleStartTrial = () => {
+    startTrial();
+    setTrialStarted(true);
+  };
 
   // Load saved period data on mount
   useEffect(() => {
@@ -151,6 +159,11 @@ const Index = () => {
   };
 
   const periodDates = calculatePeriodDates();
+
+  // Show paywall if trial hasn't started
+  if (!trialStarted) {
+    return <Paywall onStartTrial={handleStartTrial} />;
+  }
 
   // Check if pregnancy mode is active
   if (pregnancyMode.isPregnancyMode && pregnancyMode.lastPeriodDate) {
