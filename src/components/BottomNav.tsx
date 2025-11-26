@@ -1,14 +1,16 @@
-import { Home, Calendar, Activity, Settings, Calculator } from "lucide-react";
+import { Home, Calendar, Activity, Settings, Calculator, ListChecks } from "lucide-react";
 import { useState } from "react";
 
-type NavItem = "home" | "symptoms" | "tools" | "settings";
+type NavItem = "home" | "symptoms" | "tools" | "settings" | "checklists";
 
 interface BottomNavProps {
   activeTab?: NavItem;
   onTabChange?: (tab: NavItem) => void;
+  hideTools?: boolean;
+  showChecklists?: boolean;
 }
 
-export const BottomNav = ({ activeTab = "home", onTabChange }: BottomNavProps) => {
+export const BottomNav = ({ activeTab = "home", onTabChange, hideTools = false, showChecklists = false }: BottomNavProps) => {
   const [active, setActive] = useState<NavItem>(activeTab);
 
   const handleTabClick = (tab: NavItem) => {
@@ -19,7 +21,8 @@ export const BottomNav = ({ activeTab = "home", onTabChange }: BottomNavProps) =
   const navItems = [
     { id: "home" as NavItem, label: "Home", icon: Home },
     { id: "symptoms" as NavItem, label: "Symptoms", icon: Activity },
-    { id: "tools" as NavItem, label: "Tools", icon: Calculator },
+    ...(showChecklists ? [{ id: "checklists" as NavItem, label: "Lists", icon: ListChecks }] : []),
+    ...(!hideTools ? [{ id: "tools" as NavItem, label: "Tools", icon: Calculator }] : []),
     { id: "settings" as NavItem, label: "Settings", icon: Settings },
   ];
 

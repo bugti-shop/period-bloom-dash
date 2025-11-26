@@ -14,6 +14,7 @@ import { BottomNav } from "@/components/BottomNav";
 import { SymptomsPage } from "@/pages/SymptomsPage";
 import { SettingsPage } from "@/pages/SettingsPage";
 import { ToolsPage } from "@/pages/ToolsPage";
+import { ChecklistsPage } from "@/pages/ChecklistsPage";
 import { 
   calculatePregnancyWeek, 
   calculateDueDate, 
@@ -26,7 +27,7 @@ interface PregnancyTrackerProps {
 }
 
 export const PregnancyTracker = ({ lastPeriodDate: initialLastPeriodDate }: PregnancyTrackerProps) => {
-  const [activeTab, setActiveTab] = useState<"home" | "symptoms" | "settings" | "tools">("home");
+  const [activeTab, setActiveTab] = useState<"home" | "symptoms" | "settings" | "tools" | "checklists">("home");
   const [lastPeriodDate, setLastPeriodDate] = useState(initialLastPeriodDate);
   const [manualWeek, setManualWeek] = useState<number | undefined>(undefined);
   const [showGallery, setShowGallery] = useState(false);
@@ -68,7 +69,7 @@ export const PregnancyTracker = ({ lastPeriodDate: initialLastPeriodDate }: Preg
     });
   };
 
-  const handleTabChange = (tab: "home" | "symptoms" | "settings" | "tools") => {
+  const handleTabChange = (tab: "home" | "symptoms" | "settings" | "tools" | "checklists") => {
     setActiveTab(tab);
   };
 
@@ -117,10 +118,13 @@ export const PregnancyTracker = ({ lastPeriodDate: initialLastPeriodDate }: Preg
       {activeTab === "symptoms" && <SymptomsPage />}
       {activeTab === "settings" && <SettingsPage />}
       {activeTab === "tools" && <ToolsPage />}
+      {activeTab === "checklists" && <ChecklistsPage />}
       
       <BottomNav 
         activeTab={activeTab} 
-        onTabChange={handleTabChange} 
+        onTabChange={handleTabChange}
+        hideTools={true}
+        showChecklists={true}
       />
     </div>
   );
