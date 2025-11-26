@@ -490,12 +490,58 @@ const defaultChecklists: Checklist[] = [
   },
 ];
 
+const shouldUpdateWithDefaults = (stored: Checklist[]): boolean => {
+  // Check if any default checklist needs updating (has categories/items but stored version doesn't)
+  return stored.some(storedList => {
+    const defaultList = defaultChecklists.find(d => d.id === storedList.id);
+    if (!defaultList) return false;
+    
+    // If default has categories but stored doesn't, or stored categories are empty
+    if (defaultList.categories && defaultList.categories.length > 0) {
+      if (!storedList.categories || storedList.categories.length === 0) return true;
+      // Check if categories exist but have no items
+      const hasEmptyCategories = storedList.categories.every(cat => cat.items.length === 0);
+      if (hasEmptyCategories) return true;
+    }
+    
+    // If default has items but stored doesn't
+    if (defaultList.items && defaultList.items.length > 0 && storedList.items.length === 0) {
+      return true;
+    }
+    
+    return false;
+  });
+};
+
 export const loadChecklists = (): Checklist[] => {
   const stored = loadFromLocalStorage<Checklist[]>(STORAGE_KEY);
   if (!stored) {
     saveToLocalStorage(STORAGE_KEY, defaultChecklists);
     return defaultChecklists;
   }
+  
+  // Check if we need to update with default content
+  if (shouldUpdateWithDefaults(stored)) {
+    const updated = stored.map(storedList => {
+      const defaultList = defaultChecklists.find(d => d.id === storedList.id);
+      if (!defaultList) return storedList;
+      
+      // Update with default categories and items if stored version is empty
+      const needsCategoryUpdate = defaultList.categories && 
+        (!storedList.categories || storedList.categories.every(cat => cat.items.length === 0));
+      const needsItemsUpdate = defaultList.items && defaultList.items.length > 0 && storedList.items.length === 0;
+      
+      return {
+        ...storedList,
+        categories: needsCategoryUpdate ? defaultList.categories : storedList.categories,
+        items: needsItemsUpdate ? defaultList.items : storedList.items,
+      };
+    });
+    
+    saveToLocalStorage(STORAGE_KEY, updated);
+    return updated.sort((a, b) => a.order - b.order);
+  }
+  
   return stored.sort((a, b) => a.order - b.order);
 };
 
