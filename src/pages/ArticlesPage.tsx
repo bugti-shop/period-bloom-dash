@@ -157,6 +157,62 @@ const articles = [
     excerpt: "Essential information about high blood pressure in pregnancy, warning signs, and treatment approaches.",
     image: "https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=800&auto=format&fit=crop",
     readTime: "8 min read"
+  },
+  {
+    id: 19,
+    category: "Partner Support",
+    title: "Partner Support During Pregnancy",
+    excerpt: "Tips and guidance for non-birthing partners to meaningfully support their partner throughout pregnancy.",
+    image: "https://images.unsplash.com/photo-1511895426328-dc8714191300?w=800&auto=format&fit=crop",
+    readTime: "10 min read"
+  },
+  {
+    id: 20,
+    category: "Partner Support",
+    title: "Supporting Your Partner Postpartum",
+    excerpt: "Essential ways non-birthing partners can provide crucial support during the fourth trimester recovery period.",
+    image: "https://images.unsplash.com/photo-1476703993599-0035a21b17a9?w=800&auto=format&fit=crop",
+    readTime: "11 min read"
+  },
+  {
+    id: 21,
+    category: "Infant Nutrition",
+    title: "Introducing Solids: A Complete Guide",
+    excerpt: "Everything you need to know about starting solid foods, from readiness signs to first foods and beyond.",
+    image: "https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?w=800&auto=format&fit=crop",
+    readTime: "10 min read"
+  },
+  {
+    id: 22,
+    category: "Infant Nutrition",
+    title: "Safe Allergen Introduction: Evidence-Based Guide",
+    excerpt: "Current research-backed guidance on introducing common allergens early to help prevent food allergies.",
+    image: "https://images.unsplash.com/photo-1587049016823-69c2f2bb86c8?w=800&auto=format&fit=crop",
+    readTime: "9 min read"
+  },
+  {
+    id: 23,
+    category: "Infant Nutrition",
+    title: "Picky Eating: Prevention and Management Strategies",
+    excerpt: "Evidence-based approaches to prevent and handle picky eating while making mealtimes peaceful and positive.",
+    image: "https://images.unsplash.com/photo-1609220136736-443140cffec6?w=800&auto=format&fit=crop",
+    readTime: "9 min read"
+  },
+  {
+    id: 24,
+    category: "Baby Sleep",
+    title: "Baby Sleep Training Methods: Complete Guide",
+    excerpt: "Comprehensive overview of sleep training approaches from gentle to cry-it-out to help you choose what fits your family.",
+    image: "https://images.unsplash.com/photo-1555252333-9f8e92e65df9?w=800&auto=format&fit=crop",
+    readTime: "12 min read"
+  },
+  {
+    id: 25,
+    category: "Baby Sleep",
+    title: "Baby Sleep Schedules and Common Sleep Challenges by Age",
+    excerpt: "Age-by-age sleep schedules, wake windows, and solutions to common sleep challenges from newborn through toddlerhood.",
+    image: "https://images.unsplash.com/photo-1519785448607-12c7d020f7bc?w=800&auto=format&fit=crop",
+    readTime: "11 min read"
   }
 ];
 
@@ -171,6 +227,9 @@ const categories = [
   { name: "Baby Development", icon: Baby },
   { name: "Mental Health", icon: Heart },
   { name: "Pregnancy Complications", icon: Stethoscope },
+  { name: "Partner Support", icon: Heart },
+  { name: "Infant Nutrition", icon: Baby },
+  { name: "Baby Sleep", icon: Stethoscope },
   { name: "Bookmarked", icon: Bookmark }
 ];
 
