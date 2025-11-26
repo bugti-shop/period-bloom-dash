@@ -378,42 +378,42 @@ export const AstrologyCalendar = ({
         </div>
       </div>
 
-      {/* Horizontal Date Scroll - Bottom */}
-      <div className="mt-6 overflow-x-auto scrollbar-hide">
-        <div className="flex gap-4 justify-center min-w-max px-4">
-          {visibleDates.map((date, index) => {
-            const isCenter = index === 7;
-            const dayName = format(date, "EEE");
-            const dayNum = format(date, "d");
+      {/* Horizontal Date Scroll - Bottom - All 12 Months */}
+      <div className="mt-8 overflow-hidden">
+        <div className="flex gap-3 overflow-x-auto pb-4 px-4 scrollbar-hide justify-start">
+          {Array.from({ length: 365 }).map((_, i) => {
+            const date = addDays(lastPeriodDate, i);
+            const dayInCycle = i % cycleLength;
+            const isCurrentDay = dayInCycle === currentDayIndex;
             
             return (
               <button
-                key={date.toString()}
+                key={i}
                 onClick={() => {
-                  const daysDiff = Math.floor((date.getTime() - lastPeriodDate.getTime()) / (1000 * 60 * 60 * 24));
-                  const targetIndex = daysDiff % cycleLength;
-                  const rotationNeeded = ((baseDayInCycle - targetIndex) / cycleLength) * 360;
-                  setRotation(rotationNeeded);
+                  const targetAngle = -(dayInCycle * (360 / cycleLength)) - 90;
+                  const currentNormalizedRotation = ((rotation % 360) + 360) % 360;
+                  let delta = targetAngle - currentNormalizedRotation;
+                  
+                  if (delta > 180) delta -= 360;
+                  if (delta < -180) delta += 360;
+                  
+                  setRotation(rotation + delta);
                 }}
-                className={`flex flex-col items-center transition-all ${
-                  isCenter 
-                    ? "opacity-100 scale-110" 
-                    : "opacity-50 scale-90"
+                className={`flex-shrink-0 transition-all duration-300 ${
+                  isCurrentDay 
+                    ? 'scale-110 opacity-100' 
+                    : 'scale-90 opacity-60 hover:opacity-80'
                 }`}
               >
-                <div className={`w-1 h-16 mb-2 rounded-full ${
-                  isCenter ? "bg-primary" : "bg-muted"
-                }`} />
-                <span className={`text-xs font-medium mb-1 ${
-                  isCenter ? "text-foreground" : "text-muted-foreground"
+                <div className={`w-16 h-20 rounded-xl flex flex-col items-center justify-center transition-all ${
+                  isCurrentDay
+                    ? 'bg-primary text-primary-foreground shadow-lg'
+                    : 'bg-muted/30 text-muted-foreground hover:bg-muted/50'
                 }`}>
-                  {dayName}
-                </span>
-                <span className={`text-lg font-bold ${
-                  isCenter ? "text-primary" : "text-muted-foreground"
-                }`}>
-                  {dayNum}
-                </span>
+                  <span className="text-xs font-medium">{format(date, "EEE")}</span>
+                  <span className="text-2xl font-bold">{format(date, "d")}</span>
+                  <span className="text-xs">{format(date, "MMM")}</span>
+                </div>
               </button>
             );
           })}
