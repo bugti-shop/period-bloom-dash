@@ -22,10 +22,10 @@ export const Paywall = ({ onStartTrial }: PaywallProps) => {
           {/* Today */}
           <div className="flex gap-3">
             <div className="flex flex-col items-center">
-              <div className="w-10 h-10 rounded-full bg-black flex items-center justify-center">
+              <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: '#ee5ea6' }}>
                 <Lock className="w-4 h-4 text-white" />
               </div>
-              <div className="w-2 h-12 bg-gray-300 mt-1" />
+              <div className="w-3 h-12 bg-gray-300 mt-1" />
             </div>
             <div className="flex-1 pt-1">
               <h3 className="text-base font-semibold text-black mb-0.5">Today</h3>
@@ -38,10 +38,10 @@ export const Paywall = ({ onStartTrial }: PaywallProps) => {
           {/* In 2 Days */}
           <div className="flex gap-3">
             <div className="flex flex-col items-center">
-              <div className="w-10 h-10 rounded-full bg-black flex items-center justify-center">
+              <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: '#ee5ea6' }}>
                 <Bell className="w-4 h-4 text-white" />
               </div>
-              <div className="w-2 h-12 bg-gray-300 mt-1" />
+              <div className="w-3 h-12 bg-gray-300 mt-1" />
             </div>
             <div className="flex-1 pt-1">
               <h3 className="text-base font-semibold text-black mb-0.5">In 2 Days - Reminder</h3>
@@ -54,7 +54,7 @@ export const Paywall = ({ onStartTrial }: PaywallProps) => {
           {/* In 3 Days */}
           <div className="flex gap-3">
             <div className="flex flex-col items-center">
-              <div className="w-10 h-10 rounded-full bg-black flex items-center justify-center">
+              <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: '#ee5ea6' }}>
                 <Crown className="w-4 h-4 text-white" />
               </div>
             </div>
@@ -71,32 +71,34 @@ export const Paywall = ({ onStartTrial }: PaywallProps) => {
         <div className="flex gap-4">
           <button
             onClick={() => setSelectedPlan("monthly")}
-            className={`flex-1 p-4 rounded-2xl border-2 transition-colors ${
+            className={`flex-1 p-3 rounded-2xl border-2 transition-colors ${
               selectedPlan === "monthly"
-                ? "border-foreground bg-foreground/5"
+                ? "bg-foreground/5"
                 : "border-border bg-background"
             }`}
+            style={selectedPlan === "monthly" ? { borderColor: '#ee5ea6' } : {}}
           >
             <div className="text-center">
-              <div className="text-lg font-semibold text-foreground mb-1">Monthly</div>
-              <div className="text-base text-muted-foreground">$3.99/mo</div>
+              <div className="text-base font-semibold text-foreground mb-1">Monthly</div>
+              <div className="text-sm text-muted-foreground">$3.99/mo</div>
             </div>
           </button>
 
           <button
             onClick={() => setSelectedPlan("yearly")}
-            className={`flex-1 p-4 rounded-2xl border-2 transition-colors relative ${
+            className={`flex-1 p-3 rounded-2xl border-2 transition-colors relative ${
               selectedPlan === "yearly"
-                ? "border-foreground bg-foreground/5"
+                ? "bg-foreground/5"
                 : "border-border bg-background"
             }`}
+            style={selectedPlan === "yearly" ? { borderColor: '#ee5ea6' } : {}}
           >
-            <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-foreground text-background px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap">
+            <div className="absolute -top-3 left-1/2 -translate-x-1/2 text-white px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap" style={{ backgroundColor: '#ee5ea6' }}>
               3 DAYS FREE
             </div>
             <div className="text-center">
-              <div className="text-lg font-semibold text-foreground mb-1">Yearly</div>
-              <div className="text-base text-muted-foreground">$2.35/mo</div>
+              <div className="text-base font-semibold text-foreground mb-1">Yearly</div>
+              <div className="text-sm text-muted-foreground">$2.35/mo</div>
             </div>
           </button>
         </div>
