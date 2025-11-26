@@ -25,6 +25,7 @@ import { loadSectionVisibility } from "@/lib/sectionVisibility";
 import floralDecoration from "@/assets/floral-decoration.png";
 import { Paywall } from "@/components/Paywall";
 import { hasStartedTrial, startTrial } from "@/lib/trialStorage";
+import { loadTheme } from "@/lib/themeStorage";
 
 interface RegularPeriodData {
   cycleType: 'regular';
@@ -52,6 +53,7 @@ const Index = () => {
   const [trialStarted, setTrialStarted] = useState(hasStartedTrial());
   const pregnancyMode = loadPregnancyMode();
   const visibility = loadSectionVisibility();
+  const currentTheme = loadTheme();
 
   const handleStartTrial = () => {
     startTrial();
@@ -208,26 +210,28 @@ const Index = () => {
       {activeTab === "home" && (
         <div className="max-w-7xl mx-auto py-3 px-3 pb-20">
           <div className="space-y-4">
-            {/* Floral Calendar Header */}
-            <div className="relative bg-gradient-to-br from-pink-50 to-purple-50 rounded-2xl overflow-hidden">
-              <div className="absolute inset-0 opacity-70">
-                <img 
-                  src={floralDecoration} 
-                  alt="" 
-                  className="w-full h-full object-cover scale-110"
-                />
-              </div>
-              
-              <div className="relative px-4 py-4">
-                <div className="text-center mb-2">
-                  <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">TODAY</p>
-                  <h1 className="text-2xl font-bold text-gray-900 mb-1">
-                    {format(new Date(), "MMMM d")}
-                  </h1>
-                  <p className="text-lg text-gray-700">{format(new Date(), "yyyy")}</p>
+            {/* Floral Calendar Header - Hidden in Astrology Theme */}
+            {currentTheme !== "astrology" && (
+              <div className="relative bg-gradient-to-br from-pink-50 to-purple-50 rounded-2xl overflow-hidden">
+                <div className="absolute inset-0 opacity-70">
+                  <img 
+                    src={floralDecoration} 
+                    alt="" 
+                    className="w-full h-full object-cover scale-110"
+                  />
+                </div>
+                
+                <div className="relative px-4 py-4">
+                  <div className="text-center mb-2">
+                    <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">TODAY</p>
+                    <h1 className="text-2xl font-bold text-gray-900 mb-1">
+                      {format(new Date(), "MMMM d")}
+                    </h1>
+                    <p className="text-lg text-gray-700">{format(new Date(), "yyyy")}</p>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
 
             {/* Period Calendar */}
             {visibility.periodCalendar && (
