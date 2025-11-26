@@ -18,6 +18,10 @@ import BirthControlPage from "./pages/BirthControlPage";
 import { ArticlesPage } from "./pages/ArticlesPage";
 import { ArticleDetailPage } from "./pages/ArticleDetailPage";
 import { ChecklistDetailPage } from "./pages/ChecklistDetailPage";
+import AppointmentPage from "./pages/AppointmentPage";
+import PregnancyWeightPage from "./pages/PregnancyWeightPage";
+import BloodPressurePage from "./pages/BloodPressurePage";
+import GlucosePage from "./pages/GlucosePage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -44,6 +48,10 @@ const App = () => (
           <Route path="/articles" element={<ArticlesPage />} />
           <Route path="/article/:id" element={<ArticleDetailPage />} />
           <Route path="/checklists/:id" element={<ChecklistDetailPage />} />
+          <Route path="/appointments" element={<AppointmentPage />} />
+          <Route path="/pregnancy-weight" element={<PregnancyWeightPage />} />
+          <Route path="/blood-pressure" element={<BloodPressurePage />} />
+          <Route path="/glucose" element={<GlucosePage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
