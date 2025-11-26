@@ -56,23 +56,21 @@ export const ChecklistsPage = () => {
           {checklists.map((checklist) => (
             <div
               key={checklist.id}
-              className={`${checklist.bgColor} rounded-3xl overflow-hidden cursor-pointer hover:scale-105 transition-transform duration-200 shadow-lg ${
+              className={`${checklist.bgColor} rounded-3xl p-6 cursor-pointer hover:scale-105 transition-transform duration-200 shadow-lg flex flex-col min-h-[220px] ${
                 checklist.id === "hospital-bag" || checklist.id === "names"
                   ? "col-span-2"
                   : ""
               }`}
             >
-              <div className="p-6 flex flex-col min-h-[220px]">
-                <h3 className="text-xl font-bold text-foreground mb-4">
-                  {checklist.title}
-                </h3>
-                <div className="flex-1 flex items-center justify-center">
-                  <img
-                    src={checklist.image}
-                    alt={checklist.title}
-                    className="w-full h-auto max-h-[200px] object-contain"
-                  />
-                </div>
+              <h3 className="text-xl font-bold text-foreground mb-4">
+                {checklist.title}
+              </h3>
+              <div className="flex-1 flex items-center justify-center">
+                <img
+                  src={checklist.image}
+                  alt={checklist.title}
+                  className="w-full h-auto max-h-[200px] object-contain"
+                />
               </div>
             </div>
           ))}
