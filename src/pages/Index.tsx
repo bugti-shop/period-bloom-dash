@@ -237,343 +237,336 @@ const Index = () => {
       {/* Render content based on active tab */}
       {activeTab === "home" && (
         <div className="max-w-7xl mx-auto py-3 px-3 pb-20">
-          {/* Floral Calendar Header - Hidden in Astrology Theme */}
-          {currentTheme !== "astrology" && (
-            <div className="relative bg-gradient-to-br from-pink-50 to-purple-50 rounded-2xl overflow-hidden mb-4">
-              <div className="absolute inset-0 opacity-70">
-                <img 
-                  src={floralDecoration} 
-                  alt="" 
-                  className="w-full h-full object-cover scale-110"
-                />
-              </div>
-              
-              <div className="relative px-4 py-4">
-                <div className="text-center mb-2">
-                  <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">TODAY</p>
-                  <h1 className="text-2xl font-bold text-gray-900 mb-1">
-                    {format(new Date(), "MMMM d")}
-                  </h1>
-                  <p className="text-lg text-gray-700">{format(new Date(), "yyyy")}</p>
+          <div className="space-y-4">
+            {/* Floral Calendar Header - Hidden in Astrology Theme */}
+            {currentTheme !== "astrology" && (
+              <div className="relative bg-gradient-to-br from-pink-50 to-purple-50 rounded-2xl overflow-hidden">
+                <div className="absolute inset-0 opacity-70">
+                  <img 
+                    src={floralDecoration} 
+                    alt="" 
+                    className="w-full h-full object-cover scale-110"
+                  />
                 </div>
-              </div>
-            </div>
-          )}
-
-          {/* Two Column Layout for Astrology Theme */}
-          <div className={currentTheme === "astrology" ? "grid grid-cols-1 lg:grid-cols-3 gap-4" : "space-y-4"}>
-            {/* Left Column - Main Content */}
-            <div className={currentTheme === "astrology" ? "lg:col-span-2 space-y-4" : "space-y-4"}>
-              {/* Period Calendar */}
-              {visibility.periodCalendar && (
-                <PeriodCalendar 
-                  periodDates={periodDates}
-                  cycleLength={periodData.cycleType === 'regular' ? periodData.cycleLength : periodData.mean}
-                  lastPeriodDate={
-                    periodData.cycleType === 'regular' 
-                      ? periodData.lastPeriodDate 
-                      : periodData.cycles[periodData.cycles.length - 1].endDate
-                  }
-                  periodDuration={
-                    periodData.cycleType === 'regular' 
-                      ? periodData.periodDuration 
-                      : Math.round(periodData.cycles.reduce((sum, c) => sum + c.periodDuration, 0) / periodData.cycles.length)
-                  }
-                  onMonthChange={handleMonthChange}
-                />
-              )}
-
-              {/* Confidence Score for Irregular Cycles */}
-              {periodData.cycleType === 'irregular' && (
-                <div className={`p-4 rounded-2xl ${
-                  currentTheme === 'astrology' 
-                    ? 'bg-card border border-border' 
-                    : 'bg-gradient-to-br from-blue-50 to-purple-50'
-                }`}>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm text-muted-foreground mb-1">Prediction Confidence</p>
-                      <p className="text-2xl font-bold text-primary">{periodData.confidence}%</p>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Based on {periodData.cycles.length} cycles • SD: {periodData.stdDev.toFixed(1)} days
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-sm text-muted-foreground mb-1">Avg Cycle Length</p>
-                      <p className="text-xl font-semibold text-foreground">{periodData.mean} days</p>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Range: {periodData.mean - Math.round(periodData.stdDev * 1.5)}-{periodData.mean + Math.round(periodData.stdDev * 1.5)} days
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Info Cards - 2 Column Grid */}
-              {visibility.periodInfoCards && (
-                <InfoCards 
-                  periodData={periodData} 
-                  displayMonth={selectedMonth || undefined} 
-                />
-              )}
-
-              {/* Symptom Insights */}
-              {visibility.periodInsights && periodData.cycleType === 'regular' && (
-                <SymptomInsights 
-                  lastPeriodDate={periodData.lastPeriodDate}
-                  cycleLength={periodData.cycleLength}
-                />
-              )}
-
-              {/* Action Buttons */}
-              <div className="grid grid-cols-2 gap-3">
-                <button
-                  onClick={() => {
-                    setPeriodData(null);
-                    localStorage.removeItem("current-period-data");
-                  }}
-                  className={`py-3.5 font-semibold text-[13px] transition-colors rounded-xl ${
-                    currentTheme === 'astrology'
-                      ? 'bg-primary text-primary-foreground hover:bg-primary/90'
-                      : 'bg-[#EC4899] text-white hover:bg-[#db2777]'
-                  }`}
-                >
-                  Update Periods
-                </button>
-                <button
-                  onClick={() => setShowHistory(true)}
-                  className={`py-3.5 font-semibold text-[13px] transition-colors rounded-xl ${
-                    currentTheme === 'astrology'
-                      ? 'bg-muted text-foreground hover:bg-muted/80 border border-border'
-                      : 'bg-[#E5E7EB] text-[#1F2937] hover:bg-[#D1D5DB]'
-                  }`}
-                >
-                  Periods History
-                </button>
-              </div>
-
-              {/* Cycle Insights Button */}
-              <button
-                onClick={() => setShowCycleInsights(true)}
-                className={`w-full py-4 font-semibold text-sm transition-colors rounded-xl ${
-                  currentTheme === 'astrology'
-                    ? 'bg-primary text-primary-foreground hover:bg-primary/90'
-                    : 'bg-[#eb4899] text-white hover:bg-[#db2777]'
-                }`}
-              >
-                View Cycle Insights & Trends
-              </button>
-
-              {/* Sticky Notes Section */}
-              {visibility.periodStickyNotes && <StickyNotes currentWeek={undefined} />}
-            </div>
-
-            {/* Right Column - Astrology Header (Only in Astrology Theme) */}
-            {currentTheme === "astrology" && (
-              <div className="lg:col-span-1">
-                <div className="sticky top-20">
-                  <div className="relative bg-gradient-to-b from-[#1a1d3a] to-[#0f1123] rounded-2xl overflow-hidden border border-border/50">
-                    {/* Animated Stars Background with Constellations */}
-                    <div className="absolute inset-0 overflow-hidden">
-                      {/* Stars */}
-                      {Array.from({ length: 30 }).map((_, i) => (
-                        <div
-                          key={i}
-                          className="absolute rounded-full bg-white animate-pulse"
-                          style={{
-                            width: Math.random() * 3 + 1 + 'px',
-                            height: Math.random() * 3 + 1 + 'px',
-                            top: Math.random() * 100 + '%',
-                            left: Math.random() * 100 + '%',
-                            animationDelay: Math.random() * 3 + 's',
-                            animationDuration: (Math.random() * 2 + 2) + 's',
-                            opacity: Math.random() * 0.7 + 0.3
-                          }}
-                        />
-                      ))}
-                      
-                      {/* Constellation Lines */}
-                      <svg className="absolute inset-0 w-full h-full" style={{ pointerEvents: 'none' }}>
-                        <defs>
-                          <linearGradient id="constellation-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" style={{ stopColor: '#a78bfa', stopOpacity: 0.4 }} />
-                            <stop offset="100%" style={{ stopColor: '#ec4899', stopOpacity: 0.2 }} />
-                          </linearGradient>
-                        </defs>
-                        {/* Big Dipper constellation pattern */}
-                        <line x1="20%" y1="30%" x2="35%" y2="28%" stroke="url(#constellation-gradient)" strokeWidth="1" opacity="0.6" />
-                        <line x1="35%" y1="28%" x2="45%" y2="25%" stroke="url(#constellation-gradient)" strokeWidth="1" opacity="0.6" />
-                        <line x1="45%" y1="25%" x2="55%" y2="30%" stroke="url(#constellation-gradient)" strokeWidth="1" opacity="0.6" />
-                        <line x1="45%" y1="25%" x2="50%" y2="15%" stroke="url(#constellation-gradient)" strokeWidth="1" opacity="0.6" />
-                        <line x1="50%" y1="15%" x2="60%" y2="18%" stroke="url(#constellation-gradient)" strokeWidth="1" opacity="0.6" />
-                        <line x1="60%" y1="18%" x2="70%" y2="20%" stroke="url(#constellation-gradient)" strokeWidth="1" opacity="0.6" />
-                        
-                        {/* Orion's Belt */}
-                        <line x1="15%" y1="70%" x2="25%" y2="72%" stroke="url(#constellation-gradient)" strokeWidth="1" opacity="0.5" />
-                        <line x1="25%" y1="72%" x2="35%" y2="70%" stroke="url(#constellation-gradient)" strokeWidth="1" opacity="0.5" />
-                        
-                        {/* Small triangle constellation */}
-                        <line x1="75%" y1="45%" x2="85%" y2="50%" stroke="url(#constellation-gradient)" strokeWidth="1" opacity="0.5" />
-                        <line x1="85%" y1="50%" x2="80%" y2="60%" stroke="url(#constellation-gradient)" strokeWidth="1" opacity="0.5" />
-                        <line x1="80%" y1="60%" x2="75%" y2="45%" stroke="url(#constellation-gradient)" strokeWidth="1" opacity="0.5" />
-                        
-                        {/* Constellation stars (brighter) */}
-                        <circle cx="20%" cy="30%" r="2" fill="#fff" opacity="0.9" />
-                        <circle cx="35%" cy="28%" r="2" fill="#fff" opacity="0.9" />
-                        <circle cx="45%" cy="25%" r="2" fill="#fff" opacity="0.9" />
-                        <circle cx="55%" cy="30%" r="2" fill="#fff" opacity="0.9" />
-                        <circle cx="50%" cy="15%" r="2" fill="#fff" opacity="0.9" />
-                        <circle cx="60%" cy="18%" r="2" fill="#fff" opacity="0.9" />
-                        <circle cx="70%" cy="20%" r="2" fill="#fff" opacity="0.9" />
-                        <circle cx="15%" cy="70%" r="2" fill="#fff" opacity="0.8" />
-                        <circle cx="25%" cy="72%" r="2" fill="#fff" opacity="0.8" />
-                        <circle cx="35%" cy="70%" r="2" fill="#fff" opacity="0.8" />
-                        <circle cx="75%" cy="45%" r="2" fill="#fff" opacity="0.8" />
-                        <circle cx="85%" cy="50%" r="2" fill="#fff" opacity="0.8" />
-                        <circle cx="80%" cy="60%" r="2" fill="#fff" opacity="0.8" />
-                      </svg>
-                    </div>
-
-                    {/* Moon Phase Indicator */}
-                    <div className="relative px-4 py-6">
-                      <div className="text-center">
-                        {(() => {
-                          // Calculate current moon phase
-                          const today = new Date();
-                          const knownNewMoon = new Date(2000, 0, 6, 18, 14);
-                          const lunarCycle = 29.53059;
-                          const daysSinceNew = (today.getTime() - knownNewMoon.getTime()) / (1000 * 60 * 60 * 24);
-                          const phase = (daysSinceNew % lunarCycle) / lunarCycle;
-                          
-                          let phaseName = "";
-                          let phaseEmoji = "";
-                          
-                          if (phase < 0.03 || phase > 0.97) {
-                            phaseName = "New Moon";
-                            phaseEmoji = "🌑";
-                          } else if (phase < 0.22) {
-                            phaseName = "Waxing Crescent";
-                            phaseEmoji = "🌒";
-                          } else if (phase < 0.28) {
-                            phaseName = "First Quarter";
-                            phaseEmoji = "🌓";
-                          } else if (phase < 0.47) {
-                            phaseName = "Waxing Gibbous";
-                            phaseEmoji = "🌔";
-                          } else if (phase < 0.53) {
-                            phaseName = "Full Moon";
-                            phaseEmoji = "🌕";
-                          } else if (phase < 0.72) {
-                            phaseName = "Waning Gibbous";
-                            phaseEmoji = "🌖";
-                          } else if (phase < 0.78) {
-                            phaseName = "Last Quarter";
-                            phaseEmoji = "🌗";
-                          } else {
-                            phaseName = "Waning Crescent";
-                            phaseEmoji = "🌘";
-                          }
-                          
-                          // Calculate zodiac sign
-                          const month = today.getMonth() + 1;
-                          const day = today.getDate();
-                          let zodiacSign = "";
-                          let zodiacEmoji = "";
-                          
-                          if ((month === 3 && day >= 21) || (month === 4 && day <= 19)) {
-                            zodiacSign = "Aries";
-                            zodiacEmoji = "♈";
-                          } else if ((month === 4 && day >= 20) || (month === 5 && day <= 20)) {
-                            zodiacSign = "Taurus";
-                            zodiacEmoji = "♉";
-                          } else if ((month === 5 && day >= 21) || (month === 6 && day <= 20)) {
-                            zodiacSign = "Gemini";
-                            zodiacEmoji = "♊";
-                          } else if ((month === 6 && day >= 21) || (month === 7 && day <= 22)) {
-                            zodiacSign = "Cancer";
-                            zodiacEmoji = "♋";
-                          } else if ((month === 7 && day >= 23) || (month === 8 && day <= 22)) {
-                            zodiacSign = "Leo";
-                            zodiacEmoji = "♌";
-                          } else if ((month === 8 && day >= 23) || (month === 9 && day <= 22)) {
-                            zodiacSign = "Virgo";
-                            zodiacEmoji = "♍";
-                          } else if ((month === 9 && day >= 23) || (month === 10 && day <= 22)) {
-                            zodiacSign = "Libra";
-                            zodiacEmoji = "♎";
-                          } else if ((month === 10 && day >= 23) || (month === 11 && day <= 21)) {
-                            zodiacSign = "Scorpio";
-                            zodiacEmoji = "♏";
-                          } else if ((month === 11 && day >= 22) || (month === 12 && day <= 21)) {
-                            zodiacSign = "Sagittarius";
-                            zodiacEmoji = "♐";
-                          } else if ((month === 12 && day >= 22) || (month === 1 && day <= 19)) {
-                            zodiacSign = "Capricorn";
-                            zodiacEmoji = "♑";
-                          } else if ((month === 1 && day >= 20) || (month === 2 && day <= 18)) {
-                            zodiacSign = "Aquarius";
-                            zodiacEmoji = "♒";
-                          } else {
-                            zodiacSign = "Pisces";
-                            zodiacEmoji = "♓";
-                          }
-                          
-                          // Fetch horoscope on mount or when zodiac changes
-                          if (!dailyHoroscope && zodiacSign) {
-                            fetchHoroscope(zodiacSign);
-                          }
-                          
-                          return (
-                            <>
-                              <div className="flex items-center justify-center gap-6 mb-4">
-                                {/* Moon Phase */}
-                                <div className="flex flex-col items-center">
-                                  <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-purple-400/20 to-pink-400/20 mb-2 relative">
-                                    <div className="absolute inset-0 rounded-full bg-gradient-to-br from-purple-500/30 to-pink-500/30 blur-xl animate-pulse" />
-                                    <div className="text-4xl relative z-10">{phaseEmoji}</div>
-                                  </div>
-                                  <p className="text-xs text-primary uppercase tracking-wider font-semibold">
-                                    {phaseName}
-                                  </p>
-                                </div>
-                                
-                                {/* Zodiac Sign */}
-                                <div className="flex flex-col items-center">
-                                  <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-pink-400/20 to-purple-400/20 mb-2 relative">
-                                    <div className="absolute inset-0 rounded-full bg-gradient-to-br from-pink-500/30 to-purple-500/30 blur-xl animate-pulse" style={{ animationDelay: '1s' }} />
-                                    <div className="text-4xl relative z-10">{zodiacEmoji}</div>
-                                  </div>
-                                  <p className="text-xs text-primary uppercase tracking-wider font-semibold">
-                                    {zodiacSign}
-                                  </p>
-                                </div>
-                              </div>
-                              
-                              {/* Daily Horoscope */}
-                              {dailyHoroscope && (
-                                <div className="px-4 mb-3">
-                                  <div className="bg-muted/30 rounded-xl p-3 border border-border/50 backdrop-blur-sm">
-                                    <p className="text-xs text-foreground leading-relaxed italic">
-                                      "{dailyHoroscope}"
-                                    </p>
-                                  </div>
-                                </div>
-                              )}
-                              
-                              <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">Today</p>
-                            </>
-                          );
-                        })()}
-                        <h1 className="text-3xl font-bold text-foreground mb-1 tracking-tight">
-                          {format(new Date(), "MMMM d")}
-                        </h1>
-                        <p className="text-base text-muted-foreground">{format(new Date(), "yyyy")}</p>
-                      </div>
-                    </div>
+                
+                <div className="relative px-4 py-4">
+                  <div className="text-center mb-2">
+                    <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">TODAY</p>
+                    <h1 className="text-2xl font-bold text-gray-900 mb-1">
+                      {format(new Date(), "MMMM d")}
+                    </h1>
+                    <p className="text-lg text-gray-700">{format(new Date(), "yyyy")}</p>
                   </div>
                 </div>
               </div>
             )}
+
+            {/* Astrology-Themed Header - Shows in Astrology Theme */}
+            {currentTheme === "astrology" && (
+              <div className="relative bg-gradient-to-b from-[#1a1d3a] to-[#0f1123] rounded-2xl overflow-hidden border border-border/50">
+                {/* Animated Stars Background with Constellations */}
+                <div className="absolute inset-0 overflow-hidden">
+                  {/* Stars */}
+                  {Array.from({ length: 30 }).map((_, i) => (
+                    <div
+                      key={i}
+                      className="absolute rounded-full bg-white animate-pulse"
+                      style={{
+                        width: Math.random() * 3 + 1 + 'px',
+                        height: Math.random() * 3 + 1 + 'px',
+                        top: Math.random() * 100 + '%',
+                        left: Math.random() * 100 + '%',
+                        animationDelay: Math.random() * 3 + 's',
+                        animationDuration: (Math.random() * 2 + 2) + 's',
+                        opacity: Math.random() * 0.7 + 0.3
+                      }}
+                    />
+                  ))}
+                  
+                  {/* Constellation Lines */}
+                  <svg className="absolute inset-0 w-full h-full" style={{ pointerEvents: 'none' }}>
+                    <defs>
+                      <linearGradient id="constellation-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style={{ stopColor: '#a78bfa', stopOpacity: 0.4 }} />
+                        <stop offset="100%" style={{ stopColor: '#ec4899', stopOpacity: 0.2 }} />
+                      </linearGradient>
+                    </defs>
+                    {/* Big Dipper constellation pattern */}
+                    <line x1="20%" y1="30%" x2="35%" y2="28%" stroke="url(#constellation-gradient)" strokeWidth="1" opacity="0.6" />
+                    <line x1="35%" y1="28%" x2="45%" y2="25%" stroke="url(#constellation-gradient)" strokeWidth="1" opacity="0.6" />
+                    <line x1="45%" y1="25%" x2="55%" y2="30%" stroke="url(#constellation-gradient)" strokeWidth="1" opacity="0.6" />
+                    <line x1="45%" y1="25%" x2="50%" y2="15%" stroke="url(#constellation-gradient)" strokeWidth="1" opacity="0.6" />
+                    <line x1="50%" y1="15%" x2="60%" y2="18%" stroke="url(#constellation-gradient)" strokeWidth="1" opacity="0.6" />
+                    <line x1="60%" y1="18%" x2="70%" y2="20%" stroke="url(#constellation-gradient)" strokeWidth="1" opacity="0.6" />
+                    
+                    {/* Orion's Belt */}
+                    <line x1="15%" y1="70%" x2="25%" y2="72%" stroke="url(#constellation-gradient)" strokeWidth="1" opacity="0.5" />
+                    <line x1="25%" y1="72%" x2="35%" y2="70%" stroke="url(#constellation-gradient)" strokeWidth="1" opacity="0.5" />
+                    
+                    {/* Small triangle constellation */}
+                    <line x1="75%" y1="45%" x2="85%" y2="50%" stroke="url(#constellation-gradient)" strokeWidth="1" opacity="0.5" />
+                    <line x1="85%" y1="50%" x2="80%" y2="60%" stroke="url(#constellation-gradient)" strokeWidth="1" opacity="0.5" />
+                    <line x1="80%" y1="60%" x2="75%" y2="45%" stroke="url(#constellation-gradient)" strokeWidth="1" opacity="0.5" />
+                    
+                    {/* Constellation stars (brighter) */}
+                    <circle cx="20%" cy="30%" r="2" fill="#fff" opacity="0.9" />
+                    <circle cx="35%" cy="28%" r="2" fill="#fff" opacity="0.9" />
+                    <circle cx="45%" cy="25%" r="2" fill="#fff" opacity="0.9" />
+                    <circle cx="55%" cy="30%" r="2" fill="#fff" opacity="0.9" />
+                    <circle cx="50%" cy="15%" r="2" fill="#fff" opacity="0.9" />
+                    <circle cx="60%" cy="18%" r="2" fill="#fff" opacity="0.9" />
+                    <circle cx="70%" cy="20%" r="2" fill="#fff" opacity="0.9" />
+                    <circle cx="15%" cy="70%" r="2" fill="#fff" opacity="0.8" />
+                    <circle cx="25%" cy="72%" r="2" fill="#fff" opacity="0.8" />
+                    <circle cx="35%" cy="70%" r="2" fill="#fff" opacity="0.8" />
+                    <circle cx="75%" cy="45%" r="2" fill="#fff" opacity="0.8" />
+                    <circle cx="85%" cy="50%" r="2" fill="#fff" opacity="0.8" />
+                    <circle cx="80%" cy="60%" r="2" fill="#fff" opacity="0.8" />
+                  </svg>
+                </div>
+
+                {/* Moon Phase Indicator */}
+                <div className="relative px-4 py-6">
+                  <div className="text-center">
+                    {(() => {
+                      // Calculate current moon phase
+                      const today = new Date();
+                      const knownNewMoon = new Date(2000, 0, 6, 18, 14); // Known new moon date
+                      const lunarCycle = 29.53059; // Days in lunar cycle
+                      const daysSinceNew = (today.getTime() - knownNewMoon.getTime()) / (1000 * 60 * 60 * 24);
+                      const phase = (daysSinceNew % lunarCycle) / lunarCycle;
+                      
+                      let phaseName = "";
+                      let phaseEmoji = "";
+                      
+                      if (phase < 0.03 || phase > 0.97) {
+                        phaseName = "New Moon";
+                        phaseEmoji = "🌑";
+                      } else if (phase < 0.22) {
+                        phaseName = "Waxing Crescent";
+                        phaseEmoji = "🌒";
+                      } else if (phase < 0.28) {
+                        phaseName = "First Quarter";
+                        phaseEmoji = "🌓";
+                      } else if (phase < 0.47) {
+                        phaseName = "Waxing Gibbous";
+                        phaseEmoji = "🌔";
+                      } else if (phase < 0.53) {
+                        phaseName = "Full Moon";
+                        phaseEmoji = "🌕";
+                      } else if (phase < 0.72) {
+                        phaseName = "Waning Gibbous";
+                        phaseEmoji = "🌖";
+                      } else if (phase < 0.78) {
+                        phaseName = "Last Quarter";
+                        phaseEmoji = "🌗";
+                      } else {
+                        phaseName = "Waning Crescent";
+                        phaseEmoji = "🌘";
+                      }
+                      
+                      // Calculate zodiac sign
+                      const month = today.getMonth() + 1;
+                      const day = today.getDate();
+                      let zodiacSign = "";
+                      let zodiacEmoji = "";
+                      
+                      if ((month === 3 && day >= 21) || (month === 4 && day <= 19)) {
+                        zodiacSign = "Aries";
+                        zodiacEmoji = "♈";
+                      } else if ((month === 4 && day >= 20) || (month === 5 && day <= 20)) {
+                        zodiacSign = "Taurus";
+                        zodiacEmoji = "♉";
+                      } else if ((month === 5 && day >= 21) || (month === 6 && day <= 20)) {
+                        zodiacSign = "Gemini";
+                        zodiacEmoji = "♊";
+                      } else if ((month === 6 && day >= 21) || (month === 7 && day <= 22)) {
+                        zodiacSign = "Cancer";
+                        zodiacEmoji = "♋";
+                      } else if ((month === 7 && day >= 23) || (month === 8 && day <= 22)) {
+                        zodiacSign = "Leo";
+                        zodiacEmoji = "♌";
+                      } else if ((month === 8 && day >= 23) || (month === 9 && day <= 22)) {
+                        zodiacSign = "Virgo";
+                        zodiacEmoji = "♍";
+                      } else if ((month === 9 && day >= 23) || (month === 10 && day <= 22)) {
+                        zodiacSign = "Libra";
+                        zodiacEmoji = "♎";
+                      } else if ((month === 10 && day >= 23) || (month === 11 && day <= 21)) {
+                        zodiacSign = "Scorpio";
+                        zodiacEmoji = "♏";
+                      } else if ((month === 11 && day >= 22) || (month === 12 && day <= 21)) {
+                        zodiacSign = "Sagittarius";
+                        zodiacEmoji = "♐";
+                      } else if ((month === 12 && day >= 22) || (month === 1 && day <= 19)) {
+                        zodiacSign = "Capricorn";
+                        zodiacEmoji = "♑";
+                      } else if ((month === 1 && day >= 20) || (month === 2 && day <= 18)) {
+                        zodiacSign = "Aquarius";
+                        zodiacEmoji = "♒";
+                      } else {
+                        zodiacSign = "Pisces";
+                        zodiacEmoji = "♓";
+                      }
+                      
+                      // Fetch horoscope on mount or when zodiac changes
+                      if (!dailyHoroscope && zodiacSign) {
+                        fetchHoroscope(zodiacSign);
+                      }
+                      
+                      return (
+                        <>
+                          <div className="flex items-center justify-center gap-6 mb-4">
+                            {/* Moon Phase */}
+                            <div className="flex flex-col items-center">
+                              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-purple-400/20 to-pink-400/20 mb-2 relative">
+                                <div className="absolute inset-0 rounded-full bg-gradient-to-br from-purple-500/30 to-pink-500/30 blur-xl animate-pulse" />
+                                <div className="text-4xl relative z-10">{phaseEmoji}</div>
+                              </div>
+                              <p className="text-xs text-primary uppercase tracking-wider font-semibold">
+                                {phaseName}
+                              </p>
+                            </div>
+                            
+                            {/* Zodiac Sign */}
+                            <div className="flex flex-col items-center">
+                              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-pink-400/20 to-purple-400/20 mb-2 relative">
+                                <div className="absolute inset-0 rounded-full bg-gradient-to-br from-pink-500/30 to-purple-500/30 blur-xl animate-pulse" style={{ animationDelay: '1s' }} />
+                                <div className="text-4xl relative z-10">{zodiacEmoji}</div>
+                              </div>
+                              <p className="text-xs text-primary uppercase tracking-wider font-semibold">
+                                {zodiacSign}
+                              </p>
+                            </div>
+                          </div>
+                          
+                          {/* Daily Horoscope */}
+                          {dailyHoroscope && (
+                            <div className="px-4 mb-3">
+                              <div className="bg-muted/30 rounded-xl p-3 border border-border/50 backdrop-blur-sm">
+                                <p className="text-xs text-foreground leading-relaxed italic">
+                                  "{dailyHoroscope}"
+                                </p>
+                              </div>
+                            </div>
+                          )}
+                          
+                          <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">Today</p>
+                        </>
+                      );
+                    })()}
+                    <h1 className="text-3xl font-bold text-foreground mb-1 tracking-tight">
+                      {format(new Date(), "MMMM d")}
+                    </h1>
+                    <p className="text-base text-muted-foreground">{format(new Date(), "yyyy")}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Period Calendar */}
+            {visibility.periodCalendar && (
+              <PeriodCalendar 
+                periodDates={periodDates}
+                cycleLength={periodData.cycleType === 'regular' ? periodData.cycleLength : periodData.mean}
+                lastPeriodDate={
+                  periodData.cycleType === 'regular' 
+                    ? periodData.lastPeriodDate 
+                    : periodData.cycles[periodData.cycles.length - 1].endDate
+                }
+                periodDuration={
+                  periodData.cycleType === 'regular' 
+                    ? periodData.periodDuration 
+                    : Math.round(periodData.cycles.reduce((sum, c) => sum + c.periodDuration, 0) / periodData.cycles.length)
+                }
+                onMonthChange={handleMonthChange}
+              />
+            )}
+
+
+            {/* Confidence Score for Irregular Cycles */}
+            {periodData.cycleType === 'irregular' && (
+              <div className={`p-4 rounded-2xl ${
+                currentTheme === 'astrology' 
+                  ? 'bg-card border border-border' 
+                  : 'bg-gradient-to-br from-blue-50 to-purple-50'
+              }`}>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-muted-foreground mb-1">Prediction Confidence</p>
+                    <p className="text-2xl font-bold text-primary">{periodData.confidence}%</p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Based on {periodData.cycles.length} cycles • SD: {periodData.stdDev.toFixed(1)} days
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm text-muted-foreground mb-1">Avg Cycle Length</p>
+                    <p className="text-xl font-semibold text-foreground">{periodData.mean} days</p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Range: {periodData.mean - Math.round(periodData.stdDev * 1.5)}-{periodData.mean + Math.round(periodData.stdDev * 1.5)} days
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Info Cards - 2 Column Grid */}
+            {visibility.periodInfoCards && (
+              <InfoCards 
+                periodData={periodData} 
+                displayMonth={selectedMonth || undefined} 
+              />
+            )}
+
+            {/* Symptom Insights */}
+            {visibility.periodInsights && periodData.cycleType === 'regular' && (
+              <SymptomInsights 
+                lastPeriodDate={periodData.lastPeriodDate}
+                cycleLength={periodData.cycleLength}
+              />
+            )}
+
+            {/* Action Buttons */}
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                onClick={() => {
+                  setPeriodData(null);
+                  localStorage.removeItem("current-period-data");
+                }}
+                className={`py-3.5 font-semibold text-[13px] transition-colors rounded-xl ${
+                  currentTheme === 'astrology'
+                    ? 'bg-primary text-primary-foreground hover:bg-primary/90'
+                    : 'bg-[#EC4899] text-white hover:bg-[#db2777]'
+                }`}
+              >
+                Update Periods
+              </button>
+              <button
+                onClick={() => setShowHistory(true)}
+                className={`py-3.5 font-semibold text-[13px] transition-colors rounded-xl ${
+                  currentTheme === 'astrology'
+                    ? 'bg-muted text-foreground hover:bg-muted/80 border border-border'
+                    : 'bg-[#E5E7EB] text-[#1F2937] hover:bg-[#D1D5DB]'
+                }`}
+              >
+                Periods History
+              </button>
+            </div>
+
+            {/* Cycle Insights Button */}
+            <button
+              onClick={() => setShowCycleInsights(true)}
+              className={`w-full py-4 font-semibold text-sm transition-colors rounded-xl ${
+                currentTheme === 'astrology'
+                  ? 'bg-primary text-primary-foreground hover:bg-primary/90'
+                  : 'bg-[#eb4899] text-white hover:bg-[#db2777]'
+              }`}
+            >
+              View Cycle Insights & Trends
+            </button>
+
+            {/* Sticky Notes Section */}
+            {visibility.periodStickyNotes && <StickyNotes currentWeek={undefined} />}
           </div>
         </div>
       )}
