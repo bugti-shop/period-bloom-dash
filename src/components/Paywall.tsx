@@ -21,7 +21,7 @@ export const Paywall = ({ onStartTrial }: PaywallProps) => {
         <div 
           className="py-4"
           style={{
-            '--connector-width': '14px',
+            '--connector-width': '13px',
             '--connector-color': '#d1d5db',
             '--icon-gap': '68px'
           } as React.CSSProperties}
