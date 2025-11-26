@@ -190,37 +190,35 @@ All colors MUST be HSL.
 
   /* Astrology Theme - Deep Blue Night Sky */
   .astrology {
-    --background: 245 55% 10%;
-    --foreground: 245 20% 95%;
+    --background: 222 47% 11%;
+    --foreground: 210 40% 98%;
 
-    --card: 245 50% 14%;
-    --card-foreground: 245 20% 95%;
+    --card: 222 47% 11%;
+    --card-foreground: 210 40% 98%;
 
-    --popover: 245 50% 14%;
-    --popover-foreground: 245 20% 95%;
+    --popover: 222 47% 11%;
+    --popover-foreground: 210 40% 98%;
 
-    --primary: 330 80% 65%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 310 80% 65%;
+    --primary-foreground: 210 40% 98%;
 
-    --secondary: 245 45% 20%;
-    --secondary-foreground: 245 20% 95%;
+    --secondary: 220 20% 20%;
+    --secondary-foreground: 210 40% 98%;
 
-    --muted: 245 40% 16%;
-    --muted-foreground: 245 15% 70%;
+    --muted: 220 20% 25%;
+    --muted-foreground: 215 20% 65%;
 
-    --accent: 280 70% 60%;
-    --accent-foreground: 245 20% 95%;
+    --accent: 270 70% 60%;
+    --accent-foreground: 210 40% 98%;
 
-    --destructive: 0 70% 55%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 40% 98%;
 
-    --border: 245 35% 22%;
-    --input: 245 35% 22%;
-    --ring: 330 80% 65%;
+    --border: 220 20% 25%;
+    --input: 220 20% 25%;
+    --ring: 310 80% 65%;
 
-    --glass-bg: 245 45% 14% / 0.6;
-    --glass-border: 245 35% 28% / 0.6;
-    --glass-shadow: 245 45% 20% / 0.5;
+    --radius: 0.5rem;
   }
 }
 
