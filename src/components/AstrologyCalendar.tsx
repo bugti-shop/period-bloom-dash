@@ -87,16 +87,75 @@ export const AstrologyCalendar = ({
   };
 
   const getMoonShape = (dayNumber: number, totalDays: number) => {
-    const phaseProgress = dayNumber / totalDays;
+    // Calculate moon phase (0 = new moon, 0.5 = full moon, 1 = new moon again)
+    const phase = dayNumber / totalDays;
+    return phase;
+  };
+
+  // Moon phase SVG component
+  const MoonPhase = ({ phase, size, color, x, y, isToday, onClick }: {
+    phase: number;
+    size: number;
+    color: string;
+    x: number;
+    y: number;
+    isToday: boolean;
+    onClick?: () => void;
+  }) => {
+    // Calculate illumination percentage (0 = new moon, 0.5 = full moon)
+    const illumination = phase < 0.5 ? phase * 2 : 2 - (phase * 2);
     
-    if (phaseProgress < 0.1) return "0.1";
-    if (phaseProgress < 0.25) return "0.3";
-    if (phaseProgress < 0.4) return "0.5";
-    if (phaseProgress < 0.5) return "0.7";
-    if (phaseProgress < 0.6) return "0.9";
-    if (phaseProgress < 0.75) return "0.7";
-    if (phaseProgress < 0.9) return "0.5";
-    return "0.3";
+    // Waxing (0 to 0.5) or Waning (0.5 to 1)
+    const isWaxing = phase < 0.5;
+    
+    return (
+      <g onClick={onClick} style={{ cursor: onClick ? "pointer" : "default" }}>
+        {/* Outer circle - moon body */}
+        <circle
+          cx={x}
+          cy={y}
+          r={size / 2}
+          fill={`hsl(245, 30%, ${15 + illumination * 50}%)`}
+          stroke={isToday ? "white" : color}
+          strokeWidth={isToday ? 2.5 : 1}
+          opacity={0.9}
+        />
+        
+        {/* Illuminated portion */}
+        {illumination > 0.05 && (
+          <>
+            <defs>
+              <clipPath id={`moon-clip-${x}-${y}`}>
+                {illumination < 0.5 ? (
+                  // Crescent
+                  <ellipse
+                    cx={x + (isWaxing ? size / 4 : -size / 4) * (1 - illumination * 2)}
+                    cy={y}
+                    rx={size / 2 * illumination * 2}
+                    ry={size / 2}
+                  />
+                ) : (
+                  // Gibbous to Full
+                  <ellipse
+                    cx={x + (isWaxing ? -size / 4 : size / 4) * (2 - illumination * 2)}
+                    cy={y}
+                    rx={size / 2 * (2 - (1 - illumination) * 2)}
+                    ry={size / 2}
+                  />
+                )}
+              </clipPath>
+            </defs>
+            <circle
+              cx={x}
+              cy={y}
+              r={size / 2}
+              fill={color}
+              clipPath={`url(#moon-clip-${x}-${y})`}
+            />
+          </>
+        )}
+      </g>
+    );
   };
 
   // Calculate period status
@@ -121,28 +180,16 @@ export const AstrologyCalendar = ({
             const moonPhase = getMoonShape(phase.dayNumber, cycleLength);
 
             return (
-              <g key={index}>
-                <circle
-                  cx={x}
-                  cy={y}
-                  r={size / 2}
-                  fill={color}
-                  opacity={parseFloat(moonPhase)}
-                  className={phase.isToday ? "stroke-white stroke-[3]" : ""}
-                  style={{ cursor: onDateSelect ? "pointer" : "default" }}
-                  onClick={() => onDateSelect?.(phase.date)}
-                />
-                {phase.isPeriod && (
-                  <circle
-                    cx={x}
-                    cy={y}
-                    r={size / 2 + 2}
-                    fill="none"
-                    stroke="hsl(350, 80%, 50%)"
-                    strokeWidth="2"
-                  />
-                )}
-              </g>
+              <MoonPhase
+                key={index}
+                phase={moonPhase}
+                size={size}
+                color={color}
+                x={x}
+                y={y}
+                isToday={phase.isToday}
+                onClick={() => onDateSelect?.(phase.date)}
+              />
             );
           })}
         </svg>
