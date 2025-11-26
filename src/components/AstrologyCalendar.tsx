@@ -1,5 +1,5 @@
 import { format, addDays, isSameDay, addMonths } from "date-fns";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 
 interface AstrologyCalendarProps {
   periodDates: Date[];
@@ -18,7 +18,11 @@ export const AstrologyCalendar = ({
   onDateSelect,
 }: AstrologyCalendarProps) => {
   const today = new Date();
-  const [currentMonth] = useState(0);
+  const [rotation, setRotation] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const [currentDayIndex, setCurrentDayIndex] = useState(0);
+  const svgRef = useRef<SVGSVGElement>(null);
+  const lastAngleRef = useRef(0);
 
   // Calculate all dates for current cycle
   const calculateAllDates = () => {
@@ -52,7 +56,17 @@ export const AstrologyCalendar = ({
 
   // Calculate current day in cycle
   const daysSinceLastPeriod = Math.floor((today.getTime() - lastPeriodDate.getTime()) / (1000 * 60 * 60 * 24));
-  const currentDayInCycle = (daysSinceLastPeriod % cycleLength) + 1;
+  const baseDayInCycle = (daysSinceLastPeriod % cycleLength);
+
+  // Update current day based on rotation
+  useEffect(() => {
+    const rotationDays = Math.round((rotation / 360) * cycleLength);
+    const newDayIndex = (baseDayInCycle - rotationDays + cycleLength) % cycleLength;
+    setCurrentDayIndex(newDayIndex);
+  }, [rotation, baseDayInCycle, cycleLength]);
+
+  const currentDayInCycle = currentDayIndex + 1;
+  const currentDate = addDays(lastPeriodDate, currentDayIndex);
 
   // Generate moon phases for the entire cycle
   const moonPhases = Array.from({ length: cycleLength }, (_, i) => {
@@ -65,6 +79,40 @@ export const AstrologyCalendar = ({
 
     return { dayNumber, date, isPeriod, isOvulation, isFertile, isToday };
   });
+
+  // Handle mouse/touch events for spinning
+  const handlePointerDown = (e: React.PointerEvent) => {
+    setIsDragging(true);
+    const svg = svgRef.current;
+    if (!svg) return;
+    
+    const rect = svg.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    const angle = Math.atan2(e.clientY - centerY, e.clientX - centerX) * (180 / Math.PI);
+    lastAngleRef.current = angle;
+  };
+
+  const handlePointerMove = (e: React.PointerEvent) => {
+    if (!isDragging) return;
+    
+    const svg = svgRef.current;
+    if (!svg) return;
+    
+    const rect = svg.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    const angle = Math.atan2(e.clientY - centerY, e.clientX - centerX) * (180 / Math.PI);
+    
+    const delta = angle - lastAngleRef.current;
+    lastAngleRef.current = angle;
+    
+    setRotation(prev => prev + delta);
+  };
+
+  const handlePointerUp = () => {
+    setIsDragging(false);
+  };
 
   // Calculate positions for circular layout
   const radius = 140;
@@ -166,11 +214,74 @@ export const AstrologyCalendar = ({
     ? `PERIOD IN ${daysUntilNextPeriod} days`
     : "PERIOD IS due";
 
+  // Generate dates for horizontal display (7 days before and after current)
+  const visibleDates = Array.from({ length: 15 }, (_, i) => {
+    const offset = i - 7;
+    return addDays(currentDate, offset);
+  });
+
   return (
     <div className="bg-card p-6 rounded-2xl border border-border">
+      {/* Horizontal Date Scroll */}
+      <div className="mb-6 overflow-x-auto scrollbar-hide">
+        <div className="flex gap-4 justify-center min-w-max px-4">
+          {visibleDates.map((date, index) => {
+            const isCenter = index === 7;
+            const dayName = format(date, "EEE");
+            const dayNum = format(date, "d");
+            
+            return (
+              <button
+                key={date.toString()}
+                onClick={() => {
+                  const daysDiff = Math.floor((date.getTime() - lastPeriodDate.getTime()) / (1000 * 60 * 60 * 24));
+                  const targetIndex = daysDiff % cycleLength;
+                  const rotationNeeded = ((baseDayInCycle - targetIndex) / cycleLength) * 360;
+                  setRotation(rotationNeeded);
+                }}
+                className={`flex flex-col items-center transition-all ${
+                  isCenter 
+                    ? "opacity-100 scale-110" 
+                    : "opacity-50 scale-90"
+                }`}
+              >
+                <span className={`text-xs font-medium mb-1 ${
+                  isCenter ? "text-foreground" : "text-muted-foreground"
+                }`}>
+                  {dayName}
+                </span>
+                <span className={`text-lg font-bold ${
+                  isCenter ? "text-primary" : "text-muted-foreground"
+                }`}>
+                  {dayNum}
+                </span>
+                <div className={`w-1 h-16 mt-2 rounded-full ${
+                  isCenter ? "bg-primary" : "bg-muted"
+                }`} />
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
       {/* Circular Moon Phase Calendar */}
-      <div className="relative w-full aspect-square max-w-[360px] mx-auto">
-        <svg viewBox="0 0 360 360" className="w-full h-full">
+      <div 
+        className="relative w-full aspect-square max-w-[360px] mx-auto touch-none select-none"
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
+        onPointerLeave={handlePointerUp}
+      >
+        <svg 
+          ref={svgRef}
+          viewBox="0 0 360 360" 
+          className="w-full h-full"
+          style={{ 
+            transform: `rotate(${rotation}deg)`,
+            transition: isDragging ? "none" : "transform 0.3s ease-out",
+            cursor: isDragging ? "grabbing" : "grab"
+          }}
+        >
           {moonPhases.map((phase, index) => {
             const angle = (index / cycleLength) * 360 - 90;
             const x = centerX + radius * Math.cos((angle * Math.PI) / 180);
@@ -194,8 +305,8 @@ export const AstrologyCalendar = ({
           })}
         </svg>
 
-        {/* Center text */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center">
+        {/* Center text (not rotated) */}
+        <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
           <p className="text-xs text-muted-foreground tracking-wider mb-2">{periodStatus}</p>
           <p className="text-3xl font-light text-foreground">
             {daysUntilNextPeriod > 0 ? `${daysUntilNextPeriod} days` : "Today"}
@@ -209,7 +320,7 @@ export const AstrologyCalendar = ({
       {/* Current date display */}
       <div className="mt-6 text-center">
         <p className="text-sm text-muted-foreground mb-2">
-          {format(today, "EEE, MMM d")}
+          {format(currentDate, "EEE, MMM d")}
         </p>
         <p className="text-xs text-muted-foreground">
           Day {currentDayInCycle} of {cycleLength}
