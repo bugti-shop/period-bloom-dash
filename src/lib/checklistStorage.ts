@@ -664,3 +664,28 @@ export const editChecklistItem = (
   });
   saveChecklists(updated);
 };
+
+export const markAllCategoryItemsComplete = (
+  checklistId: string,
+  categoryId: string
+): void => {
+  const checklists = loadChecklists();
+  const updated = checklists.map((c) => {
+    if (c.id === checklistId && c.categories) {
+      return {
+        ...c,
+        categories: c.categories.map((cat) => {
+          if (cat.id === categoryId) {
+            return {
+              ...cat,
+              items: cat.items.map((item) => ({ ...item, completed: true })),
+            };
+          }
+          return cat;
+        }),
+      };
+    }
+    return c;
+  });
+  saveChecklists(updated);
+};

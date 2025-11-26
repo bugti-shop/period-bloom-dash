@@ -12,6 +12,7 @@ import {
   toggleChecklistItem,
   deleteChecklistItem,
   editChecklistItem,
+  markAllCategoryItemsComplete,
   type Checklist,
 } from "@/lib/checklistStorage";
 import {
@@ -85,6 +86,14 @@ export const ChecklistDetailPage = () => {
     }
   };
 
+  const handleMarkAllComplete = (categoryId: string) => {
+    if (checklist) {
+      markAllCategoryItemsComplete(checklist.id, categoryId);
+      const updated = loadChecklists().find((c) => c.id === checklist.id);
+      if (updated) setChecklist(updated);
+    }
+  };
+
   if (!checklist) return null;
 
   const allItems = checklist.categories
@@ -137,12 +146,22 @@ export const ChecklistDetailPage = () => {
           {checklist.categories ? (
             checklist.categories.map((category) => (
               <div key={category.id} className="space-y-2">
-                <div className="flex items-center gap-2 mb-3">
-                  {category.icon && <span className="text-xl">{category.icon}</span>}
-                  <h3 className="text-lg font-semibold text-foreground">{category.title}</h3>
-                  <span className="text-sm text-muted-foreground">
-                    {category.items.filter((i) => i.completed).length}/{category.items.length}
-                  </span>
+                <div className="flex items-center justify-between gap-2 mb-3">
+                  <div className="flex items-center gap-2">
+                    {category.icon && <span className="text-xl">{category.icon}</span>}
+                    <h3 className="text-lg font-semibold text-foreground">{category.title}</h3>
+                    <span className="text-sm text-muted-foreground">
+                      {category.items.filter((i) => i.completed).length}/{category.items.length}
+                    </span>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleMarkAllComplete(category.id)}
+                    className="text-xs"
+                  >
+                    Mark all complete
+                  </Button>
                 </div>
                 {category.items.map((item) => (
                   <div
