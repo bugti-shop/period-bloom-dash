@@ -1,6 +1,6 @@
 import { saveToLocalStorage, loadFromLocalStorage } from "./storage";
 
-export type ThemeVariant = "light" | "dark-black" | "dark-blue" | "dark-green" | "dark-brown";
+export type ThemeVariant = "light" | "dark-black" | "dark-blue" | "dark-green" | "dark-brown" | "astrology";
 
 const THEME_KEY = "app-theme";
 
@@ -18,7 +18,7 @@ export const applyTheme = (theme: ThemeVariant): void => {
   const root = document.documentElement;
   
   // Remove all theme classes
-  root.classList.remove("dark-black", "dark-blue", "dark-green", "dark-brown");
+  root.classList.remove("dark-black", "dark-blue", "dark-green", "dark-brown", "astrology");
   
   // Add the selected theme class
   if (theme !== "light") {
