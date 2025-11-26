@@ -1,6 +1,5 @@
 import { format, addDays, isSameDay, addMonths } from "date-fns";
 import { useState, useRef, useEffect } from "react";
-import { Haptics, ImpactStyle } from "@capacitor/haptics";
 
 interface AstrologyCalendarProps {
   periodDates: Date[];
@@ -27,7 +26,6 @@ export const AstrologyCalendar = ({
   const velocityRef = useRef(0);
   const lastTimeRef = useRef(0);
   const momentumRef = useRef<number | null>(null);
-  const lastHapticDayRef = useRef(-1);
 
   // Calculate all dates for current cycle
   const calculateAllDates = () => {
@@ -63,32 +61,12 @@ export const AstrologyCalendar = ({
   const daysSinceLastPeriod = Math.floor((today.getTime() - lastPeriodDate.getTime()) / (1000 * 60 * 60 * 24));
   const baseDayInCycle = (daysSinceLastPeriod % cycleLength);
 
-  // Update current day based on rotation and trigger haptics
+  // Update current day based on rotation
   useEffect(() => {
     const rotationDays = Math.round((rotation / 360) * cycleLength);
     const newDayIndex = (baseDayInCycle - rotationDays + cycleLength) % cycleLength;
     setCurrentDayIndex(newDayIndex);
-    
-    // Trigger haptic feedback when switching to a new day
-    if (newDayIndex !== lastHapticDayRef.current && (isDragging || momentumRef.current)) {
-      lastHapticDayRef.current = newDayIndex;
-      
-      // Check if it's a special day (period, ovulation, fertile)
-      const currentDate = addDays(lastPeriodDate, newDayIndex);
-      const isPeriod = allPeriodDates.some((pDate) => isSameDay(pDate, currentDate));
-      const isOvulation = allOvulationDates.some((oDate) => isSameDay(oDate, currentDate));
-      const isFertile = allFertileDates.some((fDate) => isSameDay(fDate, currentDate)) && !isPeriod && !isOvulation;
-      
-      // Different haptic intensities for different phases
-      if (isPeriod || isOvulation) {
-        Haptics.impact({ style: ImpactStyle.Medium }).catch(() => {});
-      } else if (isFertile) {
-        Haptics.impact({ style: ImpactStyle.Light }).catch(() => {});
-      } else {
-        Haptics.impact({ style: ImpactStyle.Light }).catch(() => {});
-      }
-    }
-  }, [rotation, baseDayInCycle, cycleLength, isDragging, lastPeriodDate, allPeriodDates, allOvulationDates, allFertileDates]);
+  }, [rotation, baseDayInCycle, cycleLength]);
 
   const currentDayInCycle = currentDayIndex + 1;
   const currentDate = addDays(lastPeriodDate, currentDayIndex);
@@ -351,9 +329,6 @@ export const AstrologyCalendar = ({
             const handleMoonClick = (e: React.MouseEvent) => {
               e.stopPropagation();
               
-              // Trigger haptic feedback
-              Haptics.impact({ style: ImpactStyle.Medium }).catch(() => {});
-              
               // Calculate rotation needed to center this moon
               const targetAngle = -angle - 90;
               const currentNormalizedRotation = ((rotation % 360) + 360) % 360;
@@ -401,16 +376,6 @@ export const AstrologyCalendar = ({
             <p className="text-sm text-muted-foreground mt-1">Day {currentDayInCycle} of period</p>
           )}
         </div>
-      </div>
-
-      {/* Current date display */}
-      <div className="mt-6 text-center">
-        <p className="text-sm text-muted-foreground mb-2">
-          {format(currentDate, "EEE, MMM d")}
-        </p>
-        <p className="text-xs text-muted-foreground">
-          Day {currentDayInCycle} of {cycleLength}
-        </p>
       </div>
 
       {/* Horizontal Date Scroll - Bottom */}
