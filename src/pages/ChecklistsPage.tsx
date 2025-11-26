@@ -82,10 +82,13 @@ export const ChecklistsPage = () => {
 
         <div className="grid grid-cols-2 gap-4">
           {checklists.map((checklist) => {
-            const completedCount = checklist.items.filter(
+            const allItems = checklist.categories
+              ? checklist.categories.flatMap((cat) => cat.items)
+              : checklist.items;
+            const completedCount = allItems.filter(
               (item) => item.completed
             ).length;
-            const totalCount = checklist.items.length;
+            const totalCount = allItems.length;
             const progressPercent =
               totalCount > 0 ? (completedCount / totalCount) * 100 : 0;
 
