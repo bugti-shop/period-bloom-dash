@@ -8,6 +8,10 @@ import { IntimacyPage } from "./pages/IntimacyPage";
 import { BBTPage } from "./pages/BBTPage";
 import { AppetitePage } from "./pages/AppetitePage";
 import { HealthPage } from "./pages/HealthPage";
+import { WaterPage } from "./pages/WaterPage";
+import { SleepPage } from "./pages/SleepPage";
+import { ExercisePage } from "./pages/ExercisePage";
+import { CervicalMucusPage } from "./pages/CervicalMucusPage";
 import { ArticlesPage } from "./pages/ArticlesPage";
 import { ArticleDetailPage } from "./pages/ArticleDetailPage";
 import { ChecklistDetailPage } from "./pages/ChecklistDetailPage";
@@ -27,6 +31,10 @@ const App = () => (
           <Route path="/bbt" element={<BBTPage />} />
           <Route path="/appetite" element={<AppetitePage />} />
           <Route path="/health" element={<HealthPage />} />
+          <Route path="/water" element={<WaterPage />} />
+          <Route path="/sleep" element={<SleepPage />} />
+          <Route path="/exercise" element={<ExercisePage />} />
+          <Route path="/cervical-mucus" element={<CervicalMucusPage />} />
           <Route path="/articles" element={<ArticlesPage />} />
           <Route path="/article/:id" element={<ArticleDetailPage />} />
           <Route path="/checklists/:id" element={<ChecklistDetailPage />} />

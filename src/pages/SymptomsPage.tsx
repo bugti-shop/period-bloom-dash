@@ -19,6 +19,10 @@ import intimacyImg from "@/assets/tracker-intimacy.jpg";
 import bbtImg from "@/assets/tracker-bbt.jpg";
 import appetiteImg from "@/assets/tracker-appetite.jpg";
 import healthImg from "@/assets/tracker-health.jpg";
+import waterImg from "@/assets/tracker-water.jpg";
+import sleepImg from "@/assets/tracker-sleep.jpg";
+import exerciseImg from "@/assets/tracker-exercise.jpg";
+import cervicalImg from "@/assets/tracker-cervical.jpg";
 import {
   saveSymptomLog,
   getSymptomsForDate,
@@ -252,6 +256,74 @@ export const SymptomsPage = () => {
                 </div>
               </div>
             )}
+
+            {/* Water Intake Tracker Card */}
+            <div 
+              className="relative rounded-2xl overflow-hidden shadow-md cursor-pointer h-48 group"
+              onClick={() => navigate('/water')}
+            >
+              <img 
+                src={waterImg} 
+                alt="Water Intake Tracker" 
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+              <div className="absolute inset-0 flex flex-col justify-end p-4 text-white">
+                <h3 className="text-xl font-bold mb-1">Water Intake</h3>
+                <p className="text-sm opacity-90">Track Hydration</p>
+              </div>
+            </div>
+
+            {/* Sleep Quality Tracker Card */}
+            <div 
+              className="relative rounded-2xl overflow-hidden shadow-md cursor-pointer h-48 group"
+              onClick={() => navigate('/sleep')}
+            >
+              <img 
+                src={sleepImg} 
+                alt="Sleep Quality Tracker" 
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+              <div className="absolute inset-0 flex flex-col justify-end p-4 text-white">
+                <h3 className="text-xl font-bold mb-1">Sleep Quality</h3>
+                <p className="text-sm opacity-90">Track Sleep</p>
+              </div>
+            </div>
+
+            {/* Exercise Tracker Card */}
+            <div 
+              className="relative rounded-2xl overflow-hidden shadow-md cursor-pointer h-48 group"
+              onClick={() => navigate('/exercise')}
+            >
+              <img 
+                src={exerciseImg} 
+                alt="Exercise Tracker" 
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+              <div className="absolute inset-0 flex flex-col justify-end p-4 text-white">
+                <h3 className="text-xl font-bold mb-1">Exercise</h3>
+                <p className="text-sm opacity-90">Log Activity</p>
+              </div>
+            </div>
+
+            {/* Cervical Mucus Tracker Card */}
+            <div 
+              className="relative rounded-2xl overflow-hidden shadow-md cursor-pointer h-48 group"
+              onClick={() => navigate('/cervical-mucus')}
+            >
+              <img 
+                src={cervicalImg} 
+                alt="Cervical Mucus Tracker" 
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+              <div className="absolute inset-0 flex flex-col justify-end p-4 text-white">
+                <h3 className="text-xl font-bold mb-1">Cervical Mucus</h3>
+                <p className="text-sm opacity-90">Track Fertility</p>
+              </div>
+            </div>
           </div>
 
           {/* Statistics Dashboard */}
