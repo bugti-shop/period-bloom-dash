@@ -21,7 +21,7 @@ export const Paywall = ({ onStartTrial }: PaywallProps) => {
         <div 
           className="py-4"
           style={{
-            '--connector-width': '8px',
+            '--connector-width': '14px',
             '--connector-color': '#d1d5db',
             '--icon-gap': '68px'
           } as React.CSSProperties}
@@ -36,7 +36,7 @@ export const Paywall = ({ onStartTrial }: PaywallProps) => {
                   className="absolute left-1/2 -translate-x-1/2 pointer-events-none"
                   style={{
                     width: 'var(--connector-width)',
-                    height: 'calc(var(--icon-gap) * 2 + 26px)',
+                    height: 'calc(var(--icon-gap) * 2 + 46px)',
                     top: '20px',
                     backgroundColor: 'var(--connector-color)',
                     borderRadius: '999px',
