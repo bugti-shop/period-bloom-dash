@@ -23,10 +23,10 @@ export const Paywall = ({ onStartTrial }: PaywallProps) => {
           style={{
             '--connector-width': '8px',
             '--connector-color': '#d1d5db',
-            '--icon-gap': '56px'
+            '--icon-gap': '68px'
           } as React.CSSProperties}
         >
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-6">
             {/* Today */}
             <div className="flex gap-3 relative">
               {/* Icon Column with Connector Line */}
@@ -36,7 +36,7 @@ export const Paywall = ({ onStartTrial }: PaywallProps) => {
                   className="absolute left-1/2 -translate-x-1/2 pointer-events-none"
                   style={{
                     width: 'var(--connector-width)',
-                    height: 'calc(var(--icon-gap) * 2 + 12px)',
+                    height: 'calc(var(--icon-gap) * 2 + 26px)',
                     top: '20px',
                     backgroundColor: 'var(--connector-color)',
                     borderRadius: '999px',
@@ -54,7 +54,7 @@ export const Paywall = ({ onStartTrial }: PaywallProps) => {
               </div>
               
               <div className="flex-1 pt-1">
-                <h3 className="text-base font-semibold text-black mb-0.5">Today</h3>
+                <h3 className="text-lg font-semibold text-black mb-0.5">Today</h3>
                 <p className="text-xs text-black">
                   Unlock all app features like Calculating, Adding Notes, Unlimited Goals and more.
                 </p>
@@ -73,7 +73,7 @@ export const Paywall = ({ onStartTrial }: PaywallProps) => {
               </div>
               
               <div className="flex-1 pt-1">
-                <h3 className="text-base font-semibold text-black mb-0.5">In 2 Days - Reminder</h3>
+                <h3 className="text-lg font-semibold text-black mb-0.5">In 2 Days - Reminder</h3>
                 <p className="text-xs text-black">
                   We'll send you a reminder before your trial ends.
                 </p>
@@ -92,7 +92,7 @@ export const Paywall = ({ onStartTrial }: PaywallProps) => {
               </div>
               
               <div className="flex-1 pt-1">
-                <h3 className="text-base font-semibold text-black mb-0.5">In 3 Days - Billing Starts</h3>
+                <h3 className="text-lg font-semibold text-black mb-0.5">In 3 Days - Billing Starts</h3>
                 <p className="text-xs text-black">
                   You'll be charged after 3 days unless you cancel anytime before.
                 </p>
