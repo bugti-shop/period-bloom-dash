@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Header } from "@/components/Header";
 import { BottomNav } from "@/components/BottomNav";
 import { Card } from "@/components/ui/card";
@@ -8,8 +8,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { format } from "date-fns";
-import { CalendarIcon, Droplets, Trash2 } from "lucide-react";
+import { format, differenceInDays, addDays } from "date-fns";
+import { CalendarIcon, Droplets, Trash2, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   loadWaterEntries,
@@ -18,7 +18,16 @@ import {
   getWaterEntryByDate,
   type WaterEntry,
 } from "@/lib/waterStorage";
+import { loadFromLocalStorage } from "@/lib/storage";
+import { getGoalForCyclePhase } from "@/lib/waterReminderStorage";
+import { WaterReminderSettingsCard } from "@/components/WaterReminderSettings";
 import { toast } from "sonner";
+
+interface PeriodData {
+  lastPeriodDate: Date;
+  cycleLength: number;
+  periodDuration: number;
+}
 
 export const WaterPage = () => {
   const [date, setDate] = useState<Date>(new Date());
@@ -26,8 +35,45 @@ export const WaterPage = () => {
   const [goal, setGoal] = useState<number>(8);
   const [notes, setNotes] = useState<string>("");
   const [entries, setEntries] = useState<WaterEntry[]>(loadWaterEntries());
+  const [showSettings, setShowSettings] = useState(false);
+  const [periodData, setPeriodData] = useState<PeriodData | null>(null);
+  const [currentPhase, setCurrentPhase] = useState<string>("follicular");
 
   const selectedDateEntry = getWaterEntryByDate(format(date, "yyyy-MM-dd"));
+
+  useEffect(() => {
+    const savedData = loadFromLocalStorage<PeriodData>("current-period-data");
+    if (savedData) {
+      setPeriodData({
+        ...savedData,
+        lastPeriodDate: new Date(savedData.lastPeriodDate),
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    if (periodData) {
+      const phase = calculateCyclePhase(new Date(), periodData);
+      setCurrentPhase(phase);
+      const adjustedGoal = getGoalForCyclePhase(phase);
+      setGoal(adjustedGoal);
+    }
+  }, [periodData, date]);
+
+  const calculateCyclePhase = (currentDate: Date, data: PeriodData): string => {
+    const daysSinceLastPeriod = differenceInDays(currentDate, data.lastPeriodDate);
+    const cycleDay = ((daysSinceLastPeriod % data.cycleLength) + data.cycleLength) % data.cycleLength;
+
+    if (cycleDay < data.periodDuration) {
+      return "menstruation";
+    } else if (cycleDay < 14) {
+      return "follicular";
+    } else if (cycleDay >= 14 && cycleDay < 16) {
+      return "ovulation";
+    } else {
+      return "luteal";
+    }
+  };
 
   const handleSave = () => {
     const dateStr = format(date, "yyyy-MM-dd");
@@ -52,10 +98,35 @@ export const WaterPage = () => {
     <div className="min-h-screen bg-background pb-20">
       <Header />
       <div className="max-w-4xl mx-auto px-4 py-6 space-y-6">
-        <div className="flex items-center gap-3">
-          <Droplets className="h-8 w-8 text-primary" />
-          <h1 className="text-3xl font-bold text-foreground">Water Intake Tracker</h1>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Droplets className="h-8 w-8 text-primary" />
+            <h1 className="text-3xl font-bold text-foreground">Water Intake Tracker</h1>
+          </div>
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => setShowSettings(!showSettings)}
+          >
+            <Settings className="h-5 w-5" />
+          </Button>
         </div>
+
+        {showSettings && <WaterReminderSettingsCard />}
+
+        {periodData && (
+          <Card className="p-4 bg-gradient-to-r from-blue-50 to-cyan-50 border-blue-200">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-blue-900">Current Phase: {currentPhase}</p>
+                <p className="text-xs text-blue-700 mt-1">
+                  Recommended: {goal} glasses/day
+                </p>
+              </div>
+              <Droplets className="h-8 w-8 text-blue-500" />
+            </div>
+          </Card>
+        )}
 
         <Card className="p-6 space-y-4">
           <div className="space-y-2">
