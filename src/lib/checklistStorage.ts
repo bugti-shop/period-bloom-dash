@@ -7,6 +7,13 @@ export interface ChecklistItem {
   createdAt: string;
 }
 
+export interface ChecklistCategory {
+  id: string;
+  title: string;
+  icon?: string;
+  items: ChecklistItem[];
+}
+
 export interface Checklist {
   id: string;
   title: string;
@@ -16,6 +23,7 @@ export interface Checklist {
   order: number;
   isCustom: boolean;
   items: ChecklistItem[];
+  categories?: ChecklistCategory[];
 }
 
 const STORAGE_KEY = "checklists_data";
@@ -38,6 +46,19 @@ const defaultChecklists: Checklist[] = [
     order: 1,
     isCustom: false,
     items: [],
+    categories: [
+      { id: "my-list", title: "My List", icon: "📝", items: [] },
+      { id: "wardrobe", title: "Wardrobe", icon: "👶", items: [] },
+      { id: "nursing", title: "Nursing", icon: "🍼", items: [] },
+      { id: "hygiene", title: "Hygiene", icon: "🧼", items: [] },
+      { id: "household", title: "Household", icon: "🛏️", items: [] },
+      { id: "toys", title: "Toys", icon: "🪀", items: [] },
+      { id: "walks", title: "Walks", icon: "🚼", items: [] },
+      { id: "sleep", title: "Everything for sleep", icon: "🛌", items: [] },
+      { id: "equipment", title: "Equipment", icon: "📱", items: [] },
+      { id: "swimming", title: "Swimming", icon: "🦆", items: [] },
+      { id: "first-aid", title: "First Aid Kit", icon: "🩹", items: [] },
+    ],
   },
   {
     id: "hospital-bag",
@@ -47,6 +68,11 @@ const defaultChecklists: Checklist[] = [
     order: 2,
     isCustom: false,
     items: [],
+    categories: [
+      { id: "for-mother", title: "For mother", icon: "👩", items: [] },
+      { id: "for-partner", title: "For partner", icon: "👨", items: [] },
+      { id: "for-child", title: "For a child", icon: "👶", items: [] },
+    ],
   },
   {
     id: "birth-plan",
@@ -56,6 +82,21 @@ const defaultChecklists: Checklist[] = [
     order: 3,
     isCustom: false,
     items: [],
+    categories: [
+      { id: "my-birth-plan", title: "My birth plan", icon: "📋", items: [] },
+      { id: "atmosphere", title: "Atmosphere", icon: "🏥", items: [] },
+      { id: "partners", title: "Partners", icon: "👫", items: [] },
+      { id: "photo-video", title: "Photo and video", icon: "📷", items: [] },
+      { id: "stimulation", title: "Stimulation of labour", icon: "💊", items: [] },
+      { id: "anesthesia", title: "Anesthesia", icon: "💉", items: [] },
+      { id: "tearing", title: "Tearing", icon: "🩹", items: [] },
+      { id: "during-childbirth", title: "During childbirth", icon: "⏰", items: [] },
+      { id: "cesarean", title: "Cesarean section", icon: "🏥", items: [] },
+      { id: "childbirth", title: "Childbirth", icon: "🎉", items: [] },
+      { id: "after-childbirth", title: "After childbirth", icon: "💕", items: [] },
+      { id: "feeding", title: "Feeding", icon: "🍼", items: [] },
+      { id: "other", title: "Other", icon: "📝", items: [] },
+    ],
   },
   {
     id: "notes",

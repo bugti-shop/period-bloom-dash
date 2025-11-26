@@ -86,8 +86,11 @@ export const ChecklistDetailPage = () => {
 
   if (!checklist) return null;
 
-  const completedCount = checklist.items.filter((item) => item.completed).length;
-  const totalCount = checklist.items.length;
+  const allItems = checklist.categories
+    ? checklist.categories.flatMap((cat) => cat.items)
+    : checklist.items;
+  const completedCount = allItems.filter((item) => item.completed).length;
+  const totalCount = allItems.length;
   const progressPercent = totalCount > 0 ? (completedCount / totalCount) * 100 : 0;
 
   return (
@@ -129,58 +132,120 @@ export const ChecklistDetailPage = () => {
           </Button>
         </div>
 
-        <div className="space-y-2">
-          {checklist.items.map((item) => (
-            <div
-              key={item.id}
-              className="p-4 rounded-lg bg-card border border-border flex items-center gap-3"
-            >
-              <Checkbox
-                checked={item.completed}
-                onCheckedChange={() => handleToggle(item.id)}
-              />
-              {editingId === item.id ? (
-                <Input
-                  value={editText}
-                  onChange={(e) => setEditText(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") handleSaveEdit();
-                    if (e.key === "Escape") setEditingId(null);
-                  }}
-                  onBlur={handleSaveEdit}
-                  autoFocus
-                  className="flex-1"
+        <div className="space-y-6">
+          {checklist.categories ? (
+            checklist.categories.map((category) => (
+              <div key={category.id} className="space-y-2">
+                <div className="flex items-center gap-2 mb-3">
+                  {category.icon && <span className="text-xl">{category.icon}</span>}
+                  <h3 className="text-lg font-semibold text-foreground">{category.title}</h3>
+                  <span className="text-sm text-muted-foreground">
+                    {category.items.filter((i) => i.completed).length}/{category.items.length}
+                  </span>
+                </div>
+                {category.items.map((item) => (
+                  <div
+                    key={item.id}
+                    className="p-4 rounded-lg bg-card border border-border flex items-center gap-3"
+                  >
+                    <Checkbox
+                      checked={item.completed}
+                      onCheckedChange={() => handleToggle(item.id)}
+                    />
+                    {editingId === item.id ? (
+                      <Input
+                        value={editText}
+                        onChange={(e) => setEditText(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") handleSaveEdit();
+                          if (e.key === "Escape") setEditingId(null);
+                        }}
+                        onBlur={handleSaveEdit}
+                        autoFocus
+                        className="flex-1"
+                      />
+                    ) : (
+                      <span
+                        className={`flex-1 ${
+                          item.completed
+                            ? "line-through text-muted-foreground"
+                            : "text-foreground"
+                        }`}
+                      >
+                        {item.text}
+                      </span>
+                    )}
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handleEdit(item.id, item.text)}
+                    >
+                      <Edit2 className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => setDeleteId(item.id)}
+                    >
+                      <Trash2 className="h-4 w-4 text-destructive" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            ))
+          ) : (
+            checklist.items.map((item) => (
+              <div
+                key={item.id}
+                className="p-4 rounded-lg bg-card border border-border flex items-center gap-3"
+              >
+                <Checkbox
+                  checked={item.completed}
+                  onCheckedChange={() => handleToggle(item.id)}
                 />
-              ) : (
-                <span
-                  className={`flex-1 ${
-                    item.completed
-                      ? "line-through text-muted-foreground"
-                      : "text-foreground"
-                  }`}
+                {editingId === item.id ? (
+                  <Input
+                    value={editText}
+                    onChange={(e) => setEditText(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") handleSaveEdit();
+                      if (e.key === "Escape") setEditingId(null);
+                    }}
+                    onBlur={handleSaveEdit}
+                    autoFocus
+                    className="flex-1"
+                  />
+                ) : (
+                  <span
+                    className={`flex-1 ${
+                      item.completed
+                        ? "line-through text-muted-foreground"
+                        : "text-foreground"
+                    }`}
+                  >
+                    {item.text}
+                  </span>
+                )}
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => handleEdit(item.id, item.text)}
                 >
-                  {item.text}
-                </span>
-              )}
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => handleEdit(item.id, item.text)}
-              >
-                <Edit2 className="h-4 w-4" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setDeleteId(item.id)}
-              >
-                <Trash2 className="h-4 w-4 text-destructive" />
-              </Button>
-            </div>
-          ))}
+                  <Edit2 className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setDeleteId(item.id)}
+                >
+                  <Trash2 className="h-4 w-4 text-destructive" />
+                </Button>
+              </div>
+            ))
+          )}
         </div>
 
-        {checklist.items.length === 0 && (
+        {totalCount === 0 && (
           <div className="text-center py-12 text-muted-foreground">
             No items yet. Add your first item above!
           </div>
