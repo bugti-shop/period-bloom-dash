@@ -40,6 +40,7 @@ export const ChecklistDetailPage = () => {
   const [editText, setEditText] = useState("");
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [openCategories, setOpenCategories] = useState<Record<string, boolean>>({});
+  const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
 
   useEffect(() => {
     const checklists = loadChecklists();
@@ -116,7 +117,7 @@ export const ChecklistDetailPage = () => {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => navigate(-1)}
+            onClick={() => navigate("/checklists")}
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
@@ -159,43 +160,32 @@ export const ChecklistDetailPage = () => {
                 }
               >
                 <div className="bg-card rounded-lg border border-border p-4">
-                  <div className="flex items-center justify-between gap-2 mb-2">
-                    <CollapsibleTrigger className="flex items-center gap-2 flex-1 text-left hover:opacity-80">
-                      <ChevronDown
-                        className={`h-5 w-5 text-muted-foreground transition-transform ${
-                          openCategories[category.id] ? "rotate-180" : ""
-                        }`}
-                      />
-                      {category.icon && <span className="text-xl">{category.icon}</span>}
-                      <h3 className="text-lg font-semibold text-foreground">{category.title}</h3>
-                      <span className="text-sm text-muted-foreground">
-                        {category.items.filter((i) => i.completed).length}/{category.items.length}
-                      </span>
-                    </CollapsibleTrigger>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleMarkAllComplete(category.id);
-                      }}
-                      className="text-xs"
-                    >
-                      Mark all complete
-                    </Button>
-                  </div>
+                  <CollapsibleTrigger className="flex items-center gap-2 flex-1 text-left hover:opacity-80 mb-2">
+                    <ChevronDown
+                      className={`h-5 w-5 text-muted-foreground transition-transform ${
+                        openCategories[category.id] ? "rotate-180" : ""
+                      }`}
+                    />
+                    {category.icon && <span className="text-xl">{category.icon}</span>}
+                    <h3 className="text-lg font-semibold text-foreground">{category.title}</h3>
+                    <span className="text-sm text-muted-foreground">
+                      {category.items.filter((i) => i.completed).length}/{category.items.length}
+                    </span>
+                  </CollapsibleTrigger>
                   
                   <CollapsibleContent className="space-y-2 mt-3">
                     {category.items.map((item) => (
                       <div
                         key={item.id}
-                        className="p-4 rounded-lg bg-background border border-border flex items-center gap-3"
+                        className="p-4 rounded-lg bg-background border border-border flex items-center gap-3 cursor-pointer"
+                        onClick={() => setSelectedItemId(item.id)}
                       >
                         <Checkbox
                           id={`checkbox-${item.id}`}
                           checked={item.completed}
                           onCheckedChange={() => handleToggle(item.id)}
                           className="h-5 w-5 shrink-0 cursor-pointer"
+                          onClick={(e) => e.stopPropagation()}
                         />
                         {editingId === item.id ? (
                           <Input
@@ -208,6 +198,7 @@ export const ChecklistDetailPage = () => {
                             onBlur={handleSaveEdit}
                             autoFocus
                             className="flex-1"
+                            onClick={(e) => e.stopPropagation()}
                           />
                         ) : (
                           <Label
@@ -221,20 +212,30 @@ export const ChecklistDetailPage = () => {
                             {item.text}
                           </Label>
                         )}
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleEdit(item.id, item.text)}
-                        >
-                          <Edit2 className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => setDeleteId(item.id)}
-                        >
-                          <Trash2 className="h-4 w-4 text-destructive" />
-                        </Button>
+                        {selectedItemId === item.id && (
+                          <>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleEdit(item.id, item.text);
+                              }}
+                            >
+                              <Edit2 className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setDeleteId(item.id);
+                              }}
+                            >
+                              <Trash2 className="h-4 w-4 text-destructive" />
+                            </Button>
+                          </>
+                        )}
                       </div>
                     ))}
                   </CollapsibleContent>
@@ -245,13 +246,15 @@ export const ChecklistDetailPage = () => {
             checklist.items.map((item) => (
               <div
                 key={item.id}
-                className="p-4 rounded-lg bg-card border border-border flex items-center gap-3"
+                className="p-4 rounded-lg bg-card border border-border flex items-center gap-3 cursor-pointer"
+                onClick={() => setSelectedItemId(item.id)}
               >
                 <Checkbox
                   id={`checkbox-${item.id}`}
                   checked={item.completed}
                   onCheckedChange={() => handleToggle(item.id)}
                   className="h-5 w-5 shrink-0 cursor-pointer"
+                  onClick={(e) => e.stopPropagation()}
                 />
                 {editingId === item.id ? (
                   <Input
@@ -264,6 +267,7 @@ export const ChecklistDetailPage = () => {
                     onBlur={handleSaveEdit}
                     autoFocus
                     className="flex-1"
+                    onClick={(e) => e.stopPropagation()}
                   />
                 ) : (
                   <Label
@@ -277,20 +281,30 @@ export const ChecklistDetailPage = () => {
                     {item.text}
                   </Label>
                 )}
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => handleEdit(item.id, item.text)}
-                >
-                  <Edit2 className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setDeleteId(item.id)}
-                >
-                  <Trash2 className="h-4 w-4 text-destructive" />
-                </Button>
+                {selectedItemId === item.id && (
+                  <>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleEdit(item.id, item.text);
+                      }}
+                    >
+                      <Edit2 className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setDeleteId(item.id);
+                      }}
+                    >
+                      <Trash2 className="h-4 w-4 text-destructive" />
+                    </Button>
+                  </>
+                )}
               </div>
             ))
           )}
