@@ -1,7 +1,9 @@
 import { format, addDays, isSameDay, startOfMonth, endOfMonth, eachDayOfInterval, getDay, addMonths } from "date-fns";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { getSymptomDates } from "@/lib/symptomLog";
+import { loadTheme } from "@/lib/themeStorage";
+import { AstrologyCalendar } from "./AstrologyCalendar";
 
 interface PeriodCalendarProps {
   periodDates: Date[];
@@ -26,6 +28,20 @@ export const PeriodCalendar = ({
 }: PeriodCalendarProps) => {
   const today = new Date();
   const [currentMonthOffset, setCurrentMonthOffset] = useState(0);
+  const [isAstrologyTheme, setIsAstrologyTheme] = useState(false);
+
+  useEffect(() => {
+    const theme = loadTheme();
+    setIsAstrologyTheme(theme === "astrology");
+
+    const checkTheme = () => {
+      const currentTheme = loadTheme();
+      setIsAstrologyTheme(currentTheme === "astrology");
+    };
+
+    const interval = setInterval(checkTheme, 500);
+    return () => clearInterval(interval);
+  }, []);
   
   // Calculate all dates for 12 months (same as CalendarPage)
   const calculateAllDates = () => {
@@ -93,6 +109,20 @@ export const PeriodCalendar = ({
       onMonthChange(addMonths(startingMonth, newOffset));
     }
   };
+
+  // Render astrology calendar if theme is astrology
+  if (isAstrologyTheme) {
+    return (
+      <AstrologyCalendar
+        periodDates={periodDates}
+        cycleLength={cycleLength}
+        lastPeriodDate={lastPeriodDate}
+        periodDuration={periodDuration}
+        selectedDate={selectedDate}
+        onDateSelect={onDateSelect}
+      />
+    );
+  }
 
   return (
     <div className="glass-card p-1.5 rounded-2xl">

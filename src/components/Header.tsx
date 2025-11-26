@@ -1,9 +1,10 @@
 import logo from "@/assets/logo.png";
-import { BookOpen, Users } from "lucide-react";
+import { BookOpen, Users, Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { loadTheme, saveTheme, type ThemeVariant } from "@/lib/themeStorage";
 
 interface HeaderProps {
   showArticlesToggle?: boolean;
@@ -13,9 +14,11 @@ export const Header = ({ showArticlesToggle = false }: HeaderProps) => {
   const navigate = useNavigate();
   const [hasPartnerCode, setHasPartnerCode] = useState(false);
   const [referralCount, setReferralCount] = useState(0);
+  const [currentTheme, setCurrentTheme] = useState<ThemeVariant>("light");
 
   useEffect(() => {
     checkPartnerStatus();
+    setCurrentTheme(loadTheme());
   }, []);
 
   const checkPartnerStatus = async () => {
@@ -47,6 +50,12 @@ export const Header = ({ showArticlesToggle = false }: HeaderProps) => {
     }
   };
 
+  const toggleTheme = () => {
+    const newTheme: ThemeVariant = currentTheme === "astrology" ? "light" : "astrology";
+    saveTheme(newTheme);
+    setCurrentTheme(newTheme);
+  };
+
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-white shadow-sm">
       <div className="max-w-7xl mx-auto px-3 py-2">
@@ -57,6 +66,16 @@ export const Header = ({ showArticlesToggle = false }: HeaderProps) => {
           </div>
           
           <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={toggleTheme}
+              className="gap-2"
+              title={currentTheme === "astrology" ? "Switch to Light Theme" : "Switch to Astrology Theme"}
+            >
+              <Moon className={`h-4 w-4 ${currentTheme === "astrology" ? "fill-current" : ""}`} />
+            </Button>
+
             {hasPartnerCode && (
               <Button
                 variant="ghost"
