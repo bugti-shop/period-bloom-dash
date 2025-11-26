@@ -1,7 +1,25 @@
 import { saveToLocalStorage, loadFromLocalStorage } from "./storage";
 
 export interface SectionVisibility {
-  calendar: boolean;
+  // Period Mode Home Sections
+  periodCalendar: boolean;
+  periodInfoCards: boolean;
+  periodInsights: boolean;
+  periodStickyNotes: boolean;
+  
+  // Pregnancy Mode Home Sections
+  pregnancyProgress: boolean;
+  bumpGallery: boolean;
+  babyAlbum: boolean;
+  familyAlbum: boolean;
+  ultrasoundAlbum: boolean;
+  appointmentCard: boolean;
+  pregnancyWeightCard: boolean;
+  bloodPressureCard: boolean;
+  glucoseCard: boolean;
+  pregnancyStickyNotes: boolean;
+  
+  // Symptoms Page Sections (shared between modes)
   symptoms: boolean;
   mood: boolean;
   intimacy: boolean;
@@ -10,8 +28,6 @@ export interface SectionVisibility {
   conceiving: boolean;
   medications: boolean;
   flowIntensity: boolean;
-  stickyNotes: boolean;
-  insights: boolean;
   health: boolean;
   symptomsChecker: boolean;
 }
@@ -19,7 +35,25 @@ export interface SectionVisibility {
 const SECTION_VISIBILITY_KEY = "section-visibility";
 
 const DEFAULT_VISIBILITY: SectionVisibility = {
-  calendar: true,
+  // Period Mode Home Sections
+  periodCalendar: true,
+  periodInfoCards: true,
+  periodInsights: true,
+  periodStickyNotes: true,
+  
+  // Pregnancy Mode Home Sections
+  pregnancyProgress: true,
+  bumpGallery: true,
+  babyAlbum: true,
+  familyAlbum: true,
+  ultrasoundAlbum: true,
+  appointmentCard: true,
+  pregnancyWeightCard: true,
+  bloodPressureCard: true,
+  glucoseCard: true,
+  pregnancyStickyNotes: true,
+  
+  // Symptoms Page Sections
   symptoms: true,
   mood: true,
   intimacy: true,
@@ -28,8 +62,6 @@ const DEFAULT_VISIBILITY: SectionVisibility = {
   conceiving: true,
   medications: true,
   flowIntensity: true,
-  stickyNotes: true,
-  insights: true,
   health: true,
   symptomsChecker: false,
 };

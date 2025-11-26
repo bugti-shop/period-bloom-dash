@@ -22,6 +22,7 @@ import {
   loadPregnancyMode, 
   savePregnancyMode 
 } from "@/lib/pregnancyMode";
+import { loadSectionVisibility } from "@/lib/sectionVisibility";
 
 interface PregnancyTrackerProps {
   lastPeriodDate: Date;
@@ -35,6 +36,7 @@ export const PregnancyTracker = ({ lastPeriodDate: initialLastPeriodDate }: Preg
   const [showBabyAlbum, setShowBabyAlbum] = useState(false);
   const [showFamilyAlbum, setShowFamilyAlbum] = useState(false);
   const [showUltrasoundAlbum, setShowUltrasoundAlbum] = useState(false);
+  const visibility = loadSectionVisibility();
   
   // Load saved manual week override on mount
   useEffect(() => {
@@ -101,21 +103,23 @@ export const PregnancyTracker = ({ lastPeriodDate: initialLastPeriodDate }: Preg
       {activeTab === "home" && (
         <div className="max-w-2xl mx-auto py-4 px-4 pb-20">
           <div className="space-y-4">
-            <PregnancyProgress 
-              week={currentWeek} 
-              dueDate={dueDate}
-              onUpdateLastPeriod={handleUpdateLastPeriod}
-              onSwitchWeek={handleSwitchWeek}
-            />
-            <BumpGalleryCard onClick={() => setShowGallery(true)} />
-            <BabyAlbumCard onClick={() => setShowBabyAlbum(true)} />
-            <FamilyAlbumCard onClick={() => setShowFamilyAlbum(true)} />
-            <UltrasoundAlbumCard onClick={() => setShowUltrasoundAlbum(true)} />
-            <AppointmentCard />
-            <PregnancyWeightCard />
-            <BloodPressureCard />
-            <GlucoseCard />
-            <StickyNotes />
+            {visibility.pregnancyProgress && (
+              <PregnancyProgress 
+                week={currentWeek} 
+                dueDate={dueDate}
+                onUpdateLastPeriod={handleUpdateLastPeriod}
+                onSwitchWeek={handleSwitchWeek}
+              />
+            )}
+            {visibility.bumpGallery && <BumpGalleryCard onClick={() => setShowGallery(true)} />}
+            {visibility.babyAlbum && <BabyAlbumCard onClick={() => setShowBabyAlbum(true)} />}
+            {visibility.familyAlbum && <FamilyAlbumCard onClick={() => setShowFamilyAlbum(true)} />}
+            {visibility.ultrasoundAlbum && <UltrasoundAlbumCard onClick={() => setShowUltrasoundAlbum(true)} />}
+            {visibility.appointmentCard && <AppointmentCard />}
+            {visibility.pregnancyWeightCard && <PregnancyWeightCard />}
+            {visibility.bloodPressureCard && <BloodPressureCard />}
+            {visibility.glucoseCard && <GlucoseCard />}
+            {visibility.pregnancyStickyNotes && <StickyNotes />}
           </div>
         </div>
       )}
