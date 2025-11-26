@@ -56,13 +56,13 @@ export const ChecklistsPage = () => {
           {checklists.map((checklist) => (
             <div
               key={checklist.id}
-              className={`${checklist.bgColor} rounded-3xl p-6 cursor-pointer hover:scale-105 transition-transform duration-200 shadow-lg flex flex-col min-h-[220px] ${
+              className={`${checklist.bgColor} rounded-3xl p-4 cursor-pointer hover:scale-105 transition-transform duration-200 shadow-lg flex flex-col min-h-[160px] ${
                 checklist.id === "hospital-bag" || checklist.id === "names"
                   ? "col-span-2"
                   : ""
               }`}
             >
-              <h3 className="text-xl font-bold text-foreground mb-4">
+              <h3 className="text-lg font-bold text-foreground mb-2">
                 {checklist.title}
               </h3>
               <div className="flex-1 flex items-center justify-center">
