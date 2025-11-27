@@ -114,7 +114,7 @@ export const Paywall = ({ onStartTrial }: PaywallProps) => {
           >
             <div className="text-center">
               <div className="text-base font-semibold text-foreground mb-1">Monthly</div>
-              <div className="text-sm text-muted-foreground">$3.99/mo</div>
+              <div className="text-sm text-muted-foreground">$9.99/mo</div>
             </div>
           </button>
 
@@ -132,7 +132,8 @@ export const Paywall = ({ onStartTrial }: PaywallProps) => {
             </div>
             <div className="text-center">
               <div className="text-base font-semibold text-foreground mb-1">Yearly</div>
-              <div className="text-sm text-muted-foreground">$2.35/mo</div>
+              <div className="text-sm text-muted-foreground">$4.99/mo</div>
+              <div className="text-xs text-muted-foreground mt-0.5">Billed $59.99 annually</div>
             </div>
           </button>
         </div>
