@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { VoiceNotes } from "@/components/VoiceNotes";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Plus, Trash2, Calendar, Clock, MapPin, User, CheckCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -172,7 +173,7 @@ export default function AppointmentPage() {
           </Card>
         )}
 
-        <Card className="p-6">
+        <Card className="p-6 mb-6">
           <h2 className="text-lg font-semibold mb-4">Your Appointments</h2>
           
           {appointments.length === 0 ? (
@@ -243,6 +244,8 @@ export default function AppointmentPage() {
             </div>
           )}
         </Card>
+
+        <VoiceNotes selectedDate={new Date()} />
       </div>
     </div>
   );
