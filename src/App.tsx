@@ -23,6 +23,7 @@ import PregnancyWeightPage from "./pages/PregnancyWeightPage";
 import BloodPressurePage from "./pages/BloodPressurePage";
 import GlucosePage from "./pages/GlucosePage";
 import StressPage from "./pages/StressPage";
+import DigestivePage from "./pages/DigestivePage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -54,6 +55,7 @@ const App = () => (
           <Route path="/blood-pressure" element={<BloodPressurePage />} />
           <Route path="/glucose" element={<GlucosePage />} />
           <Route path="/stress" element={<StressPage />} />
+          <Route path="/digestive" element={<DigestivePage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
