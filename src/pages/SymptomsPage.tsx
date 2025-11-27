@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { format } from "date-fns";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { PeriodCalendar } from "@/components/PeriodCalendar";
 import { SymptomCategoryPicker } from "@/components/SymptomCategoryPicker";
 import { DateStickyNotes } from "@/components/DateStickyNotes";
@@ -27,6 +28,8 @@ import exerciseImg from "@/assets/tracker-exercise.jpg";
 import cervicalImg from "@/assets/tracker-cervical.jpg";
 import stressImg from "@/assets/tracker-stress.jpg";
 import digestiveImg from "@/assets/tracker-digestive.jpg";
+import energyImg from "@/assets/tracker-energy.jpg";
+import skinImg from "@/assets/tracker-skin.jpg";
 import {
   saveSymptomLog,
   getSymptomsForDate,
@@ -193,6 +196,19 @@ export const SymptomsPage = () => {
 
           {/* Symptom Reminders */}
           <SymptomReminders />
+
+          {/* Health Dashboard Link */}
+          <Card className="p-4 bg-gradient-to-r from-primary/10 to-secondary/10 border-2 border-primary/20">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="font-semibold text-lg mb-1">Health Dashboard</h3>
+                <p className="text-sm text-muted-foreground">View all your health data in one place</p>
+              </div>
+              <Button onClick={() => navigate('/health-dashboard')}>
+                View Dashboard
+              </Button>
+            </div>
+          </Card>
 
           {/* Tracker Cards with Images */}
           <div className="grid grid-cols-2 gap-4">
@@ -371,6 +387,40 @@ export const SymptomsPage = () => {
               <div className="absolute inset-0 flex flex-col justify-end p-4 text-white">
                 <h3 className="text-xl font-bold mb-1">Digestive Health</h3>
                 <p className="text-sm opacity-90">Track Digestion</p>
+              </div>
+            </div>
+
+            {/* Energy Level Tracker Card */}
+            <div 
+              className="relative rounded-2xl overflow-hidden shadow-md cursor-pointer h-48 group"
+              onClick={() => navigate('/energy')}
+            >
+              <img 
+                src={energyImg} 
+                alt="Energy Level Tracker" 
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+              <div className="absolute inset-0 flex flex-col justify-end p-4 text-white">
+                <h3 className="text-xl font-bold mb-1">Energy Levels</h3>
+                <p className="text-sm opacity-90">Track Energy</p>
+              </div>
+            </div>
+
+            {/* Skin Condition Tracker Card */}
+            <div 
+              className="relative rounded-2xl overflow-hidden shadow-md cursor-pointer h-48 group"
+              onClick={() => navigate('/skin')}
+            >
+              <img 
+                src={skinImg} 
+                alt="Skin Condition Tracker" 
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+              <div className="absolute inset-0 flex flex-col justify-end p-4 text-white">
+                <h3 className="text-xl font-bold mb-1">Skin Condition</h3>
+                <p className="text-sm opacity-90">Track Skin</p>
               </div>
             </div>
 
