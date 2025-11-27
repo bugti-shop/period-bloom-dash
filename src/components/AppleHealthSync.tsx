@@ -3,7 +3,11 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Activity, RefreshCw, Download, FileText, Heart } from "lucide-react";
+import { GoogleFitSync } from "./GoogleFitSync";
+import { PDFReportGenerator } from "./PDFReportGenerator";
+import { MedicationInteractionAlert } from "./MedicationInteractionAlert";
 import { toast } from "sonner";
 import {
   requestHealthPermissions,
@@ -123,8 +127,19 @@ export const AppleHealthSync = () => {
 
   return (
     <div className="space-y-4">
-      {/* Apple Health Sync Section */}
-      <Card className="p-6">
+      {/* Medication Interaction Warnings */}
+      <MedicationInteractionAlert />
+
+      <Tabs defaultValue="health-sync" className="w-full">
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="health-sync">Health Sync</TabsTrigger>
+          <TabsTrigger value="pdf-reports">PDF Reports</TabsTrigger>
+          <TabsTrigger value="csv-export">CSV Export</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="health-sync" className="space-y-4 mt-4">
+          {/* Apple Health Sync Section */}
+          <Card className="p-6">
         <div className="flex items-center gap-3 mb-4">
           <div className="p-2 bg-red-100 rounded-lg">
             <Heart className="w-5 h-5 text-red-600" />
@@ -210,8 +225,17 @@ export const AppleHealthSync = () => {
         )}
       </Card>
 
-      {/* Medical Export Section */}
-      <Card className="p-6">
+          {/* Google Fit Sync Section */}
+          <GoogleFitSync />
+        </TabsContent>
+
+        <TabsContent value="pdf-reports" className="mt-4">
+          <PDFReportGenerator />
+        </TabsContent>
+
+        <TabsContent value="csv-export" className="mt-4">
+          {/* Medical Export Section */}
+          <Card className="p-6">
         <div className="flex items-center gap-3 mb-4">
           <div className="p-2 bg-blue-100 rounded-lg">
             <FileText className="w-5 h-5 text-blue-600" />
@@ -262,10 +286,12 @@ export const AppleHealthSync = () => {
           </Button>
         </div>
 
-        <p className="text-xs text-muted-foreground mt-4">
-          These reports are formatted for medical consultation and include all tracked health metrics.
-        </p>
-      </Card>
+            <p className="text-xs text-muted-foreground mt-4">
+              These reports are formatted for medical consultation and include all tracked health metrics.
+            </p>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
