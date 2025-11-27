@@ -11,6 +11,7 @@ interface VoiceNote {
   timestamp: Date;
   duration: number;
   date: string; // YYYY-MM-DD format
+  transcription?: string;
 }
 
 interface VoiceNotesProps {
@@ -22,10 +23,12 @@ export const VoiceNotes = ({ selectedDate }: VoiceNotesProps) => {
   const [voiceNotes, setVoiceNotes] = useState<VoiceNote[]>([]);
   const [playingId, setPlayingId] = useState<string | null>(null);
   const [isPaused, setIsPaused] = useState(false);
+  const [currentTranscript, setCurrentTranscript] = useState("");
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const recordingStartTimeRef = useRef<number>(0);
   const currentAudioRef = useRef<HTMLAudioElement | null>(null);
+  const recognitionRef = useRef<any>(null);
   const { toast } = useToast();
 
   const dateKey = format(selectedDate, "yyyy-MM-dd");
@@ -55,6 +58,27 @@ export const VoiceNotes = ({ selectedDate }: VoiceNotesProps) => {
       mediaRecorderRef.current = mediaRecorder;
       audioChunksRef.current = [];
       recordingStartTimeRef.current = Date.now();
+      setCurrentTranscript("");
+
+      // Start speech recognition
+      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      if (SpeechRecognition) {
+        const recognition = new SpeechRecognition();
+        recognition.continuous = true;
+        recognition.interimResults = true;
+        recognition.lang = 'en-US';
+
+        recognition.onresult = (event: any) => {
+          let transcript = '';
+          for (let i = 0; i < event.results.length; i++) {
+            transcript += event.results[i][0].transcript + ' ';
+          }
+          setCurrentTranscript(transcript.trim());
+        };
+
+        recognition.start();
+        recognitionRef.current = recognition;
+      }
 
       mediaRecorder.ondataavailable = (event) => {
         audioChunksRef.current.push(event.data);
@@ -73,7 +97,8 @@ export const VoiceNotes = ({ selectedDate }: VoiceNotesProps) => {
             data: base64Audio,
             timestamp: new Date(),
             duration,
-            date: dateKey
+            date: dateKey,
+            transcription: currentTranscript || undefined
           };
 
           const allNotes = loadFromLocalStorage<VoiceNote[]>("voice-notes") || [];
@@ -83,12 +108,18 @@ export const VoiceNotes = ({ selectedDate }: VoiceNotesProps) => {
           loadVoiceNotes();
           toast({
             title: "Voice note saved",
-            description: `Recorded ${duration} seconds`
+            description: currentTranscript ? "Recording and transcription saved" : `Recorded ${duration} seconds`
           });
         };
         
         reader.readAsDataURL(audioBlob);
         stream.getTracks().forEach(track => track.stop());
+
+        // Stop speech recognition
+        if (recognitionRef.current) {
+          recognitionRef.current.stop();
+          recognitionRef.current = null;
+        }
       };
 
       mediaRecorder.start();
@@ -171,25 +202,34 @@ export const VoiceNotes = ({ selectedDate }: VoiceNotesProps) => {
         <p className="text-xs text-gray-500">{format(selectedDate, "MMM dd, yyyy")}</p>
       </div>
 
-      <div className="flex justify-center">
-        {!isRecording ? (
-          <Button
-            onClick={startRecording}
-            className="w-full bg-red-500 hover:bg-red-600 text-white"
-            size="lg"
-          >
-            <Mic className="w-5 h-5 mr-2" />
-            Start Recording
-          </Button>
-        ) : (
-          <Button
-            onClick={stopRecording}
-            className="w-full bg-gray-800 hover:bg-gray-900 text-white animate-pulse"
-            size="lg"
-          >
-            <Square className="w-5 h-5 mr-2" />
-            Stop Recording
-          </Button>
+      <div className="space-y-3">
+        <div className="flex justify-center">
+          {!isRecording ? (
+            <Button
+              onClick={startRecording}
+              className="w-full bg-red-500 hover:bg-red-600 text-white"
+              size="lg"
+            >
+              <Mic className="w-5 h-5 mr-2" />
+              Start Recording
+            </Button>
+          ) : (
+            <Button
+              onClick={stopRecording}
+              className="w-full bg-gray-800 hover:bg-gray-900 text-white animate-pulse"
+              size="lg"
+            >
+              <Square className="w-5 h-5 mr-2" />
+              Stop Recording
+            </Button>
+          )}
+        </div>
+
+        {isRecording && currentTranscript && (
+          <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
+            <p className="text-xs font-medium text-blue-700 mb-1">Live Transcription:</p>
+            <p className="text-sm text-blue-900">{currentTranscript}</p>
+          </div>
         )}
       </div>
 
@@ -205,7 +245,7 @@ export const VoiceNotes = ({ selectedDate }: VoiceNotesProps) => {
                 onClick={() => playNote(note)}
                 variant="ghost"
                 size="sm"
-                className="h-8 w-8 p-0"
+                className="h-8 w-8 p-0 flex-shrink-0"
               >
                 {playingId === note.id ? (
                   isPaused ? (
@@ -218,11 +258,14 @@ export const VoiceNotes = ({ selectedDate }: VoiceNotesProps) => {
                 )}
               </Button>
               
-              <div className="flex-1">
+              <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium">
                   {isNaN(note.timestamp.getTime()) ? "Invalid time" : format(note.timestamp, "h:mm a")}
                 </p>
-                <p className="text-xs text-gray-500">{note.duration}s</p>
+                <p className="text-xs text-gray-500 mb-1">{note.duration}s</p>
+                {note.transcription && (
+                  <p className="text-xs text-gray-700 line-clamp-2">{note.transcription}</p>
+                )}
               </div>
 
               <Button
