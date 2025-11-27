@@ -97,6 +97,44 @@ export type Database = {
           },
         ]
       }
+      free_months_rewards: {
+        Row: {
+          created_at: string | null
+          id: string
+          months_earned: number
+          months_used: number
+          referral_id: string | null
+          source: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          months_earned?: number
+          months_used?: number
+          referral_id?: string | null
+          source?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          months_earned?: number
+          months_used?: number
+          referral_id?: string | null
+          source?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "free_months_rewards_referral_id_fkey"
+            columns: ["referral_id"]
+            isOneToOne: false
+            referencedRelation: "referrals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       partner_codes: {
         Row: {
           code: string
@@ -285,6 +323,60 @@ export type Database = {
         }
         Relationships: []
       }
+      referral_codes: {
+        Row: {
+          code: string
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          user_id: string
+        }
+        Insert: {
+          code: string
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          user_id: string
+        }
+        Update: {
+          code?: string
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      referrals: {
+        Row: {
+          confirmed_at: string | null
+          created_at: string | null
+          id: string
+          referral_code: string
+          referred_user_id: string
+          referrer_user_id: string
+          status: string | null
+        }
+        Insert: {
+          confirmed_at?: string | null
+          created_at?: string | null
+          id?: string
+          referral_code: string
+          referred_user_id: string
+          referrer_user_id: string
+          status?: string | null
+        }
+        Update: {
+          confirmed_at?: string | null
+          created_at?: string | null
+          id?: string
+          referral_code?: string
+          referred_user_id?: string
+          referrer_user_id?: string
+          status?: string | null
+        }
+        Relationships: []
+      }
       reward_config: {
         Row: {
           created_at: string
@@ -458,6 +550,10 @@ export type Database = {
         }
         Returns: number
       }
+      check_referral_code_available: {
+        Args: { code_to_check: string }
+        Returns: boolean
+      }
       distribute_referral_reward: {
         Args: {
           p_partner_user_id: string
@@ -499,6 +595,13 @@ export type Database = {
           isSetofReturn: true
         }
       }
+      get_referrer_by_code: {
+        Args: { referral_code: string }
+        Returns: {
+          code: string
+          user_id: string
+        }[]
+      }
       get_user_available_credits: {
         Args: { p_user_id: string }
         Returns: number
@@ -510,6 +613,10 @@ export type Database = {
           p_user_id: string
         }
         Returns: string
+      }
+      process_referral_reward: {
+        Args: { referral_id_param: string }
+        Returns: undefined
       }
       update_campaign_statuses: { Args: never; Returns: undefined }
     }
