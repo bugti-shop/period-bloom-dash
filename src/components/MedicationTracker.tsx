@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Plus, Pill, Trash2, Check } from "lucide-react";
+import { Plus, Pill, Trash2, Check, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -30,6 +30,7 @@ import {
 } from "@/lib/medicationStorage";
 import { notifySuccess } from "@/lib/notificationWithHaptics";
 import { format } from "date-fns";
+import { MedicationInteractionAlert } from "./MedicationInteractionAlert";
 
 export const MedicationTracker = () => {
   const [medications, setMedications] = useState<Medication[]>(loadMedications());
@@ -100,6 +101,9 @@ export const MedicationTracker = () => {
 
   return (
     <div className="space-y-4">
+      {/* Medication Interaction Warnings */}
+      <MedicationInteractionAlert />
+      
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold text-foreground">Medications & Supplements</h2>
