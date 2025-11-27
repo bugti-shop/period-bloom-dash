@@ -2,7 +2,6 @@ import { format, differenceInDays, addWeeks } from "date-fns";
 import { Baby, Heart, Calendar, Activity, Apple, Scale } from "lucide-react";
 import { calculateTrimester } from "@/lib/pregnancyMode";
 import { getBabyDataForWeek } from "@/lib/pregnancyData";
-import { loadTheme } from "@/lib/themeStorage";
 
 interface PregnancyInfoCardsProps {
   week: number;
@@ -16,7 +15,6 @@ export const PregnancyInfoCards = ({ week, dueDate, lastPeriodDate }: PregnancyI
   const babyData = getBabyDataForWeek(week);
   const daysUntilDue = Math.max(0, differenceInDays(dueDate, today));
   const weeksUntilDue = Math.floor(daysUntilDue / 7);
-  const currentTheme = loadTheme();
   
   // Calculate next prenatal visit (typically every 4 weeks until week 28)
   const nextVisitWeek = week < 28 ? Math.ceil(week / 4) * 4 + 4 : week + 2;
@@ -30,7 +28,7 @@ export const PregnancyInfoCards = ({ week, dueDate, lastPeriodDate }: PregnancyI
       date: `Week ${week}`,
       subtitle: `Trimester ${trimester}`,
       icon: Baby,
-      bgColor: currentTheme === 'astrology' ? "bg-card" : "bg-[#ffe8e8]",
+      bgColor: "bg-[#ffe8e8]",
       iconColor: "text-[#c71585]",
     },
     {
@@ -39,8 +37,8 @@ export const PregnancyInfoCards = ({ week, dueDate, lastPeriodDate }: PregnancyI
       date: babyData.size,
       subtitle: `${babyData.heightCm} cm, ${babyData.weightGrams}g`,
       icon: Scale,
-      bgColor: currentTheme === 'astrology' ? "bg-card" : "bg-[#ffd4f4]",
-      iconColor: "text-primary",
+      bgColor: "bg-[#ffd4f4]",
+      iconColor: "text-[#ee5ea6]",
     },
     {
       id: 3,
@@ -48,7 +46,7 @@ export const PregnancyInfoCards = ({ week, dueDate, lastPeriodDate }: PregnancyI
       date: format(dueDate, "MMM dd, yyyy"),
       subtitle: `${weeksUntilDue} weeks left`,
       icon: Calendar,
-      bgColor: currentTheme === 'astrology' ? "bg-card" : "bg-[#fff4d4]",
+      bgColor: "bg-[#fff4d4]",
       iconColor: "text-[#f59e0b]",
     },
     {
@@ -57,7 +55,7 @@ export const PregnancyInfoCards = ({ week, dueDate, lastPeriodDate }: PregnancyI
       date: `${daysUntilDue} Days`,
       subtitle: `${40 - week} weeks to go`,
       icon: Heart,
-      bgColor: currentTheme === 'astrology' ? "bg-card" : "bg-[#e8f4ff]",
+      bgColor: "bg-[#e8f4ff]",
       iconColor: "text-[#2196f3]",
     },
     {
@@ -66,7 +64,7 @@ export const PregnancyInfoCards = ({ week, dueDate, lastPeriodDate }: PregnancyI
       date: format(nextVisitDate, "MMM dd"),
       subtitle: `In ${daysToNextVisit} days`,
       icon: Activity,
-      bgColor: currentTheme === 'astrology' ? "bg-card" : "bg-[#e8ffe8]",
+      bgColor: "bg-[#e8ffe8]",
       iconColor: "text-[#4caf50]",
     },
     {
@@ -75,7 +73,7 @@ export const PregnancyInfoCards = ({ week, dueDate, lastPeriodDate }: PregnancyI
       date: "Balanced Diet",
       subtitle: "Folic acid, iron, calcium",
       icon: Apple,
-      bgColor: currentTheme === 'astrology' ? "bg-card" : "bg-[#f4e8ff]",
+      bgColor: "bg-[#f4e8ff]",
       iconColor: "text-[#9c27b0]",
     },
   ];
@@ -87,12 +85,10 @@ export const PregnancyInfoCards = ({ week, dueDate, lastPeriodDate }: PregnancyI
         return (
           <div
             key={card.id}
-            className={`${card.bgColor} rounded-2xl p-4 transition-transform hover:scale-105 ${
-              currentTheme === 'astrology' ? 'border border-border' : ''
-            }`}
+            className={`${card.bgColor} rounded-2xl p-4 transition-transform hover:scale-105`}
           >
             <div className="flex flex-col h-full">
-              <div className={`p-3 ${currentTheme === 'astrology' ? 'bg-muted' : 'bg-white'} rounded-xl w-fit mb-3`}>
+              <div className={`p-3 bg-white rounded-xl w-fit mb-3`}>
                 <Icon className={`w-6 h-6 ${card.iconColor}`} />
               </div>
               
@@ -100,14 +96,10 @@ export const PregnancyInfoCards = ({ week, dueDate, lastPeriodDate }: PregnancyI
                 <p className={`text-2xl font-bold mb-1 ${card.iconColor}`}>
                   {card.date}
                 </p>
-                <p className={`text-base font-semibold mb-1 ${
-                  currentTheme === 'astrology' ? 'text-foreground' : 'text-gray-800'
-                }`}>
+                <p className="text-base font-semibold text-gray-800 mb-1">
                   {card.title}
                 </p>
-                <p className={`text-sm ${
-                  currentTheme === 'astrology' ? 'text-muted-foreground' : 'text-gray-600'
-                }`}>
+                <p className="text-sm text-gray-600">
                   {card.subtitle}
                 </p>
               </div>

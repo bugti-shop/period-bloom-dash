@@ -27,14 +27,14 @@ export const SymptomHistoryPage = ({ onBack }: SymptomHistoryPageProps) => {
 
         <div className="space-y-3">
           {symptomLogs.length === 0 ? (
-            <div className="bg-card rounded-xl p-6 text-center border border-border">
-              <p className="text-muted-foreground">No symptoms recorded yet</p>
+            <div className="bg-white rounded-xl p-6 text-center">
+              <p className="text-gray-500">No symptoms recorded yet</p>
             </div>
           ) : (
             symptomLogs.map((log) => (
               <div
                 key={log.date}
-                className="bg-card rounded-xl p-4 shadow-sm border border-border"
+                className="bg-white rounded-xl p-4 shadow-sm"
               >
                 <div className="flex items-start gap-3">
                   <span className="text-sm font-bold text-gray-900 min-w-[120px]">

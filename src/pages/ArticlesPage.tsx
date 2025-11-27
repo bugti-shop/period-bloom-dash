@@ -322,7 +322,7 @@ export const ArticlesPage = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Header with Hamburger Menu */}
-      <header className="sticky top-0 z-50 w-full border-b border-border bg-card shadow-sm">
+      <header className="sticky top-0 z-50 w-full border-b border-border bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -468,7 +468,7 @@ export const ArticlesPage = () => {
             <article
               key={article.id}
               onClick={() => navigate(`/article/${article.id}`)}
-              className="bg-card rounded-xl overflow-hidden shadow-sm border border-border hover:shadow-md transition-shadow cursor-pointer relative"
+              className="bg-white rounded-xl overflow-hidden shadow-sm border border-border hover:shadow-md transition-shadow cursor-pointer relative"
             >
               <div className="absolute top-2 right-2 z-10 flex gap-1">
                 {isArticleOffline(article.id.toString()) && (

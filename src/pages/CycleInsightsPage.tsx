@@ -105,7 +105,7 @@ export const CycleInsightsPage = ({ onBack }: CycleInsightsPageProps) => {
 
         {/* Cycle Length Trend */}
         {cycleLengthData.length > 0 && (
-          <div className="p-6 bg-card rounded-2xl shadow-sm border border-border">
+          <div className="p-6 bg-white rounded-2xl shadow-sm">
             <div className="flex items-center gap-2 mb-4">
               <TrendingUp className="w-5 h-5 text-primary" />
               <h2 className="text-lg font-semibold text-foreground">Cycle Length Trend</h2>
@@ -130,7 +130,7 @@ export const CycleInsightsPage = ({ onBack }: CycleInsightsPageProps) => {
 
         {/* Period Duration Trend */}
         {cycleLengthData.length > 0 && (
-          <div className="p-6 bg-card rounded-2xl shadow-sm border border-border">
+          <div className="p-6 bg-white rounded-2xl shadow-sm">
             <div className="flex items-center gap-2 mb-4">
               <Heart className="w-5 h-5 text-red-500" />
               <h2 className="text-lg font-semibold text-foreground">Period Duration Trend</h2>
@@ -155,7 +155,7 @@ export const CycleInsightsPage = ({ onBack }: CycleInsightsPageProps) => {
 
         {/* Top Symptoms */}
         {topSymptoms.length > 0 && (
-          <div className="p-6 bg-card rounded-2xl shadow-sm border border-border">
+          <div className="p-6 bg-white rounded-2xl shadow-sm">
             <h2 className="text-lg font-semibold text-foreground mb-4">Most Common Symptoms</h2>
             <div className="space-y-3">
               {topSymptoms.map((symptom: any, index: number) => (

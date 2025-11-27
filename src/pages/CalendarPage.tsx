@@ -85,7 +85,7 @@ export const CalendarPage = ({ periodData }: CalendarPageProps) => {
   const handleNextMonth = () => setCurrentMonthIndex(prev => prev + 1);
 
   return (
-    <div className="min-h-screen bg-background pb-20">
+    <div className="min-h-screen bg-white pb-20">
       {/* Beautiful Floral Header */}
       <div className="relative bg-gradient-to-br from-pink-50 to-purple-50 pt-8 pb-6">
         <div className="absolute inset-0 opacity-60">
@@ -158,7 +158,7 @@ export const CalendarPage = ({ periodData }: CalendarPageProps) => {
               const isFertile = isFertileDate(day) && !isPeriod && !isOvulation;
               const isToday = isSameDay(day, today);
               
-              let bgClass = "bg-muted/40 text-foreground";
+              let bgClass = "bg-white/40 text-foreground";
               
               if (isPeriod) {
                 const periodIndex = periodDates.findIndex(pDate => isSameDay(pDate, day)) % periodDuration;

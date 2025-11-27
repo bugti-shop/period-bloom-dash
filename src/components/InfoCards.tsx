@@ -75,7 +75,7 @@ export const InfoCards = ({ periodData, displayMonth }: InfoCardsProps) => {
         : format(nextPeriodDate, "MMM dd"),
       subtitle: `(${daysToNextPeriod} Days left)`,
       icon: Droplet,
-      bgColor: "bg-card",
+      bgColor: "bg-[#ffe8e8]",
       iconColor: "text-[#c71585]",
     },
     {
@@ -84,8 +84,8 @@ export const InfoCards = ({ periodData, displayMonth }: InfoCardsProps) => {
       date: format(nextOvulationDate, "MMM dd"),
       subtitle: `(${daysToOvulation} Days left)`,
       icon: Heart,
-      bgColor: "bg-card",
-      iconColor: "text-primary",
+      bgColor: "bg-[#ffd4f4]",
+      iconColor: "text-[#ee5ea6]",
     },
     {
       id: 3,
@@ -93,7 +93,7 @@ export const InfoCards = ({ periodData, displayMonth }: InfoCardsProps) => {
       date: `${format(fertileWindowStart, "MMM dd")} - ${format(fertileWindowEnd, "MMM dd")}`,
       subtitle: `(${daysToFertileWindow} Days left)`,
       icon: Flower2,
-      bgColor: "bg-card",
+      bgColor: "bg-[#d4f4ff]",
       iconColor: "text-[#00bcd4]",
     },
     {
@@ -102,7 +102,7 @@ export const InfoCards = ({ periodData, displayMonth }: InfoCardsProps) => {
       date: `${format(safeDayStart, "MMM dd")} - ${format(safeDayEnd, "MMM dd")}`,
       subtitle: `(${daysToSafeDays} Days left)`,
       icon: Shield,
-      bgColor: "bg-card",
+      bgColor: "bg-[#e8f4ff]",
       iconColor: "text-[#2196f3]",
     },
     {
@@ -111,7 +111,7 @@ export const InfoCards = ({ periodData, displayMonth }: InfoCardsProps) => {
       date: format(addDays(nextPeriodDate, 280), "MMM dd yyyy"),
       subtitle: "",
       icon: CalendarIcon,
-      bgColor: "bg-card",
+      bgColor: "bg-[#fff9e8]",
       iconColor: "text-[#ff9800]",
     },
     {
@@ -120,8 +120,8 @@ export const InfoCards = ({ periodData, displayMonth }: InfoCardsProps) => {
       date: format(addDays(nextPeriodDate, 14), "MMM dd yyyy"),
       subtitle: "",
       icon: TestTube2,
-      bgColor: "bg-card",
-      iconColor: "text-primary",
+      bgColor: "bg-[#fff0f5]",
+      iconColor: "text-[#e91e63]",
     },
   ];
 
@@ -136,7 +136,7 @@ export const InfoCards = ({ periodData, displayMonth }: InfoCardsProps) => {
             className={`${card.bgColor} rounded-xl p-3 aspect-square flex flex-col`}
           >
             <div className="mb-2">
-              <div className={`p-2 bg-muted rounded-lg ${card.iconColor} inline-block`}>
+              <div className={`p-2 bg-white rounded-lg ${card.iconColor} inline-block`}>
                 <Icon className="w-5 h-5" />
               </div>
             </div>
@@ -145,11 +145,11 @@ export const InfoCards = ({ periodData, displayMonth }: InfoCardsProps) => {
               <p className={`text-base font-bold mb-1 ${card.iconColor}`}>
                 {card.date}
               </p>
-              <h3 className="text-sm font-bold text-foreground mb-0.5">
+              <h3 className="text-sm font-bold text-gray-900 mb-0.5">
                 {card.title}
               </h3>
               {card.subtitle && (
-                <p className="text-xs text-muted-foreground mt-0.5">{card.subtitle}</p>
+                <p className="text-xs text-gray-600 mt-0.5">{card.subtitle}</p>
               )}
             </div>
           </div>
