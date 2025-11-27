@@ -24,6 +24,9 @@ import BloodPressurePage from "./pages/BloodPressurePage";
 import GlucosePage from "./pages/GlucosePage";
 import StressPage from "./pages/StressPage";
 import DigestivePage from "./pages/DigestivePage";
+import EnergyPage from "./pages/EnergyPage";
+import SkinPage from "./pages/SkinPage";
+import HealthDashboard from "./pages/HealthDashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -56,6 +59,9 @@ const App = () => (
           <Route path="/glucose" element={<GlucosePage />} />
           <Route path="/stress" element={<StressPage />} />
           <Route path="/digestive" element={<DigestivePage />} />
+          <Route path="/energy" element={<EnergyPage />} />
+          <Route path="/skin" element={<SkinPage />} />
+          <Route path="/health-dashboard" element={<HealthDashboard />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
