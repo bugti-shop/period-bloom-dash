@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from "react";
-import { Camera, X, Download } from "lucide-react";
+import { Camera, X, Download, Image } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { saveToLocalStorage, loadFromLocalStorage } from "@/lib/storage";
+import { takeCameraPhoto, selectFromGallery } from "@/lib/cameraUtils";
 import { format } from "date-fns";
 import { toast } from "sonner";
 
@@ -32,7 +33,47 @@ export const PhotoLogger = ({ selectedDate }: PhotoLoggerProps) => {
     setPhotos(datePhotos);
   };
 
-  const handlePhotoCapture = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleCameraCapture = async () => {
+    const imageData = await takeCameraPhoto();
+    if (imageData) {
+      const dateStr = format(selectedDate, "yyyy-MM-dd");
+      const newPhoto: PhotoLog = {
+        id: Date.now().toString(),
+        imageData,
+        timestamp: new Date(),
+        date: dateStr
+      };
+
+      const allPhotos = loadFromLocalStorage<PhotoLog[]>("symptom-photos") || [];
+      allPhotos.push(newPhoto);
+      saveToLocalStorage("symptom-photos", allPhotos);
+      
+      setPhotos([...photos, newPhoto]);
+      toast.success("Photo captured!");
+    }
+  };
+
+  const handleGallerySelect = async () => {
+    const imageData = await selectFromGallery();
+    if (imageData) {
+      const dateStr = format(selectedDate, "yyyy-MM-dd");
+      const newPhoto: PhotoLog = {
+        id: Date.now().toString(),
+        imageData,
+        timestamp: new Date(),
+        date: dateStr
+      };
+
+      const allPhotos = loadFromLocalStorage<PhotoLog[]>("symptom-photos") || [];
+      allPhotos.push(newPhoto);
+      saveToLocalStorage("symptom-photos", allPhotos);
+      
+      setPhotos([...photos, newPhoto]);
+      toast.success("Photo added!");
+    }
+  };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -77,21 +118,32 @@ export const PhotoLogger = ({ selectedDate }: PhotoLoggerProps) => {
   return (
     <Card>
       <CardContent className="pt-6">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold">Photos</h3>
-          <Button
-            onClick={() => fileInputRef.current?.click()}
-            size="sm"
-            className="bg-pink-500 hover:bg-pink-600"
-          >
-            <Camera className="w-4 h-4 mr-2" />
-            Add Photo
-          </Button>
+        <div className="mb-4">
+          <h3 className="text-lg font-semibold mb-2">Photos</h3>
+          <div className="flex gap-2">
+            <Button
+              onClick={handleCameraCapture}
+              size="sm"
+              className="flex-1 bg-pink-500 hover:bg-pink-600"
+            >
+              <Camera className="w-4 h-4 mr-2" />
+              Take Photo
+            </Button>
+            <Button
+              onClick={handleGallerySelect}
+              size="sm"
+              variant="outline"
+              className="flex-1"
+            >
+              <Image className="w-4 h-4 mr-2" />
+              Gallery
+            </Button>
+          </div>
           <input
             ref={fileInputRef}
             type="file"
             accept="image/*"
-            onChange={handlePhotoCapture}
+            onChange={handleFileUpload}
             className="hidden"
           />
         </div>

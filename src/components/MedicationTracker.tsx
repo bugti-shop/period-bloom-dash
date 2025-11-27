@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Plus, Pill, Trash2, Check, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -29,6 +29,7 @@ import {
   getMedicationLog,
 } from "@/lib/medicationStorage";
 import { notifySuccess } from "@/lib/notificationWithHaptics";
+import { scheduleMedicationReminders } from "@/lib/medicationNotifications";
 import { format } from "date-fns";
 import { MedicationInteractionAlert } from "./MedicationInteractionAlert";
 
@@ -44,6 +45,10 @@ export const MedicationTracker = () => {
     reminderEnabled: true,
     notes: "",
   });
+
+  useEffect(() => {
+    scheduleMedicationReminders();
+  }, [medications]);
 
   const handleAddMedication = () => {
     if (!newMed.name || !newMed.dosage) {

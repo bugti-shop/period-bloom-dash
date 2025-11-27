@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Header } from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Plus, Trash2, Calendar, Clock, MapPin, User, CheckCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { saveAppointment, getAppointments, deleteAppointment, toggleAppointmentComplete } from "@/lib/appointmentStorage";
+import { scheduleAppointmentReminders } from "@/lib/appointmentNotifications";
 import { format } from "date-fns";
 
 export default function AppointmentPage() {
@@ -22,6 +23,10 @@ export default function AppointmentPage() {
   const [location, setLocation] = useState("");
   const [doctor, setDoctor] = useState("");
   const [notes, setNotes] = useState("");
+
+  useEffect(() => {
+    scheduleAppointmentReminders();
+  }, [appointments]);
 
   const handleAddAppointment = () => {
     if (!date || !time || !type) {
