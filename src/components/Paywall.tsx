@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Lock, Bell, Crown } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { ReferralCodeGenerator } from "@/components/ReferralCodeGenerator";
 
 interface PaywallProps {
   onStartTrial: () => void;
@@ -147,9 +146,6 @@ export const Paywall = ({ onStartTrial }: PaywallProps) => {
         >
           Start My 3-Day Free Trial
         </Button>
-
-        {/* Referral Code Generator */}
-        <ReferralCodeGenerator />
 
         {/* Terms */}
         <p className="text-xs text-center text-muted-foreground px-4">
