@@ -1,4 +1,4 @@
-import { Layers, ChevronRight, Moon, Calendar, Bell, Folder, Download, Upload, Trash2, Baby, Palette } from "lucide-react";
+import { Layers, ChevronRight, Moon, Calendar, Bell, Folder, Download, Upload, Trash2, Baby, Palette, Heart, FileText } from "lucide-react";
 import { format } from "date-fns";
 import { getPeriodHistory, clearPeriodHistory } from "@/lib/periodHistory";
 import { useState } from "react";
@@ -14,6 +14,7 @@ import { SymptomReminderSettings } from "@/components/SymptomReminderSettings";
 import { exportAllData, importData } from "@/lib/dataExport";
 import { Button } from "@/components/ui/button";
 import { useRef } from "react";
+import { AppleHealthSync } from "@/components/AppleHealthSync";
 
 export const SettingsPage = () => {
   const [pregnancyMode, setPregnancyMode] = useState(loadPregnancyMode());
@@ -26,6 +27,7 @@ export const SettingsPage = () => {
   const [showFertilityRemindersDialog, setShowFertilityRemindersDialog] = useState(false);
   const [showSymptomRemindersDialog, setShowSymptomRemindersDialog] = useState(false);
   const [showDataDialog, setShowDataDialog] = useState(false);
+  const [showHealthExportDialog, setShowHealthExportDialog] = useState(false);
   const [history, setHistory] = useState(getPeriodHistory());
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -256,6 +258,14 @@ export const SettingsPage = () => {
               <span className="text-foreground text-base">Delete app data</span>
               <ChevronRight className="w-5 h-5 text-primary" />
             </button>
+            
+            <button
+              onClick={() => setShowHealthExportDialog(true)}
+              className="w-full flex items-center justify-between px-4 py-4 border-b border-border hover:bg-muted/30 transition-colors"
+            >
+              <span className="text-foreground text-base">Health integration & medical export</span>
+              <ChevronRight className="w-5 h-5 text-primary" />
+            </button>
           </div>
 
           {/* Theme Section */}
@@ -436,37 +446,68 @@ export const SettingsPage = () => {
       <Dialog open={showThemeDialog} onOpenChange={setShowThemeDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Choose Your Theme</DialogTitle>
+            <DialogTitle>Choose Theme</DialogTitle>
             <DialogDescription>
-              Select a theme that matches your style
+              Select your preferred app theme
             </DialogDescription>
           </DialogHeader>
-          <div className="grid grid-cols-1 gap-3 py-4">
+          <div className="grid grid-cols-2 gap-4 py-4">
             {themeOptions.map((option) => (
               <button
                 key={option.value}
-                onClick={() => {
-                  handleThemeChange(option.value);
-                  setShowThemeDialog(false);
-                }}
-                className={`flex items-center gap-4 p-4 rounded-xl border-2 transition-all ${
-                  currentTheme === option.value 
-                    ? 'border-primary bg-primary/5' 
+                onClick={() => handleThemeChange(option.value)}
+                className={`p-4 rounded-xl border-2 transition-all ${
+                  currentTheme === option.value
+                    ? 'border-primary ring-2 ring-primary/20'
                     : 'border-border hover:border-primary/50'
                 }`}
               >
-                <div className={`w-16 h-16 rounded-lg ${option.color}`} />
-                <div className="flex-1 text-left">
-                  <h4 className="font-semibold text-foreground">{option.label}</h4>
-                  {currentTheme === option.value && (
-                    <p className="text-xs text-primary">Currently active</p>
-                  )}
-                </div>
+                <div className={`h-20 rounded-lg mb-3 ${option.color}`} />
+                <p className="font-semibold text-center">{option.label}</p>
               </button>
             ))}
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Health Export Dialog */}
+      <Dialog open={showHealthExportDialog} onOpenChange={setShowHealthExportDialog}>
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Health Integration & Medical Export</DialogTitle>
+            <DialogDescription>
+              Sync with Apple Health and export medical reports
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4">
+            <AppleHealthSync />
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept=".json"
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+              try {
+                const data = JSON.parse(event.target?.result as string);
+                importData(data);
+                notifySuccess("Data restored successfully");
+                setTimeout(() => window.location.reload(), 500);
+              } catch (error) {
+                notifyError("Failed to restore data");
+              }
+            };
+            reader.readAsText(file);
+          }
+        }}
+        className="hidden"
+      />
     </div>
   );
 };
