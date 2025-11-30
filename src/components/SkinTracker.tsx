@@ -78,18 +78,22 @@ export const SkinTracker = ({ selectedDate }: SkinTrackerProps) => {
     const newPhotos: string[] = [];
 
     for (const file of Array.from(files)) {
+      const isVideo = file.type.startsWith('video/');
+      const mediaType = isVideo ? 'video' : 'image';
+      
       const reader = new FileReader();
       await new Promise<void>((resolve) => {
         reader.onloadend = async () => {
           const base64Data = reader.result as string;
           
-          // Save photo instantly to filesystem
+          // Save media instantly to filesystem
           try {
             const photoId = await saveSymptomPhoto(base64Data, 'skin', {
               date: selectedDate,
               notes: notes,
               severity: Object.values(severity).reduce((a, b) => a + b, 0) / Object.keys(severity).length,
-              conditions: selectedConditions
+              conditions: selectedConditions,
+              mediaType
             });
             
             newPhotoIds.push(photoId);
@@ -219,7 +223,7 @@ export const SkinTracker = ({ selectedDate }: SkinTrackerProps) => {
           <input
             ref={fileInputRef}
             type="file"
-            accept="image/*"
+            accept="image/*,video/*"
             multiple
             onChange={handlePhotoCapture}
             className="hidden"

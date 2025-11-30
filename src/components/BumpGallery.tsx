@@ -1,32 +1,18 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { X, Plus, Trash2, Download, Baby, Filter, MessageSquare, Mic, Camera, ArrowLeftRight, Play, Pause, Edit, Tag, FileDown, Share2, CheckSquare, Square, MoveRight, Users } from "lucide-react";
+import { X, Plus, Trash2, Baby, Filter, MessageSquare, Mic, FileDown, Share2 } from "lucide-react";
 import { saveToLocalStorage, loadFromLocalStorage } from "@/lib/storage";
-import { saveAlbumPhoto, loadAlbumPhotos, deleteAlbumPhoto, updateAlbumPhoto, getAlbumPhotoWithData, movePhotoToAlbum } from "@/lib/albumStorage";
+import { useAlbumPhotos } from "@/hooks/useAlbumPhotos";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { BumpPhotoComparison } from "./BumpPhotoComparison";
-import { FaceGroupsView } from "./FaceGroupsView";
-import { Slider } from "@/components/ui/slider";
+import { BatchPhotoUpload } from "./BatchPhotoUpload";
+import { MediaViewer } from "./MediaViewer";
 import jsPDF from "jspdf";
-import { detectFacesInImage, PhotoWithFaces } from "@/lib/faceDetection";
-
-interface WeekPhoto {
-  imageData: string;
-  timestamp: Date;
-  caption?: string;
-  tags?: string[];
-  filters?: {
-    brightness: number;
-    contrast: number;
-    saturation: number;
-  };
-}
 
 interface WeekNotes {
   [week: number]: string;
@@ -42,1366 +28,372 @@ interface WeekVoiceNotes {
   [week: number]: WeekVoiceNote;
 }
 
-interface WeekPhotos {
-  [week: number]: WeekPhoto;
-}
-
 interface BumpGalleryProps {
   onClose: () => void;
 }
 
-const PREGNANCY_PHOTOS_KEY = "pregnancy-week-photos";
-const BABY_BORN_PHOTO_KEY = "baby-born-photo";
 const PREGNANCY_NOTES_KEY = "pregnancy-week-notes";
 const PREGNANCY_VOICE_NOTES_KEY = "pregnancy-week-voice-notes";
 
 type FilterType = "all" | "photos" | "notes" | "voice";
 
 export const BumpGallery = ({ onClose }: BumpGalleryProps) => {
-  const [weekPhotos, setWeekPhotos] = useState<WeekPhotos>({});
-  const [babyPhoto, setBabyPhoto] = useState<WeekPhoto | null>(null);
+  const bumpPhotos = useAlbumPhotos('bump');
+  const babyPhotos = useAlbumPhotos('baby');
+  
   const [selectedWeek, setSelectedWeek] = useState<number | "baby" | null>(null);
   const [showUploadDialog, setShowUploadDialog] = useState(false);
   const [uploadTarget, setUploadTarget] = useState<number | "baby" | null>(null);
   const [filterType, setFilterType] = useState<FilterType>("all");
   const [weekNotes, setWeekNotes] = useState<WeekNotes>({});
   const [weekVoiceNotes, setWeekVoiceNotes] = useState<WeekVoiceNotes>({});
-  const [editingCaption, setEditingCaption] = useState<number | "baby" | null>(null);
+  const [editingCaption, setEditingCaption] = useState<{ week: number | "baby", photoId: string } | null>(null);
   const [captionText, setCaptionText] = useState("");
-  const [showComparison, setShowComparison] = useState(false);
-  const [isSlideshow, setIsSlideshow] = useState(false);
-  const [currentSlideWeek, setCurrentSlideWeek] = useState<number>(1);
-  const [editingPhoto, setEditingPhoto] = useState<number | "baby" | null>(null);
-  const [brightness, setBrightness] = useState(100);
-  const [contrast, setContrast] = useState(100);
-  const [saturation, setSaturation] = useState(100);
-  const [tagInput, setTagInput] = useState("");
-  const [editingTags, setEditingTags] = useState<number | "baby" | null>(null);
-  const [tagFilter, setTagFilter] = useState<string | null>(null);
-  const [sharingPhoto, setSharingPhoto] = useState<number | "baby" | "gallery" | null>(null);
-  const [shareWithWatermark, setShareWithWatermark] = useState(true);
-  const [shareMessage, setShareMessage] = useState("");
-  const [selectionMode, setSelectionMode] = useState(false);
-  const [selectedWeeks, setSelectedWeeks] = useState<Set<number>>(new Set());
-  const [selectedBabyPhoto, setSelectedBabyPhoto] = useState(false);
-  const [showFaceGroups, setShowFaceGroups] = useState(false);
-  const [photosWithFaces, setPhotosWithFaces] = useState<PhotoWithFaces[]>([]);
-  const [isAnalyzingFaces, setIsAnalyzingFaces] = useState(false);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    loadData();
+    loadNotesData();
   }, []);
 
-  useEffect(() => {
-    if (!isSlideshow) return;
-    
-    const weeksWithPhotos = Object.keys(weekPhotos).map(w => parseInt(w)).sort((a, b) => a - b);
-    if (weeksWithPhotos.length === 0) {
-      setIsSlideshow(false);
-      return;
-    }
-
-    const currentIndex = weeksWithPhotos.indexOf(currentSlideWeek);
-    const nextIndex = (currentIndex + 1) % weeksWithPhotos.length;
-    
-    const timer = setTimeout(() => {
-      setCurrentSlideWeek(weeksWithPhotos[nextIndex]);
-    }, 3000);
-
-    return () => clearTimeout(timer);
-  }, [isSlideshow, currentSlideWeek, weekPhotos]);
-
-  const loadData = async () => {
-    // Load notes and voice notes from localStorage (small metadata)
+  const loadNotesData = () => {
     const storedNotes = loadFromLocalStorage<WeekNotes>(PREGNANCY_NOTES_KEY) || {};
     const storedVoiceNotes = loadFromLocalStorage<WeekVoiceNotes>(PREGNANCY_VOICE_NOTES_KEY) || {};
     
     setWeekNotes(storedNotes);
     setWeekVoiceNotes(storedVoiceNotes);
-    
-    // Load photos from filesystem
-    try {
-      const bumpPhotos = await loadAlbumPhotos('bump');
-      const photosMap: WeekPhotos = {};
-      
-      for (const photo of bumpPhotos) {
-        if (photo.week) {
-          const photoData = await getAlbumPhotoWithData(photo.id, 'bump');
-          if (photoData) {
-            photosMap[photo.week] = {
-              imageData: photoData.imageData,
-              timestamp: photo.timestamp,
-              caption: photo.caption,
-              tags: photo.tags
-            };
-          }
-        }
-      }
-      
-      setWeekPhotos(photosMap);
-      
-      // Load baby born photo
-      const babyPhotos = await loadAlbumPhotos('baby');
-      if (babyPhotos.length > 0) {
-        const babyPhotoData = await getAlbumPhotoWithData(babyPhotos[0].id, 'baby');
-        if (babyPhotoData) {
-          setBabyPhoto({
-            imageData: babyPhotoData.imageData,
-            timestamp: babyPhotoData.timestamp,
-            caption: babyPhotoData.caption,
-            tags: babyPhotoData.tags
-          });
-        }
-      }
-    } catch (error) {
-      console.error('Error loading photos:', error);
-      toast.error('Failed to load photos');
-    }
   };
 
-  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file || uploadTarget === null) return;
-
-    const reader = new FileReader();
-    reader.onloadend = async () => {
-      const base64Data = reader.result as string;
-      
-      try {
-        if (uploadTarget === "baby") {
-          // Save to baby album
-          await saveAlbumPhoto(base64Data, 'baby', {
-            caption: '',
-            tags: []
-          });
-          toast.success("Baby photo saved instantly!");
-        } else {
-          // Save to bump album
-          await saveAlbumPhoto(base64Data, 'bump', {
-            week: uploadTarget,
-            caption: '',
-            tags: []
-          });
-          toast.success(`Week ${uploadTarget} photo saved instantly!`);
-        }
-        
-        // Reload data to show new photo
-        await loadData();
-        setShowUploadDialog(false);
-        setUploadTarget(null);
-      } catch (error) {
-        console.error('Error saving photo:', error);
-        toast.error('Failed to save photo');
-      }
-    };
-    reader.readAsDataURL(file);
-  };
-
-  const openUploadDialog = (target: number | "baby") => {
-    setUploadTarget(target);
+  const handleUploadClick = (week: number | "baby") => {
+    setUploadTarget(week);
     setShowUploadDialog(true);
   };
 
-  const deletePhoto = (target: number | "baby") => {
-    if (target === "baby") {
-      setBabyPhoto(null);
-      localStorage.removeItem(BABY_BORN_PHOTO_KEY);
-      toast.success("Baby photo deleted");
-    } else {
-      const updatedPhotos = { ...weekPhotos };
-      delete updatedPhotos[target];
-      setWeekPhotos(updatedPhotos);
-      saveToLocalStorage(PREGNANCY_PHOTOS_KEY, updatedPhotos);
-      toast.success(`Week ${target} photo deleted`);
-    }
-    setSelectedWeek(null);
-  };
-
-  const downloadPhoto = (target: number | "baby") => {
-    const photo = target === "baby" ? babyPhoto : weekPhotos[target];
-    if (!photo) return;
+  const handleBatchUpload = async (files: FileList) => {
+    if (uploadTarget === null) return;
     
-    const link = document.createElement('a');
-    link.href = photo.imageData;
-    link.download = target === "baby" ? 'baby-born.jpg' : `bump-week-${target}.jpg`;
-    link.click();
-    toast.success("Photo downloaded");
+    if (uploadTarget === "baby") {
+      await babyPhotos.addPhotoBatch(files);
+    } else {
+      await bumpPhotos.addPhotoBatch(files, { week: uploadTarget });
+    }
+    
+    setShowUploadDialog(false);
+    setUploadTarget(null);
   };
 
-  const openCaptionEditor = (target: number | "baby") => {
-    const photo = target === "baby" ? babyPhoto : weekPhotos[target];
-    setEditingCaption(target);
-    setCaptionText(photo?.caption || "");
+  const handleDeletePhoto = async (week: number | "baby", photoId: string) => {
+    if (week === "baby") {
+      await babyPhotos.removePhoto(photoId);
+    } else {
+      await bumpPhotos.removePhoto(photoId);
+    }
   };
 
-  const saveCaption = () => {
-    if (editingCaption === null) return;
+  const openCaptionEditor = (week: number | "baby", photoId: string, currentCaption?: string) => {
+    setEditingCaption({ week, photoId });
+    setCaptionText(currentCaption || "");
+  };
 
-    if (editingCaption === "baby" && babyPhoto) {
-      const updatedPhoto = { ...babyPhoto, caption: captionText };
-      setBabyPhoto(updatedPhoto);
-      saveToLocalStorage(BABY_BORN_PHOTO_KEY, updatedPhoto);
-      toast.success("Caption saved!");
-    } else if (typeof editingCaption === "number") {
-      const updatedPhotos = {
-        ...weekPhotos,
-        [editingCaption]: { ...weekPhotos[editingCaption], caption: captionText }
-      };
-      setWeekPhotos(updatedPhotos);
-      saveToLocalStorage(PREGNANCY_PHOTOS_KEY, updatedPhotos);
-      toast.success("Caption saved!");
+  const saveCaption = async () => {
+    if (!editingCaption) return;
+    
+    const { week, photoId } = editingCaption;
+    
+    if (week === "baby") {
+      await babyPhotos.updatePhoto(photoId, { caption: captionText });
+    } else {
+      await bumpPhotos.updatePhoto(photoId, { caption: captionText });
     }
     
     setEditingCaption(null);
     setCaptionText("");
   };
 
-  const shouldShowWeek = (week: number): boolean => {
-    let passesFilter = true;
-    if (filterType === "photos") passesFilter = !!weekPhotos[week];
-    else if (filterType === "notes") passesFilter = !!weekNotes[week];
-    else if (filterType === "voice") passesFilter = !!weekVoiceNotes[week];
-    
-    if (!passesFilter) return false;
-    
-    if (tagFilter && weekPhotos[week]) {
-      return weekPhotos[week].tags?.includes(tagFilter) || false;
-    }
-    
-    return filterType === "all" || passesFilter;
-  };
-
-  const startSlideshow = () => {
-    const weeksWithPhotos = Object.keys(weekPhotos).map(w => parseInt(w)).sort((a, b) => a - b);
-    if (weeksWithPhotos.length > 0) {
-      setCurrentSlideWeek(weeksWithPhotos[0]);
-      setIsSlideshow(true);
-    }
-  };
-
-  const openPhotoEditor = (target: number | "baby") => {
-    const photo = target === "baby" ? babyPhoto : weekPhotos[target];
-    if (!photo) return;
-    
-    setEditingPhoto(target);
-    setBrightness(photo.filters?.brightness || 100);
-    setContrast(photo.filters?.contrast || 100);
-    setSaturation(photo.filters?.saturation || 100);
-  };
-
-  const applyPhotoEdits = () => {
-    if (editingPhoto === null) return;
-
-    const filters = { brightness, contrast, saturation };
-
-    if (editingPhoto === "baby" && babyPhoto) {
-      const updatedPhoto = { ...babyPhoto, filters };
-      setBabyPhoto(updatedPhoto);
-      saveToLocalStorage(BABY_BORN_PHOTO_KEY, updatedPhoto);
-    } else if (typeof editingPhoto === "number") {
-      const updatedPhotos = {
-        ...weekPhotos,
-        [editingPhoto]: { ...weekPhotos[editingPhoto], filters }
-      };
-      setWeekPhotos(updatedPhotos);
-      saveToLocalStorage(PREGNANCY_PHOTOS_KEY, updatedPhotos);
-    }
-    
-    setEditingPhoto(null);
-    toast.success("Photo edits saved!");
-  };
-
-  const openTagEditor = (target: number | "baby") => {
-    setEditingTags(target);
-    setTagInput("");
-  };
-
-  const addTag = () => {
-    if (!tagInput.trim() || editingTags === null) return;
-
-    if (editingTags === "baby" && babyPhoto) {
-      const updatedPhoto = { 
-        ...babyPhoto, 
-        tags: [...(babyPhoto.tags || []), tagInput.trim()] 
-      };
-      setBabyPhoto(updatedPhoto);
-      saveToLocalStorage(BABY_BORN_PHOTO_KEY, updatedPhoto);
-    } else if (typeof editingTags === "number") {
-      const updatedPhotos = {
-        ...weekPhotos,
-        [editingTags]: { 
-          ...weekPhotos[editingTags], 
-          tags: [...(weekPhotos[editingTags].tags || []), tagInput.trim()] 
-        }
-      };
-      setWeekPhotos(updatedPhotos);
-      saveToLocalStorage(PREGNANCY_PHOTOS_KEY, updatedPhotos);
-    }
-    
-    setTagInput("");
-    toast.success("Tag added!");
-  };
-
-  const removeTag = (target: number | "baby", tag: string) => {
-    if (target === "baby" && babyPhoto) {
-      const updatedPhoto = { 
-        ...babyPhoto, 
-        tags: babyPhoto.tags?.filter(t => t !== tag) 
-      };
-      setBabyPhoto(updatedPhoto);
-      saveToLocalStorage(BABY_BORN_PHOTO_KEY, updatedPhoto);
-    } else if (typeof target === "number") {
-      const updatedPhotos = {
-        ...weekPhotos,
-        [target]: { 
-          ...weekPhotos[target], 
-          tags: weekPhotos[target].tags?.filter(t => t !== tag) 
-        }
-      };
-      setWeekPhotos(updatedPhotos);
-      saveToLocalStorage(PREGNANCY_PHOTOS_KEY, updatedPhotos);
-    }
-    toast.success("Tag removed!");
-  };
-
-  const getAllTags = (): string[] => {
-    const tags = new Set<string>();
-    Object.values(weekPhotos).forEach(photo => {
-      photo.tags?.forEach(tag => tags.add(tag));
-    });
-    if (babyPhoto?.tags) {
-      babyPhoto.tags.forEach(tag => tags.add(tag));
-    }
-    return Array.from(tags);
-  };
-
-  const exportToPDF = async () => {
-    toast("Generating PDF memory book...");
-    
-    const pdf = new jsPDF();
-    const pageWidth = pdf.internal.pageSize.getWidth();
-    const pageHeight = pdf.internal.pageSize.getHeight();
-    let yPosition = 20;
-
-    // Title page
-    pdf.setFontSize(24);
-    pdf.text("My Pregnancy Journey", pageWidth / 2, yPosition, { align: "center" });
-    yPosition += 20;
-    pdf.setFontSize(12);
-    pdf.text("A Week-by-Week Memory Book", pageWidth / 2, yPosition, { align: "center" });
-    
-    pdf.addPage();
-    yPosition = 20;
-
-    // Add each week with photo
-    for (let week = 1; week <= 40; week++) {
-      const photo = weekPhotos[week];
-      if (!photo) continue;
-
-      // Add new page if needed
-      if (yPosition > pageHeight - 80) {
-        pdf.addPage();
-        yPosition = 20;
-      }
-
-      pdf.setFontSize(16);
-      pdf.text(`Week ${week}`, 20, yPosition);
-      yPosition += 10;
-
-      // Add photo
-      try {
-        const img = new Image();
-        img.src = photo.imageData;
-        await new Promise(resolve => { img.onload = resolve; });
-        
-        const imgWidth = 80;
-        const imgHeight = 80;
-        pdf.addImage(photo.imageData, "JPEG", 20, yPosition, imgWidth, imgHeight);
-        yPosition += imgHeight + 10;
-      } catch (error) {
-        console.error("Error adding image:", error);
-      }
-
-      // Add caption
-      if (photo.caption) {
-        pdf.setFontSize(10);
-        const lines = pdf.splitTextToSize(photo.caption, pageWidth - 40);
-        pdf.text(lines, 20, yPosition);
-        yPosition += lines.length * 5 + 5;
-      }
-
-      // Add tags
-      if (photo.tags && photo.tags.length > 0) {
-        pdf.setFontSize(9);
-        pdf.text(`Tags: ${photo.tags.join(", ")}`, 20, yPosition);
-        yPosition += 8;
-      }
-
-      // Add notes
-      if (weekNotes[week]) {
-        pdf.setFontSize(10);
-        pdf.text("Notes:", 20, yPosition);
-        yPosition += 5;
-        const noteLines = pdf.splitTextToSize(weekNotes[week], pageWidth - 40);
-        pdf.text(noteLines, 20, yPosition);
-        yPosition += noteLines.length * 5 + 10;
-      }
-
-      yPosition += 10;
-    }
-
-    // Add baby photo if exists
-    if (babyPhoto) {
-      pdf.addPage();
-      pdf.setFontSize(20);
-      pdf.text("Baby Born!", pageWidth / 2, 20, { align: "center" });
-      
-      try {
-        const img = new Image();
-        img.src = babyPhoto.imageData;
-        await new Promise(resolve => { img.onload = resolve; });
-        
-        pdf.addImage(babyPhoto.imageData, "JPEG", 20, 40, 170, 120);
-        
-        if (babyPhoto.caption) {
-          pdf.setFontSize(12);
-          const lines = pdf.splitTextToSize(babyPhoto.caption, pageWidth - 40);
-          pdf.text(lines, 20, 170);
-        }
-      } catch (error) {
-        console.error("Error adding baby image:", error);
-      }
-    }
-
-    pdf.save("pregnancy-memory-book.pdf");
-    toast.success("PDF exported successfully!");
-  };
-
-  const getPhotoStyle = (photo: WeekPhoto) => {
-    if (!photo.filters) return {};
-    return {
-      filter: `brightness(${photo.filters.brightness}%) contrast(${photo.filters.contrast}%) saturate(${photo.filters.saturation}%)`
-    };
-  };
-
-  const addWatermarkToImage = (imageData: string, text: string): Promise<string> => {
-    return new Promise((resolve) => {
-      const img = new Image();
-      img.onload = () => {
-        const canvas = canvasRef.current;
-        if (!canvas) {
-          resolve(imageData);
-          return;
-        }
-
-        canvas.width = img.width;
-        canvas.height = img.height;
-        const ctx = canvas.getContext('2d');
-        if (!ctx) {
-          resolve(imageData);
-          return;
-        }
-
-        // Draw original image
-        ctx.drawImage(img, 0, 0);
-
-        // Add watermark
-        const fontSize = Math.max(20, img.height / 30);
-        ctx.font = `${fontSize}px Arial`;
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
-        ctx.strokeStyle = 'rgba(0, 0, 0, 0.5)';
-        ctx.lineWidth = 2;
-        
-        const padding = 20;
-        const textWidth = ctx.measureText(text).width;
-        const x = img.width - textWidth - padding;
-        const y = img.height - padding;
-
-        ctx.strokeText(text, x, y);
-        ctx.fillText(text, x, y);
-
-        resolve(canvas.toDataURL('image/jpeg', 0.9));
-      };
-      img.src = imageData;
-    });
-  };
-
-  const prepareShareImage = async (target: number | "baby"): Promise<Blob | null> => {
-    const photo = target === "baby" ? babyPhoto : weekPhotos[target];
-    if (!photo) return null;
-
-    let imageData = photo.imageData;
-
-    // Apply watermark if enabled
-    if (shareWithWatermark) {
-      const watermarkText = target === "baby" 
-        ? "My Baby Born 💗" 
-        : `Week ${target} Bump 💗`;
-      imageData = await addWatermarkToImage(photo.imageData, watermarkText);
-    }
-
-    // Convert to blob
-    const response = await fetch(imageData);
-    return await response.blob();
-  };
-
-  const sharePhoto = async (target: number | "baby") => {
-    try {
-      const blob = await prepareShareImage(target);
-      if (!blob) return;
-
-      const file = new File(
-        [blob], 
-        target === "baby" ? "baby-born.jpg" : `bump-week-${target}.jpg`,
-        { type: 'image/jpeg' }
-      );
-
-      const shareData = {
-        files: [file],
-        title: target === "baby" ? "My Baby Born!" : `Week ${target} Bump Photo`,
-        text: shareMessage || (target === "baby" ? "Meet my baby! 💗" : `My pregnancy journey - Week ${target} 💗`)
-      };
-
-      if (navigator.canShare && navigator.canShare(shareData)) {
-        await navigator.share(shareData);
-        toast.success("Shared successfully!");
-      } else {
-        // Fallback: download the image
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = target === "baby" ? "baby-born.jpg" : `bump-week-${target}.jpg`;
-        link.click();
-        URL.revokeObjectURL(url);
-        toast.success("Image downloaded for sharing!");
-      }
-    } catch (error) {
-      console.error("Error sharing:", error);
-      toast.error("Failed to share photo");
-    }
-    setSharingPhoto(null);
-  };
-
-  const createGalleryCollage = async (): Promise<Blob | null> => {
-    const photosWithData = Object.entries(weekPhotos)
-      .filter(([_, photo]) => photo)
-      .sort(([weekA], [weekB]) => parseInt(weekA) - parseInt(weekB));
-
-    if (photosWithData.length === 0) return null;
-
-    // Create canvas for collage
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return null;
-
-    // Calculate grid layout
-    const cols = Math.min(4, photosWithData.length);
-    const rows = Math.ceil(photosWithData.length / cols);
-    const cellSize = 400;
-    const padding = 10;
-
-    canvas.width = cols * (cellSize + padding) + padding;
-    canvas.height = rows * (cellSize + padding) + padding + 80; // Extra space for title
-
-    // Fill background
-    ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    // Add title
-    ctx.font = 'bold 48px Arial';
-    ctx.fillStyle = '#eb4899';
-    ctx.textAlign = 'center';
-    ctx.fillText('My Pregnancy Journey', canvas.width / 2, 60);
-
-    // Load and draw images
-    const imagePromises = photosWithData.map(([week, photo], index) => {
-      return new Promise<void>((resolve) => {
-        const img = new Image();
-        img.onload = () => {
-          const col = index % cols;
-          const row = Math.floor(index / cols);
-          const x = col * (cellSize + padding) + padding;
-          const y = row * (cellSize + padding) + padding + 80;
-
-          // Draw image
-          ctx.drawImage(img, x, y, cellSize, cellSize);
-
-          // Draw week label
-          ctx.font = 'bold 24px Arial';
-          ctx.fillStyle = '#ffffff';
-          ctx.strokeStyle = '#000000';
-          ctx.lineWidth = 3;
-          ctx.textAlign = 'center';
-          const labelText = `Week ${week}`;
-          ctx.strokeText(labelText, x + cellSize / 2, y + cellSize - 20);
-          ctx.fillText(labelText, x + cellSize / 2, y + cellSize - 20);
-
-          resolve();
-        };
-        img.src = photo.imageData;
-      });
-    });
-
-    await Promise.all(imagePromises);
-
-    // Add watermark if enabled
-    if (shareWithWatermark) {
-      ctx.font = '20px Arial';
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
-      ctx.textAlign = 'center';
-      ctx.fillText('Created with love 💗', canvas.width / 2, canvas.height - 20);
-    }
-
-    return new Promise((resolve) => {
-      canvas.toBlob((blob) => resolve(blob), 'image/jpeg', 0.9);
-    });
-  };
-
-  const shareGallery = async () => {
-    try {
-      toast("Creating gallery collage...");
-      const blob = await createGalleryCollage();
-      if (!blob) {
-        toast.error("No photos to share");
-        return;
-      }
-
-      const file = new File([blob], "pregnancy-journey.jpg", { type: 'image/jpeg' });
-
-      const shareData = {
-        files: [file],
-        title: "My Pregnancy Journey",
-        text: shareMessage || "My complete pregnancy journey - 40 weeks of memories 💗"
-      };
-
-      if (navigator.canShare && navigator.canShare(shareData)) {
-        await navigator.share(shareData);
-        toast.success("Gallery shared successfully!");
-      } else {
-        // Fallback: download the collage
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = "pregnancy-journey.jpg";
-        link.click();
-        URL.revokeObjectURL(url);
-        toast.success("Gallery collage downloaded for sharing!");
-      }
-    } catch (error) {
-      console.error("Error sharing gallery:", error);
-      toast.error("Failed to share gallery");
-    }
-    setSharingPhoto(null);
-  };
-
-  const openShareDialog = (target: number | "baby" | "gallery") => {
-    setSharingPhoto(target);
-    setShareMessage("");
-  };
-
-  const analyzeFaces = async () => {
-    setIsAnalyzingFaces(true);
-    toast("Analyzing faces in photos...");
-
-    try {
-      const photosToAnalyze: Array<{ id: string; imageData: string }> = [];
-
-      // Add week photos
-      Object.entries(weekPhotos).forEach(([week, photo]) => {
-        photosToAnalyze.push({
-          id: `week-${week}`,
-          imageData: photo.imageData,
-        });
-      });
-
-      // Add baby photo
-      if (babyPhoto) {
-        photosToAnalyze.push({
-          id: "baby",
-          imageData: babyPhoto.imageData,
-        });
-      }
-
-      const results: PhotoWithFaces[] = [];
-
-      for (const photo of photosToAnalyze) {
-        const faces = await detectFacesInImage(photo.imageData);
-        if (faces.length > 0) {
-          results.push({
-            id: photo.id,
-            imageData: photo.imageData,
-            faces,
-          });
-        }
-      }
-
-      setPhotosWithFaces(results);
-      setShowFaceGroups(true);
-      toast.success(`Detected faces in ${results.length} photos`);
-    } catch (error) {
-      console.error("Face analysis error:", error);
-      toast.error("Failed to analyze faces");
-    } finally {
-      setIsAnalyzingFaces(false);
-    }
-  };
-
-  const handleFaceGroupPhotoClick = (photoId: string) => {
-    if (photoId === "baby") {
-      setSelectedWeek("baby");
-    } else if (photoId.startsWith("week-")) {
-      const week = parseInt(photoId.replace("week-", ""));
-      setSelectedWeek(week);
-    }
-    setShowFaceGroups(false);
-  };
-
-  const toggleSelectionMode = () => {
-    setSelectionMode(!selectionMode);
-    setSelectedWeeks(new Set());
-    setSelectedBabyPhoto(false);
-  };
-
-  const toggleWeekSelection = (week: number) => {
-    const newSelected = new Set(selectedWeeks);
-    if (newSelected.has(week)) {
-      newSelected.delete(week);
-    } else {
-      newSelected.add(week);
-    }
-    setSelectedWeeks(newSelected);
-  };
-
-  const selectAll = () => {
-    const allWeeks = new Set<number>();
-    for (let week = 1; week <= 40; week++) {
-      if (weekPhotos[week]) {
-        allWeeks.add(week);
-      }
-    }
-    setSelectedWeeks(allWeeks);
-    if (babyPhoto) {
-      setSelectedBabyPhoto(true);
-    }
-  };
-
-  const deselectAll = () => {
-    setSelectedWeeks(new Set());
-    setSelectedBabyPhoto(false);
-  };
-
-  const deleteSelected = () => {
-    if (selectedWeeks.size === 0 && !selectedBabyPhoto) return;
-
-    const confirmed = window.confirm(
-      `Delete ${selectedWeeks.size + (selectedBabyPhoto ? 1 : 0)} photo(s)?`
-    );
-    
-    if (!confirmed) return;
-
-    // Delete selected week photos
-    const updatedPhotos = { ...weekPhotos };
-    selectedWeeks.forEach(week => {
-      delete updatedPhotos[week];
-    });
-    setWeekPhotos(updatedPhotos);
-    saveToLocalStorage(PREGNANCY_PHOTOS_KEY, updatedPhotos);
-
-    // Delete baby photo if selected
-    if (selectedBabyPhoto) {
-      setBabyPhoto(null);
-      localStorage.removeItem(BABY_BORN_PHOTO_KEY);
-    }
-
-    toast.success(`${selectedWeeks.size + (selectedBabyPhoto ? 1 : 0)} photo(s) deleted`);
-    setSelectionMode(false);
-    setSelectedWeeks(new Set());
-    setSelectedBabyPhoto(false);
-  };
-
-  const moveToBabyAlbum = () => {
-    if (selectedWeeks.size === 0 && !selectedBabyPhoto) return;
-
-    const confirmed = window.confirm(
-      `Move ${selectedWeeks.size + (selectedBabyPhoto ? 1 : 0)} photo(s) to Baby Album?`
-    );
-    
-    if (!confirmed) return;
-
-    // Load existing baby album photos
-    const existingBabyPhotos = loadFromLocalStorage<Array<{
-      id: string;
-      imageData: string;
-      timestamp: Date;
-      caption?: string;
-      tags?: string[];
-      filters?: { brightness: number; contrast: number; saturation: number };
-    }>>("baby-album-photos") || [];
-
-    // Convert selected photos to baby album format
-    const newBabyPhotos: any[] = [];
-
-    selectedWeeks.forEach(week => {
-      const photo = weekPhotos[week];
-      if (photo) {
-        newBabyPhotos.push({
-          id: `${Date.now()}-${week}-${Math.random()}`,
-          imageData: photo.imageData,
-          timestamp: photo.timestamp,
-          caption: photo.caption || `Week ${week}`,
-          tags: photo.tags || [],
-          filters: photo.filters
-        });
-      }
-    });
-
-    if (selectedBabyPhoto && babyPhoto) {
-      newBabyPhotos.push({
-        id: `${Date.now()}-baby-${Math.random()}`,
-        imageData: babyPhoto.imageData,
-        timestamp: babyPhoto.timestamp,
-        caption: babyPhoto.caption || "Baby Born",
-        tags: babyPhoto.tags || [],
-        filters: babyPhoto.filters
-      });
-    }
-
-    // Save to baby album
-    const updatedBabyAlbum = [...existingBabyPhotos, ...newBabyPhotos].sort((a, b) => 
-      new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
-    );
-    saveToLocalStorage("baby-album-photos", updatedBabyAlbum);
-
-    // Delete from bump gallery
-    const updatedPhotos = { ...weekPhotos };
-    selectedWeeks.forEach(week => {
-      delete updatedPhotos[week];
-    });
-    setWeekPhotos(updatedPhotos);
-    saveToLocalStorage(PREGNANCY_PHOTOS_KEY, updatedPhotos);
-
-    if (selectedBabyPhoto) {
-      setBabyPhoto(null);
-      localStorage.removeItem(BABY_BORN_PHOTO_KEY);
-    }
-
-    toast.success(`${newBabyPhotos.length} photo(s) moved to Baby Album`);
-    setSelectionMode(false);
-    setSelectedWeeks(new Set());
-    setSelectedBabyPhoto(false);
-  };
-
   const getWeekBadges = (week: number) => {
     const badges = [];
-    if (weekPhotos[week]) badges.push({ icon: Camera, color: "text-primary" });
-    if (weekNotes[week]) badges.push({ icon: MessageSquare, color: "text-blue-500" });
-    if (weekVoiceNotes[week]) badges.push({ icon: Mic, color: "text-purple-500" });
+    
+    const weekPhoto = bumpPhotos.photos.find(p => p.week === week);
+    if (weekPhoto) {
+      badges.push(<Badge key="photo" variant="secondary" className="bg-primary/20">📸</Badge>);
+    }
+    
+    if (weekNotes[week]) {
+      badges.push(<Badge key="note" variant="secondary" className="bg-primary/20">📝</Badge>);
+    }
+    
+    if (weekVoiceNotes[week]) {
+      badges.push(<Badge key="voice" variant="secondary" className="bg-primary/20">🎙️</Badge>);
+    }
+    
     return badges;
   };
 
-  const renderWeekCard = (week: number) => {
-    const photo = weekPhotos[week];
-    const isSelected = selectedWeek === week;
-    const badges = getWeekBadges(week);
-
-    if (!shouldShowWeek(week)) return null;
-
-    return (
-      <div 
-        key={week}
-        className={`relative aspect-square bg-background border-2 rounded-lg overflow-hidden cursor-pointer transition-colors ${
-          selectionMode && selectedWeeks.has(week)
-            ? 'border-primary ring-2 ring-primary'
-            : 'border-border hover:border-primary'
-        }`}
-        onClick={() => {
-          if (selectionMode) {
-            toggleWeekSelection(week);
-          } else {
-            setSelectedWeek(isSelected ? null : week);
-          }
-        }}
-      >
-        {photo ? (
-          <>
-            <img 
-              src={photo.imageData} 
-              alt={`Week ${week}`}
-              className="w-full h-full object-cover"
-              style={getPhotoStyle(photo)}
-            />
-            {selectionMode && (
-              <div className="absolute top-2 left-2 z-10">
-                <div className={`w-6 h-6 rounded flex items-center justify-center ${
-                  selectedWeeks.has(week) ? 'bg-primary text-white' : 'bg-white/90 text-gray-600'
-                }`}>
-                  {selectedWeeks.has(week) ? (
-                    <CheckSquare className="w-4 h-4" />
-                  ) : (
-                    <Square className="w-4 h-4" />
-                  )}
-                </div>
-              </div>
-            )}
-            {badges.length > 0 && !isSelected && !selectionMode && (
-              <div className="absolute top-2 right-2 flex gap-1">
-                {badges.map((badge, idx) => (
-                  <div key={idx} className="bg-white/90 rounded-full p-1">
-                    <badge.icon className={`w-3 h-3 ${badge.color}`} />
-                  </div>
-                ))}
-              </div>
-            )}
-            {photo.caption && !isSelected && !selectionMode && (
-              <div className="absolute bottom-8 left-0 right-0 bg-black/70 text-white text-xs p-2 line-clamp-2">
-                {photo.caption}
-              </div>
-            )}
-            {isSelected && !selectionMode && (
-              <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center gap-2">
-                <div className="flex gap-2 flex-wrap justify-center">
-                  <Button
-                    size="icon"
-                    variant="secondary"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      openCaptionEditor(week);
-                    }}
-                    title="Edit caption"
-                  >
-                    <MessageSquare className="w-4 h-4" />
-                  </Button>
-                  <Button
-                    size="icon"
-                    variant="secondary"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      openPhotoEditor(week);
-                    }}
-                    title="Edit photo"
-                  >
-                    <Edit className="w-4 h-4" />
-                  </Button>
-                  <Button
-                    size="icon"
-                    variant="secondary"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      openTagEditor(week);
-                    }}
-                    title="Add tags"
-                  >
-                    <Tag className="w-4 h-4" />
-                  </Button>
-                  <Button
-                    size="icon"
-                    variant="secondary"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      openShareDialog(week);
-                    }}
-                    title="Share photo"
-                  >
-                    <Share2 className="w-4 h-4" />
-                  </Button>
-                  <Button
-                    size="icon"
-                    variant="secondary"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      downloadPhoto(week);
-                    }}
-                  >
-                    <Download className="w-4 h-4" />
-                  </Button>
-                  <Button
-                    size="icon"
-                    variant="secondary"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      deletePhoto(week);
-                    }}
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
-                </div>
-              </div>
-            )}
-          </>
-        ) : (
-          <div 
-            className="w-full h-full flex flex-col items-center justify-center"
-            onClick={(e) => {
-              e.stopPropagation();
-              openUploadDialog(week);
-            }}
-          >
-            <div className="w-12 h-12 rounded-full border-2 border-primary/30 flex items-center justify-center mb-2">
-              <Plus className="w-6 h-6 text-primary/50" />
-            </div>
-            <p className="text-sm font-semibold text-foreground">{week} WEEKS</p>
-            {badges.length > 0 && (
-              <div className="flex gap-1 mt-2">
-                {badges.map((badge, idx) => (
-                  <badge.icon key={idx} className={`w-3 h-3 ${badge.color}`} />
-                ))}
-              </div>
-            )}
-          </div>
-        )}
-        {photo && (
-          <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-xs font-semibold py-1 px-2 text-center">
-            {week} WEEKS
-          </div>
-        )}
-      </div>
-    );
+  const shouldShowWeek = (week: number) => {
+    if (filterType === "all") return true;
+    
+    if (filterType === "photos") {
+      return bumpPhotos.photos.some(p => p.week === week);
+    }
+    
+    if (filterType === "notes") {
+      return !!weekNotes[week];
+    }
+    
+    if (filterType === "voice") {
+      return !!weekVoiceNotes[week];
+    }
+    
+    return false;
   };
 
-  if (showFaceGroups) {
-    return (
-      <FaceGroupsView
-        photos={photosWithFaces}
-        onClose={() => setShowFaceGroups(false)}
-        onPhotoClick={handleFaceGroupPhotoClick}
-        albumType="bump"
-      />
-    );
-  }
+  const exportToPDF = async () => {
+    try {
+      const pdf = new jsPDF();
+      let yPosition = 20;
+      
+      pdf.setFontSize(20);
+      pdf.text("Pregnancy Journey", 20, yPosition);
+      yPosition += 15;
+      
+      for (let week = 1; week <= 40; week++) {
+        const weekPhoto = bumpPhotos.photos.find(p => p.week === week);
+        
+        if (weekPhoto) {
+          if (yPosition > 250) {
+            pdf.addPage();
+            yPosition = 20;
+          }
+          
+          pdf.setFontSize(14);
+          pdf.text(`Week ${week}`, 20, yPosition);
+          yPosition += 10;
+          
+          if (weekPhoto.caption) {
+            pdf.setFontSize(10);
+            pdf.text(weekPhoto.caption, 20, yPosition);
+            yPosition += 10;
+          }
+          
+          if (weekPhoto.mediaType === 'image' && weekPhoto.imageData) {
+            try {
+              pdf.addImage(weekPhoto.imageData, 'JPEG', 20, yPosition, 80, 80);
+              yPosition += 90;
+            } catch (error) {
+              console.error('Error adding image to PDF:', error);
+            }
+          }
+        }
+      }
+      
+      pdf.save("pregnancy-journey.pdf");
+      toast.success("PDF exported successfully!");
+    } catch (error) {
+      console.error("Error exporting PDF:", error);
+      toast.error("Failed to export PDF");
+    }
+  };
 
   return (
     <div className="fixed inset-0 bg-background z-50 overflow-y-auto">
-      <div className="min-h-screen pb-20">
-        {/* Header */}
-        <div className="sticky top-0 bg-background border-b border-border z-10 px-4 py-4">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-3">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={onClose}
-              >
-                <X className="w-5 h-5" />
-              </Button>
-              <div>
-                <div className="flex items-center gap-2">
-                  <h2 className="text-xl font-semibold">Bump Gallery</h2>
-                  <Badge variant="secondary" className="text-xs">
-                    {Object.keys(weekPhotos).length + (babyPhoto ? 1 : 0)} photos
-                  </Badge>
-                </div>
-              </div>
+      {/* Header */}
+      <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b border-border">
+        <div className="container py-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-2xl font-bold text-primary">Bump Photo Gallery</h2>
+              <p className="text-sm text-muted-foreground">Your pregnancy journey week by week</p>
             </div>
-            <div className="flex gap-2 overflow-x-auto pb-2">
-              {!selectionMode ? (
-                <>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setShowComparison(true)}
-                    className="gap-2"
-                  >
-                    <ArrowLeftRight className="w-4 h-4" />
-                    Compare
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={analyzeFaces}
-                    disabled={isAnalyzingFaces}
-                    className="gap-2"
-                  >
-                    <Users className="w-4 h-4" />
-                    {isAnalyzingFaces ? "Analyzing..." : "Faces"}
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={isSlideshow ? () => setIsSlideshow(false) : startSlideshow}
-                    className="gap-2"
-                  >
-                    {isSlideshow ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
-                    {isSlideshow ? "Pause" : "Slideshow"}
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={exportToPDF}
-                    className="gap-2"
-                  >
-                    <FileDown className="w-4 h-4" />
-                    PDF
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => openShareDialog("gallery")}
-                    className="gap-2"
-                  >
-                    <Share2 className="w-4 h-4" />
-                    Share
-                  </Button>
-                  <Button
-                    variant="default"
-                    size="sm"
-                    onClick={toggleSelectionMode}
-                    className="gap-2"
-                  >
-                    <CheckSquare className="w-4 h-4" />
-                    Select
-                  </Button>
-                </>
-              ) : (
-                <>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={selectAll}
-                    className="gap-2"
-                  >
-                    <CheckSquare className="w-4 h-4" />
-                    All
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={deselectAll}
-                    className="gap-2"
-                  >
-                    <Square className="w-4 h-4" />
-                    None
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={moveToBabyAlbum}
-                    disabled={selectedWeeks.size === 0 && !selectedBabyPhoto}
-                    className="gap-2"
-                  >
-                    <MoveRight className="w-4 h-4" />
-                    Move ({selectedWeeks.size + (selectedBabyPhoto ? 1 : 0)})
-                  </Button>
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    onClick={deleteSelected}
-                    disabled={selectedWeeks.size === 0 && !selectedBabyPhoto}
-                    className="gap-2"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                    Delete ({selectedWeeks.size + (selectedBabyPhoto ? 1 : 0)})
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={toggleSelectionMode}
-                  >
-                    Cancel
-                  </Button>
-                </>
-              )}
+            <div className="flex items-center gap-2">
+              <Button variant="outline" size="sm" onClick={exportToPDF}>
+                <FileDown className="w-4 h-4 mr-2" />
+                Export PDF
+              </Button>
+              <Button variant="ghost" size="icon" onClick={onClose}>
+                <X className="h-5 w-5" />
+              </Button>
             </div>
           </div>
           
           {/* Filters */}
-          <div className="flex gap-2 overflow-x-auto pb-2">
+          <div className="flex gap-2 mt-4">
             <Button
-              variant={filterType === "all" && !tagFilter ? "default" : "outline"}
+              variant={filterType === "all" ? "default" : "outline"}
               size="sm"
-              onClick={() => { setFilterType("all"); setTagFilter(null); }}
-              className="gap-2"
+              onClick={() => setFilterType("all")}
             >
-              <Filter className="w-4 h-4" />
               All Weeks
             </Button>
             <Button
               variant={filterType === "photos" ? "default" : "outline"}
               size="sm"
               onClick={() => setFilterType("photos")}
-              className="gap-2"
             >
-              <Camera className="w-4 h-4" />
-              Photos Only
+              <MessageSquare className="w-4 h-4 mr-2" />
+              With Photos
             </Button>
             <Button
               variant={filterType === "notes" ? "default" : "outline"}
               size="sm"
               onClick={() => setFilterType("notes")}
-              className="gap-2"
             >
-              <MessageSquare className="w-4 h-4" />
-              Notes Only
+              <MessageSquare className="w-4 h-4 mr-2" />
+              With Notes
             </Button>
             <Button
               variant={filterType === "voice" ? "default" : "outline"}
               size="sm"
               onClick={() => setFilterType("voice")}
-              className="gap-2"
             >
-              <Mic className="w-4 h-4" />
-              Voice Only
+              <Mic className="w-4 h-4 mr-2" />
+              With Voice
             </Button>
-            {getAllTags().map(tag => (
-              <Button
-                key={tag}
-                variant={tagFilter === tag ? "default" : "outline"}
-                size="sm"
-                onClick={() => {
-                  setTagFilter(tagFilter === tag ? null : tag);
-                  setFilterType("all");
-                }}
-                className="gap-2"
-              >
-                <Tag className="w-4 h-4" />
-                {tag}
-              </Button>
-            ))}
           </div>
         </div>
+      </div>
 
-        {/* Gallery Grid */}
-        <div className="max-w-7xl mx-auto px-4 py-6">
-          {/* Baby Born Section */}
-          <div className="mb-8">
-            <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
-              <Baby className="w-5 h-5 text-pink-500" />
-              Baby Born Photo
-            </h3>
-            <div 
-              className={`relative aspect-video max-w-md bg-background border-2 rounded-lg overflow-hidden cursor-pointer transition-colors ${
-                selectionMode && selectedBabyPhoto
-                  ? 'border-primary ring-2 ring-primary'
-                  : 'border-border hover:border-primary'
-              }`}
-              onClick={() => {
-                if (selectionMode) {
-                  setSelectedBabyPhoto(!selectedBabyPhoto);
-                } else {
-                  setSelectedWeek(selectedWeek === "baby" ? null : "baby");
-                }
-              }}
-            >
-              {babyPhoto ? (
-                <>
-                  <img 
-                    src={babyPhoto.imageData} 
-                    alt="Baby Born"
-                    className="w-full h-full object-cover"
-                    style={getPhotoStyle(babyPhoto)}
-                  />
-                  {selectionMode && (
-                    <div className="absolute top-2 left-2 z-10">
-                      <div className={`w-6 h-6 rounded flex items-center justify-center ${
-                        selectedBabyPhoto ? 'bg-primary text-white' : 'bg-white/90 text-gray-600'
-                      }`}>
-                        {selectedBabyPhoto ? (
-                          <CheckSquare className="w-4 h-4" />
-                        ) : (
-                          <Square className="w-4 h-4" />
-                        )}
+      {/* Content */}
+      <div className="container py-6">
+        {/* Pregnancy Weeks */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 mb-8">
+          {Array.from({ length: 40 }, (_, i) => i + 1)
+            .filter(shouldShowWeek)
+            .map((week) => {
+              const weekPhoto = bumpPhotos.photos.find(p => p.week === week);
+              
+              return (
+                <Card key={week} className="overflow-hidden">
+                  <div className="aspect-square relative group">
+                    {weekPhoto ? (
+                      <>
+                        <MediaViewer
+                          src={weekPhoto.imageData}
+                          mediaType={weekPhoto.mediaType}
+                          duration={weekPhoto.duration}
+                          alt={`Week ${week}`}
+                          className="cursor-pointer"
+                        />
+                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                          <Button
+                            size="icon"
+                            variant="secondary"
+                            onClick={() => openCaptionEditor(week, weekPhoto.id, weekPhoto.caption)}
+                          >
+                            <MessageSquare className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            size="icon"
+                            variant="destructive"
+                            onClick={() => handleDeletePhoto(week, weekPhoto.id)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </>
+                    ) : (
+                      <div className="w-full h-full bg-muted flex items-center justify-center">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleUploadClick(week)}
+                        >
+                          <Plus className="h-6 w-6" />
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                  <div className="p-3">
+                    <div className="flex items-center justify-between">
+                      <span className="font-medium text-sm">Week {week}</span>
+                      <div className="flex gap-1">
+                        {getWeekBadges(week)}
                       </div>
                     </div>
-                  )}
-                  {babyPhoto.caption && selectedWeek !== "baby" && !selectionMode && (
-                    <div className="absolute bottom-0 left-0 right-0 bg-black/70 text-white text-sm p-3 line-clamp-2">
-                      {babyPhoto.caption}
-                    </div>
-                  )}
-                  {selectedWeek === "baby" && !selectionMode && (
-                    <div className="absolute inset-0 bg-black/60 flex items-center justify-center gap-2">
-                      <Button
-                        size="icon"
-                        variant="secondary"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          openCaptionEditor("baby");
-                        }}
-                        title="Edit caption"
-                      >
-                        <MessageSquare className="w-4 h-4" />
-                      </Button>
-                      <Button
-                        size="icon"
-                        variant="secondary"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          openPhotoEditor("baby");
-                        }}
-                        title="Edit photo"
-                      >
-                        <Edit className="w-4 h-4" />
-                      </Button>
-                      <Button
-                        size="icon"
-                        variant="secondary"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          openTagEditor("baby");
-                        }}
-                        title="Add tags"
-                      >
-                        <Tag className="w-4 h-4" />
-                      </Button>
-                      <Button
-                        size="icon"
-                        variant="secondary"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          openShareDialog("baby");
-                        }}
-                        title="Share photo"
-                      >
-                        <Share2 className="w-4 h-4" />
-                      </Button>
-                      <Button
-                        size="icon"
-                        variant="secondary"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          downloadPhoto("baby");
-                        }}
-                      >
-                        <Download className="w-4 h-4" />
-                      </Button>
-                      <Button
-                        size="icon"
-                        variant="secondary"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          deletePhoto("baby");
-                        }}
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  )}
-                </>
-              ) : (
-                <div 
-                  className="w-full h-full flex flex-col items-center justify-center"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    openUploadDialog("baby");
-                  }}
-                >
-                  <div className="w-16 h-16 rounded-full border-2 border-pink-500/30 flex items-center justify-center mb-3">
-                    <Plus className="w-8 h-8 text-pink-500/50" />
+                    {weekPhoto?.caption && (
+                      <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
+                        {weekPhoto.caption}
+                      </p>
+                    )}
                   </div>
-                  <p className="text-sm font-semibold text-foreground">Add Baby Photo</p>
-                </div>
-              )}
-            </div>
-          </div>
+                </Card>
+              );
+            })}
+        </div>
 
-          {/* 40 Weeks Grid */}
-          <div>
-            <h3 className="text-lg font-semibold text-foreground mb-4">
-              Pregnancy Journey (40 Weeks)
-            </h3>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-              {Array.from({ length: 40 }, (_, i) => i + 1).map(week => renderWeekCard(week))}
-            </div>
+        {/* Baby Born Section */}
+        <div className="border-t border-border pt-8">
+          <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
+            <Baby className="h-5 w-5 text-primary" />
+            Baby Born
+          </h3>
+          
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+            {babyPhotos.photos.length > 0 ? (
+              babyPhotos.photos.map((photo) => (
+                <Card key={photo.id} className="overflow-hidden">
+                  <div className="aspect-square relative group">
+                    <MediaViewer
+                      src={photo.imageData}
+                      mediaType={photo.mediaType}
+                      duration={photo.duration}
+                      alt="Baby"
+                    />
+                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                      <Button
+                        size="icon"
+                        variant="secondary"
+                        onClick={() => openCaptionEditor("baby", photo.id, photo.caption)}
+                      >
+                        <MessageSquare className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        size="icon"
+                        variant="destructive"
+                        onClick={() => handleDeletePhoto("baby", photo.id)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                  {photo.caption && (
+                    <div className="p-3">
+                      <p className="text-xs text-muted-foreground line-clamp-2">
+                        {photo.caption}
+                      </p>
+                    </div>
+                  )}
+                </Card>
+              ))
+            ) : (
+              <Card className="overflow-hidden">
+                <div className="aspect-square bg-muted flex items-center justify-center">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => handleUploadClick("baby")}
+                  >
+                    <Plus className="h-6 w-6" />
+                  </Button>
+                </div>
+                <div className="p-3">
+                  <span className="text-sm text-muted-foreground">Add baby photo</span>
+                </div>
+              </Card>
+            )}
+            
+            {/* Add more button for baby album */}
+            <Card className="overflow-hidden border-dashed">
+              <div className="aspect-square bg-muted/50 flex items-center justify-center">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => handleUploadClick("baby")}
+                >
+                  <Plus className="h-6 w-6" />
+                </Button>
+              </div>
+              <div className="p-3">
+                <span className="text-sm text-muted-foreground">Add more</span>
+              </div>
+            </Card>
           </div>
         </div>
       </div>
@@ -1411,25 +403,18 @@ export const BumpGallery = ({ onClose }: BumpGalleryProps) => {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              Add Photo {uploadTarget === "baby" ? "- Baby Born" : `- Week ${uploadTarget}`}
+              Upload {uploadTarget === "baby" ? "Baby" : `Week ${uploadTarget}`} Photos/Videos
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
-            <label htmlFor="photo-upload" className="cursor-pointer">
-              <div className="border-2 border-dashed border-border rounded-lg p-8 text-center hover:border-primary transition-colors">
-                <Plus className="w-12 h-12 mx-auto mb-2 text-muted-foreground" />
-                <p className="text-sm text-muted-foreground">
-                  Click to select a photo
-                </p>
-              </div>
-              <input
-                id="photo-upload"
-                type="file"
-                accept="image/*"
-                onChange={handlePhotoUpload}
-                className="hidden"
-              />
-            </label>
+            <p className="text-sm text-muted-foreground">
+              Select multiple photos or videos to upload at once
+            </p>
+            <BatchPhotoUpload
+              onUpload={handleBatchUpload}
+              label="Select Files"
+              multiple={true}
+            />
           </div>
         </DialogContent>
       </Dialog>
@@ -1438,244 +423,29 @@ export const BumpGallery = ({ onClose }: BumpGalleryProps) => {
       <Dialog open={editingCaption !== null} onOpenChange={() => setEditingCaption(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>
-              Edit Caption {editingCaption === "baby" ? "- Baby Born" : `- Week ${editingCaption}`}
-            </DialogTitle>
+            <DialogTitle>Edit Caption</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <Label htmlFor="caption">Caption</Label>
+              <Label>Caption</Label>
               <Textarea
-                id="caption"
-                placeholder="Add a caption to your photo..."
                 value={captionText}
                 onChange={(e) => setCaptionText(e.target.value)}
-                className="mt-2"
+                placeholder="Add a caption..."
                 rows={4}
               />
             </div>
-            <div className="flex gap-2">
-              <Button onClick={saveCaption} className="flex-1">
-                Save Caption
-              </Button>
+            <div className="flex justify-end gap-2">
               <Button variant="outline" onClick={() => setEditingCaption(null)}>
                 Cancel
               </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Photo Editor Dialog */}
-      <Dialog open={editingPhoto !== null} onOpenChange={() => setEditingPhoto(null)}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>
-              Edit Photo {editingPhoto === "baby" ? "- Baby Born" : `- Week ${editingPhoto}`}
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-6">
-            {editingPhoto !== null && (
-              <div className="relative w-full h-64 bg-muted rounded-lg overflow-hidden">
-                <img
-                  src={editingPhoto === "baby" ? babyPhoto?.imageData : weekPhotos[editingPhoto as number]?.imageData}
-                  alt="Preview"
-                  className="w-full h-full object-contain"
-                  style={{
-                    filter: `brightness(${brightness}%) contrast(${contrast}%) saturate(${saturation}%)`
-                  }}
-                />
-              </div>
-            )}
-            <div className="space-y-4">
-              <div>
-                <Label>Brightness: {brightness}%</Label>
-                <Slider
-                  value={[brightness]}
-                  onValueChange={(v) => setBrightness(v[0])}
-                  min={0}
-                  max={200}
-                  step={1}
-                  className="mt-2"
-                />
-              </div>
-              <div>
-                <Label>Contrast: {contrast}%</Label>
-                <Slider
-                  value={[contrast]}
-                  onValueChange={(v) => setContrast(v[0])}
-                  min={0}
-                  max={200}
-                  step={1}
-                  className="mt-2"
-                />
-              </div>
-              <div>
-                <Label>Saturation: {saturation}%</Label>
-                <Slider
-                  value={[saturation]}
-                  onValueChange={(v) => setSaturation(v[0])}
-                  min={0}
-                  max={200}
-                  step={1}
-                  className="mt-2"
-                />
-              </div>
-            </div>
-            <div className="flex gap-2">
-              <Button onClick={applyPhotoEdits} className="flex-1">
-                Apply Edits
-              </Button>
-              <Button variant="outline" onClick={() => setEditingPhoto(null)}>
-                Cancel
+              <Button onClick={saveCaption}>
+                Save
               </Button>
             </div>
           </div>
         </DialogContent>
       </Dialog>
-
-      {/* Share Dialog */}
-      <Dialog open={sharingPhoto !== null} onOpenChange={() => setSharingPhoto(null)}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>
-              Share {sharingPhoto === "gallery" ? "Gallery Collage" : sharingPhoto === "baby" ? "Baby Photo" : `Week ${sharingPhoto} Photo`}
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="share-message">Message (optional)</Label>
-              <Textarea
-                id="share-message"
-                placeholder="Add a message to share with your photo..."
-                value={shareMessage}
-                onChange={(e) => setShareMessage(e.target.value)}
-                className="mt-2"
-                rows={3}
-              />
-            </div>
-            <div className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                id="watermark"
-                checked={shareWithWatermark}
-                onChange={(e) => setShareWithWatermark(e.target.checked)}
-                className="w-4 h-4"
-              />
-              <Label htmlFor="watermark" className="cursor-pointer">
-                Add watermark (recommended for privacy)
-              </Label>
-            </div>
-            <div className="bg-muted p-3 rounded-lg text-sm">
-              <p className="font-semibold mb-1">Privacy Note:</p>
-              <p className="text-muted-foreground">
-                {shareWithWatermark 
-                  ? "Watermark will be added to protect your photos when sharing online."
-                  : "Photos will be shared without watermark. Consider adding one for privacy."}
-              </p>
-            </div>
-            <div className="flex gap-2">
-              <Button 
-                onClick={() => sharingPhoto === "gallery" ? shareGallery() : sharePhoto(sharingPhoto as number | "baby")} 
-                className="flex-1"
-              >
-                <Share2 className="w-4 h-4 mr-2" />
-                Share Now
-              </Button>
-              <Button variant="outline" onClick={() => setSharingPhoto(null)}>
-                Cancel
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Tag Editor Dialog */}
-      <Dialog open={editingTags !== null} onOpenChange={() => setEditingTags(null)}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>
-              Manage Tags {editingTags === "baby" ? "- Baby Born" : `- Week ${editingTags}`}
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div className="flex gap-2">
-              <Input
-                placeholder="Add tag (e.g., location, event)..."
-                value={tagInput}
-                onChange={(e) => setTagInput(e.target.value)}
-                onKeyPress={(e) => e.key === "Enter" && addTag()}
-              />
-              <Button onClick={addTag}>Add</Button>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {editingTags !== null && (
-                editingTags === "baby" 
-                  ? babyPhoto?.tags?.map((tag) => (
-                      <div key={tag} className="flex items-center gap-1 bg-primary/10 text-primary px-3 py-1 rounded-full text-sm">
-                        {tag}
-                        <X 
-                          className="w-3 h-3 cursor-pointer" 
-                          onClick={() => removeTag("baby", tag)}
-                        />
-                      </div>
-                    ))
-                  : weekPhotos[editingTags as number]?.tags?.map((tag) => (
-                      <div key={tag} className="flex items-center gap-1 bg-primary/10 text-primary px-3 py-1 rounded-full text-sm">
-                        {tag}
-                        <X 
-                          className="w-3 h-3 cursor-pointer" 
-                          onClick={() => removeTag(editingTags as number, tag)}
-                        />
-                      </div>
-                    ))
-              )}
-            </div>
-            <Button variant="outline" onClick={() => setEditingTags(null)} className="w-full">
-              Done
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Slideshow Modal */}
-      {isSlideshow && (
-        <div className="fixed inset-0 bg-black z-[60] flex items-center justify-center">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setIsSlideshow(false)}
-            className="absolute top-4 right-4 text-white hover:bg-white/20"
-          >
-            <X className="w-6 h-6" />
-          </Button>
-          <div className="relative w-full h-full flex items-center justify-center p-8">
-            {weekPhotos[currentSlideWeek] && (
-              <div className="relative max-w-4xl max-h-full">
-                <img
-                  src={weekPhotos[currentSlideWeek].imageData}
-                  alt={`Week ${currentSlideWeek}`}
-                  className="max-w-full max-h-[80vh] object-contain"
-                  style={getPhotoStyle(weekPhotos[currentSlideWeek])}
-                />
-                <div className="absolute bottom-0 left-0 right-0 bg-black/70 text-white p-4">
-                  <p className="text-xl font-semibold">Week {currentSlideWeek}</p>
-                  {weekPhotos[currentSlideWeek].caption && (
-                    <p className="text-sm mt-2">{weekPhotos[currentSlideWeek].caption}</p>
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* Comparison Modal */}
-      {showComparison && (
-        <BumpPhotoComparison onClose={() => setShowComparison(false)} />
-      )}
-
-      <canvas ref={canvasRef} className="hidden" />
     </div>
   );
 };
