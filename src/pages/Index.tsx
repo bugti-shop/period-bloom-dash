@@ -220,11 +220,30 @@ const Index = () => {
               
               <div className="relative px-4 py-4">
                 <div className="text-center mb-2">
-                  <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">TODAY</p>
-                  <h1 className="text-2xl font-bold text-gray-900 mb-1">
-                    {format(new Date(), "MMMM d")}
-                  </h1>
-                  <p className="text-lg text-gray-700">{format(new Date(), "yyyy")}</p>
+                  {(() => {
+                    const today = new Date();
+                    const nextPeriodDate = periodData.cycleType === 'regular' 
+                      ? addDays(periodData.lastPeriodDate, periodData.cycleLength)
+                      : addDays(periodData.cycles[periodData.cycles.length - 1].endDate, periodData.mean);
+                    const daysUntilPeriod = differenceInDays(nextPeriodDate, today);
+                    
+                    const ovulationDate = periodData.cycleType === 'regular'
+                      ? addDays(periodData.lastPeriodDate, periodData.cycleLength - 14)
+                      : addDays(periodData.cycles[periodData.cycles.length - 1].endDate, periodData.mean - 14);
+                    const daysUntilOvulation = differenceInDays(ovulationDate, today);
+                    
+                    return (
+                      <>
+                        <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Next Period</p>
+                        <h1 className="text-2xl font-bold text-gray-900 mb-1">
+                          {daysUntilPeriod} days remaining
+                        </h1>
+                        <p className="text-lg text-gray-700">
+                          Next Ovulation ({daysUntilOvulation > 0 ? `${daysUntilOvulation} days left` : 'Today or passed'})
+                        </p>
+                      </>
+                    );
+                  })()}
                 </div>
               </div>
             </div>
