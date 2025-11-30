@@ -181,8 +181,8 @@ export const PeriodCalendar = ({
             bgClass = "bg-[hsl(330,70%,50%)] text-white";
             borderClass = "ring-2 ring-[hsl(330,70%,70%)]";
           } else if (isHighFertility) {
-            bgClass = "bg-[hsl(160,70%,45%)] text-white";
-            borderClass = "ring-2 ring-[hsl(160,70%,60%)]";
+            bgClass = "bg-[hsl(200,70%,45%)] text-white";
+            borderClass = "ring-2 ring-[hsl(200,70%,60%)]";
           } else if (isFertile) {
             const fertileIndex = allFertileDates.filter(fDate => 
               isSameDay(fDate, day) || 
@@ -227,7 +227,7 @@ export const PeriodCalendar = ({
           <span className="text-[8px] text-foreground">Ovulation</span>
         </div>
         <div className="flex items-center gap-1">
-          <div className="w-2 h-2 rounded bg-[hsl(160,70%,45%)] ring-2 ring-[hsl(160,70%,60%)]" />
+          <div className="w-2 h-2 rounded bg-[hsl(200,70%,45%)] ring-2 ring-[hsl(200,70%,60%)]" />
           <span className="text-[8px] text-foreground">High Fertility</span>
         </div>
         <div className="flex items-center gap-1">
