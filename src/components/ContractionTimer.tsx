@@ -13,6 +13,7 @@ import {
   detectPattern,
   updateContractionSession,
 } from "@/lib/contractionStorage";
+import { scheduleContractionAlert } from "@/lib/contractionNotifications";
 
 export const ContractionTimer = () => {
   const [currentSession, setCurrentSession] = useState<ContractionSession | null>(null);
@@ -86,6 +87,9 @@ export const ContractionTimer = () => {
       setCurrentSession(updatedSession);
       setActiveContraction(null);
       setElapsedTime(0);
+
+      // Check if contractions are regular and schedule notification
+      scheduleContractionAlert(updatedSession);
 
       toast({
         title: "Contraction recorded",
