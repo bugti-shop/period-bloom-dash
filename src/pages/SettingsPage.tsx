@@ -11,6 +11,7 @@ import { notifySuccess, notifyError } from "@/lib/notificationWithHaptics";
 import { ReminderSettings } from "@/components/ReminderSettings";
 import { FertilityReminderSettings } from "@/components/FertilityReminderSettings";
 import { SymptomReminderSettings } from "@/components/SymptomReminderSettings";
+import { NotificationTester } from "@/components/NotificationTester";
 import { exportAllData, importData } from "@/lib/dataExport";
 import { Button } from "@/components/ui/button";
 import { useRef } from "react";
@@ -402,11 +403,14 @@ export const SettingsPage = () => {
           <DialogHeader>
             <DialogTitle>Fertility & Period Reminders</DialogTitle>
             <DialogDescription>
-              Get notified about your fertile window, ovulation, and period
+              Get notified about your fertile window, ovulation, and period - completely offline
             </DialogDescription>
           </DialogHeader>
-          <div className="py-4">
+          <div className="py-4 space-y-6">
             <FertilityReminderSettings />
+            <div className="border-t border-border pt-6">
+              <NotificationTester />
+            </div>
           </div>
         </DialogContent>
       </Dialog>

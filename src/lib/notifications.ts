@@ -22,22 +22,25 @@ export const schedulePeriodReminder = async (
       return;
     }
 
-    // Cancel any existing notifications
+    // Cancel any existing period notifications
     await LocalNotifications.cancel({ notifications: [{ id: 1 }, { id: 2 }] });
 
     const today = new Date();
     const daysUntilPeriod = differenceInDays(nextPeriodDate, today);
 
-    // Schedule notification 2 days before period
+    // Schedule notification 2 days before period at 9:00 AM
     if (daysUntilPeriod >= 2) {
       const twoDaysBefore = addDays(nextPeriodDate, -2);
+      const notificationDate = new Date(twoDaysBefore);
+      notificationDate.setHours(9, 0, 0, 0); // Set to 9:00 AM sharp
+      
       await LocalNotifications.schedule({
         notifications: [
           {
-            title: 'Period Coming Soon',
+            title: 'Period Coming Soon 🌸',
             body: 'Your period is expected in 2 days. Be prepared!',
             id: 1,
-            schedule: { at: twoDaysBefore },
+            schedule: { at: notificationDate },
             sound: undefined,
             attachments: undefined,
             actionTypeId: '',
@@ -47,15 +50,18 @@ export const schedulePeriodReminder = async (
       });
     }
 
-    // Schedule notification on the day of period
+    // Schedule notification on the day of period at 8:00 AM
     if (daysUntilPeriod >= 0) {
+      const notificationDate = new Date(nextPeriodDate);
+      notificationDate.setHours(8, 0, 0, 0); // Set to 8:00 AM sharp
+      
       await LocalNotifications.schedule({
         notifications: [
           {
-            title: 'Period Day',
+            title: 'Period Day 🌸',
             body: 'Your period is expected today. Take care of yourself!',
             id: 2,
-            schedule: { at: nextPeriodDate },
+            schedule: { at: notificationDate },
             sound: undefined,
             attachments: undefined,
             actionTypeId: '',
