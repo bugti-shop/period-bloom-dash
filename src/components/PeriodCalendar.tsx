@@ -77,6 +77,18 @@ export const PeriodCalendar = ({
   const isOvulationDate = (date: Date) => allOvulationDates.some((oDate) => isSameDay(oDate, date));
   const isFertileDate = (date: Date) => allFertileDates.some((fDate) => isSameDay(fDate, date));
   const isSymptomDate = (date: Date) => symptomDates.some((sDate) => isSameDay(sDate, date));
+  
+  // Calculate cycle phase for a given date
+  const getCyclePhase = (date: Date): 'follicular' | 'ovulation' | 'luteal' | null => {
+    const daysSinceLastPeriod = Math.floor((date.getTime() - lastPeriodDate.getTime()) / (1000 * 60 * 60 * 24));
+    const cycleDay = (daysSinceLastPeriod % cycleLength) + 1;
+    
+    if (cycleDay >= 1 && cycleDay <= periodDuration) return 'follicular';
+    if (cycleDay >= (cycleLength - 14 - 2) && cycleDay <= (cycleLength - 14 + 2)) return 'ovulation';
+    if (cycleDay > (cycleLength - 14 + 2)) return 'luteal';
+    if (cycleDay > periodDuration && cycleDay < (cycleLength - 14 - 2)) return 'follicular';
+    return null;
+  };
 
   const handlePrevMonth = () => {
     const newOffset = Math.max(currentMonthOffset - 1, 0);
@@ -105,9 +117,14 @@ export const PeriodCalendar = ({
           <ChevronLeft className="w-4 h-4 text-foreground" />
         </button>
         
-        <h3 className="text-sm font-semibold text-foreground text-center">
-          {format(displayMonth, "MMMM yyyy")}
-        </h3>
+        <div className="text-center">
+          <h3 className="text-sm font-semibold text-foreground">
+            {format(displayMonth, "MMMM yyyy")}
+          </h3>
+          <p className="text-[10px] text-muted-foreground">
+            {getCyclePhase(displayMonth) && `${getCyclePhase(displayMonth)?.charAt(0).toUpperCase()}${getCyclePhase(displayMonth)?.slice(1)} Phase`}
+          </p>
+        </div>
         
         <button
           onClick={handleNextMonth}
@@ -141,8 +158,17 @@ export const PeriodCalendar = ({
           const isSymptom = isSymptomDate(day);
           const isToday = isSameDay(day, today);
           const isSelected = selectedDate && isSameDay(day, selectedDate);
+          const cyclePhase = getCyclePhase(day);
+          
+          // Check if this is a high-fertility day (3 days before ovulation to ovulation day)
+          const ovulationDate = allOvulationDates.find(oDate => {
+            const daysDiff = Math.abs(Math.floor((day.getTime() - oDate.getTime()) / (1000 * 60 * 60 * 24)));
+            return daysDiff <= 3;
+          });
+          const isHighFertility = ovulationDate && !isPeriod;
           
           let bgClass = "bg-white/40 text-foreground";
+          let borderClass = "";
           
           if (isPeriod) {
             const periodIndex = allPeriodDates.findIndex(pDate => isSameDay(pDate, day)) % periodDuration;
@@ -153,6 +179,10 @@ export const PeriodCalendar = ({
             else bgClass = "bg-[hsl(348,83%,75%)] text-white";
           } else if (isOvulation) {
             bgClass = "bg-[hsl(330,70%,50%)] text-white";
+            borderClass = "ring-2 ring-[hsl(330,70%,70%)]";
+          } else if (isHighFertility) {
+            bgClass = "bg-[hsl(160,70%,45%)] text-white";
+            borderClass = "ring-2 ring-[hsl(160,70%,60%)]";
           } else if (isFertile) {
             const fertileIndex = allFertileDates.filter(fDate => 
               isSameDay(fDate, day) || 
@@ -174,6 +204,7 @@ export const PeriodCalendar = ({
               className={`
                 aspect-square flex items-center justify-center rounded-md text-[10px] font-medium transition-all
                 ${bgClass}
+                ${borderClass}
                 ${isToday && !isPeriod && !isOvulation && !isFertile && !isSymptom ? "ring-2 ring-primary" : ""}
                 ${isSelected ? "ring-2 ring-pink-500 ring-offset-1" : ""}
                 ${(isPeriod || isOvulation || isFertile || isSymptom) ? "shadow-sm" : ""}
@@ -192,8 +223,12 @@ export const PeriodCalendar = ({
           <span className="text-[8px] text-foreground">Period</span>
         </div>
         <div className="flex items-center gap-1">
-          <div className="w-2 h-2 rounded bg-[hsl(330,70%,50%)]" />
+          <div className="w-2 h-2 rounded bg-[hsl(330,70%,50%)] ring-2 ring-[hsl(330,70%,70%)]" />
           <span className="text-[8px] text-foreground">Ovulation</span>
+        </div>
+        <div className="flex items-center gap-1">
+          <div className="w-2 h-2 rounded bg-[hsl(160,70%,45%)] ring-2 ring-[hsl(160,70%,60%)]" />
+          <span className="text-[8px] text-foreground">High Fertility</span>
         </div>
         <div className="flex items-center gap-1">
           <div className="w-2 h-2 rounded bg-[hsl(200,80%,60%)]" />
