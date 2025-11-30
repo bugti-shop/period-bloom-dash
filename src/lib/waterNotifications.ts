@@ -1,6 +1,7 @@
 import { LocalNotifications } from "@capacitor/local-notifications";
 import { loadWaterReminderSettings } from "./waterReminderStorage";
-import { notifyInfo } from "./notificationWithHaptics";
+import { requestNotificationPermission } from "./notifications";
+import { setHours, setMinutes, setSeconds, setMilliseconds } from "date-fns";
 
 export const scheduleWaterReminders = async () => {
   const settings = loadWaterReminderSettings();
@@ -11,43 +12,55 @@ export const scheduleWaterReminders = async () => {
   }
 
   try {
-    // Request permissions
-    const permission = await LocalNotifications.requestPermissions();
-    if (permission.display !== "granted") {
+    const hasPermission = await requestNotificationPermission();
+    if (!hasPermission) {
       console.log("Notification permission not granted");
       return;
     }
 
-    // Cancel existing reminders
+    // Cancel existing water reminders
     await cancelWaterReminders();
 
-    // Schedule new reminders for each time
+    const now = new Date();
     const notifications = settings.times.map((time, index) => {
       const [hours, minutes] = time.split(":").map(Number);
-      const now = new Date();
-      const scheduleTime = new Date();
-      scheduleTime.setHours(hours, minutes, 0, 0);
+      
+      // Create first notification with exact time
+      let firstNotification = setMilliseconds(
+        setSeconds(
+          setMinutes(
+            setHours(new Date(), hours),
+            minutes
+          ),
+          0
+        ),
+        0
+      );
 
       // If time has passed today, schedule for tomorrow
-      if (scheduleTime <= now) {
-        scheduleTime.setDate(scheduleTime.getDate() + 1);
+      if (firstNotification <= now) {
+        firstNotification.setDate(firstNotification.getDate() + 1);
       }
 
       return {
-        id: 5000 + index, // Water reminder IDs start at 5000
+        id: 5000 + index,
         title: "💧 Time to Hydrate!",
-        body: `Drink a glass of water. Goal: ${settings.dailyGoal} glasses/day`,
+        body: `Drink a glass of water. Daily goal: ${settings.dailyGoal} glasses`,
         schedule: {
-          at: scheduleTime,
-          every: "day" as const,
+          at: firstNotification,
+          every: 'day' as const, // Repeat daily at exact time
         },
-        sound: "default" as const,
-        smallIcon: "ic_stat_icon_config_sample",
+        sound: undefined,
+        attachments: undefined,
+        actionTypeId: '',
+        extra: null,
       };
     });
 
-    await LocalNotifications.schedule({ notifications });
-    console.log(`Scheduled ${notifications.length} water reminders`);
+    if (notifications.length > 0) {
+      await LocalNotifications.schedule({ notifications });
+      console.log(`✓ Scheduled ${notifications.length} water reminders (completely offline)`);
+    }
   } catch (error) {
     console.error("Error scheduling water reminders:", error);
   }
@@ -55,19 +68,15 @@ export const scheduleWaterReminders = async () => {
 
 export const cancelWaterReminders = async () => {
   try {
-    const settings = loadWaterReminderSettings();
-    const ids = settings.times.map((_, index) => ({ id: 5000 + index }));
-    if (ids.length > 0) {
-      await LocalNotifications.cancel({ notifications: ids });
-    }
+    // Cancel all water reminder IDs (5000-5099)
+    await LocalNotifications.cancel({ 
+      notifications: Array.from({ length: 100 }, (_, i) => ({ id: 5000 + i }))
+    });
   } catch (error) {
     console.error("Error canceling water reminders:", error);
   }
 };
 
-export const sendWaterReminderNow = async (message?: string) => {
-  await notifyInfo(
-    "💧 Hydration Reminder",
-    message || "Don't forget to drink water!"
-  );
+export const updateWaterReminders = async () => {
+  await scheduleWaterReminders();
 };

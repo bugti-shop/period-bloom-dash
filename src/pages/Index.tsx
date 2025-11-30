@@ -12,6 +12,7 @@ import { SymptomInsights } from "@/components/SymptomInsights";
 import { Calendar, Heart } from "lucide-react";
 import { schedulePeriodReminder } from "@/lib/notifications";
 import { scheduleFertilityReminders } from "@/lib/fertilityNotifications";
+import { initializeAllNotifications } from "@/lib/notificationInit";
 import { CycleEntry } from "@/lib/irregularCycle";
 
 import { SymptomsPage } from "@/pages/SymptomsPage";
@@ -69,10 +70,8 @@ const Index = () => {
         };
         setPeriodData(data);
         
-        // Schedule notifications
-        const nextPeriodDate = addDays(data.lastPeriodDate, data.cycleLength);
-        schedulePeriodReminder(nextPeriodDate, data.cycleLength);
-        scheduleFertilityReminders(data.lastPeriodDate, data.cycleLength);
+        // Initialize ALL notifications on app load
+        initializeAllNotifications();
       } else if (savedData.cycleType === 'irregular' && savedData.cycles && Array.isArray(savedData.cycles) && savedData.cycles.length > 0) {
         // Irregular cycle with valid data
         const data = {
@@ -85,10 +84,8 @@ const Index = () => {
         };
         setPeriodData(data);
         
-        // Schedule notification using mean cycle length
-        const lastCycle = data.cycles[data.cycles.length - 1];
-        const nextPeriodDate = addDays(lastCycle.endDate, data.mean);
-        schedulePeriodReminder(nextPeriodDate, data.mean);
+        // Initialize ALL notifications on app load
+        initializeAllNotifications();
       }
       // If data is invalid or incomplete, don't set it (will show form)
     }
@@ -107,18 +104,8 @@ const Index = () => {
     
     saveToLocalStorage("current-period-data", data);
     
-    // Schedule all notifications
-    if (data.cycleType === 'regular') {
-      const nextPeriodDate = addDays(data.lastPeriodDate, data.cycleLength);
-      schedulePeriodReminder(nextPeriodDate, data.cycleLength);
-      scheduleFertilityReminders(data.lastPeriodDate, data.cycleLength);
-    } else {
-      const lastCycle = data.cycles[data.cycles.length - 1];
-      const nextPeriodDate = addDays(lastCycle.endDate, data.mean);
-      schedulePeriodReminder(nextPeriodDate, data.mean);
-      // Schedule fertility reminders for irregular cycles using mean cycle length
-      scheduleFertilityReminders(lastCycle.endDate, data.mean);
-    }
+    // Initialize ALL notifications after form submit
+    initializeAllNotifications();
   };
 
   const handleTabChange = (tab: "home" | "symptoms" | "settings" | "tools") => {
