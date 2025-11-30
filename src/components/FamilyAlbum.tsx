@@ -12,6 +12,7 @@ import { FaceGroupsView } from "./FaceGroupsView";
 import { detectFacesInImage, PhotoWithFaces } from "@/lib/faceDetection";
 import { useAlbumPhotos } from "@/hooks/useAlbumPhotos";
 import { BatchPhotoUpload } from "./BatchPhotoUpload";
+import { MediaViewer } from "./MediaViewer";
 
 interface FamilyAlbumProps {
   onClose: () => void;
@@ -299,8 +300,10 @@ export const FamilyAlbum = ({ onClose }: FamilyAlbumProps) => {
                 className="relative group aspect-square rounded-lg overflow-hidden bg-muted cursor-pointer"
                 onClick={() => !selectionMode && setSelectedPhoto(photo.id)}
               >
-                <img
+                <MediaViewer
                   src={photo.imageData}
+                  mediaType={photo.mediaType}
+                  duration={photo.duration}
                   alt={photo.caption || "Family photo"}
                   className="w-full h-full object-cover"
                 />
@@ -343,8 +346,10 @@ export const FamilyAlbum = ({ onClose }: FamilyAlbumProps) => {
               </DialogHeader>
               
               <div className="space-y-4">
-                <img
+                <MediaViewer
                   src={selectedPhotoData.imageData}
+                  mediaType={selectedPhotoData.mediaType}
+                  duration={selectedPhotoData.duration}
                   alt="Family"
                   className="w-full rounded-lg"
                 />

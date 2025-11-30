@@ -31,7 +31,7 @@ export const BatchPhotoUpload = ({
       <input
         ref={fileInputRef}
         type="file"
-        accept="image/*"
+        accept="image/*,video/*"
         multiple={multiple}
         onChange={handleFileChange}
         className="hidden"

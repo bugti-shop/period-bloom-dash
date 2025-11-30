@@ -11,9 +11,11 @@ interface AlbumPhoto {
   tags?: string[];
   timestamp: Date;
   faceData?: any; // For family album
+  mediaType?: 'image' | 'video'; // Photo or video
+  duration?: number; // Video duration in seconds
 }
 
-// Save photo to album - instant save
+// Save media (photo or video) to album - instant save
 export async function saveAlbumPhoto(
   base64Data: string,
   albumType: AlbumType,
@@ -22,6 +24,8 @@ export async function saveAlbumPhoto(
     caption?: string;
     tags?: string[];
     faceData?: any;
+    mediaType?: 'image' | 'video';
+    duration?: number;
   } = {}
 ): Promise<string> {
   const photoId = `${albumType}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
@@ -35,7 +39,9 @@ export async function saveAlbumPhoto(
       timestamp: Date.now(),
       caption: options.caption,
       week: options.week,
-      tags: allTags
+      tags: allTags,
+      mediaType: options.mediaType,
+      duration: options.duration
     });
     
     // Store additional album-specific data in localStorage (small metadata only)
@@ -81,7 +87,9 @@ export async function loadAlbumPhotos(
           caption: metadata.caption,
           tags: metadata.tags?.filter(t => !t.startsWith('album:')),
           timestamp: new Date(metadata.timestamp),
-          faceData: albumData[metadata.id]?.faceData
+          faceData: albumData[metadata.id]?.faceData,
+          mediaType: metadata.mediaType || 'image',
+          duration: metadata.duration
         });
       }
     }
@@ -209,6 +217,8 @@ export async function getAlbumPhotoWithData(photoId: string, albumType: AlbumTyp
       tags: metadata.tags?.filter(t => !t.startsWith('album:')),
       timestamp: new Date(metadata.timestamp),
       faceData: albumData[photoId]?.faceData,
+      mediaType: metadata.mediaType || 'image',
+      duration: metadata.duration,
       imageData
     };
   } catch (error) {

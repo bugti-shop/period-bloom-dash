@@ -1,8 +1,8 @@
 import { Filesystem, Directory } from '@capacitor/filesystem';
 import { Capacitor } from '@capacitor/core';
 
-// Photo storage using Capacitor Filesystem API for unlimited storage
-// Photos are stored as actual files on the device
+// Media storage using Capacitor Filesystem API for unlimited storage
+// Photos and videos are stored as actual files on the device
 
 interface PhotoMetadata {
   id: string;
@@ -11,6 +11,8 @@ interface PhotoMetadata {
   caption?: string;
   week?: number;
   tags?: string[];
+  mediaType?: 'image' | 'video'; // Track media type
+  duration?: number; // Video duration in seconds
 }
 
 const PHOTO_DIRECTORY = 'photos';
@@ -35,12 +37,27 @@ async function ensurePhotoDirectory() {
   }
 }
 
-// Save photo to filesystem
+// Save media (photo or video) to filesystem
 export async function savePhoto(
   base64Data: string,
   metadata: Omit<PhotoMetadata, 'filename'>
 ): Promise<string> {
-  const filename = `photo_${metadata.id}_${Date.now()}.jpg`;
+  // Detect media type and extension from base64 data
+  const isVideo = base64Data.startsWith('data:video/');
+  const mediaType = metadata.mediaType || (isVideo ? 'video' : 'image');
+  
+  let extension = 'jpg';
+  if (isVideo) {
+    if (base64Data.includes('video/mp4')) extension = 'mp4';
+    else if (base64Data.includes('video/webm')) extension = 'webm';
+    else if (base64Data.includes('video/quicktime')) extension = 'mov';
+  } else {
+    if (base64Data.includes('image/png')) extension = 'png';
+    else if (base64Data.includes('image/gif')) extension = 'gif';
+    else if (base64Data.includes('image/webp')) extension = 'webp';
+  }
+  
+  const filename = `${mediaType}_${metadata.id}_${Date.now()}.${extension}`;
   
   // For native platform, use Filesystem API
   if (Capacitor.isNativePlatform()) {
@@ -48,21 +65,21 @@ export async function savePhoto(
       await ensurePhotoDirectory();
       
       // Remove data URL prefix if present
-      const base64Image = base64Data.replace(/^data:image\/[a-z]+;base64,/, '');
+      const base64Media = base64Data.replace(/^data:(image|video)\/[a-z]+;base64,/, '');
       
-      // Save photo file
+      // Save media file
       await Filesystem.writeFile({
         path: `${PHOTO_DIRECTORY}/${filename}`,
-        data: base64Image,
+        data: base64Media,
         directory: Directory.Data
       });
       
       // Save metadata
       const allMetadata = await loadAllPhotoMetadata();
-      allMetadata[metadata.id] = { ...metadata, filename };
+      allMetadata[metadata.id] = { ...metadata, filename, mediaType };
       localStorage.setItem(METADATA_KEY, JSON.stringify(allMetadata));
       
-      console.log(`Photo saved: ${filename}`);
+      console.log(`Media saved: ${filename}`);
       return filename;
     } catch (error) {
       console.error('Error saving photo to filesystem:', error);
@@ -72,20 +89,20 @@ export async function savePhoto(
     // Fallback for web: use localStorage (with size limitations)
     console.log('Web fallback: storing in localStorage');
     const allMetadata = await loadAllPhotoMetadata();
-    allMetadata[metadata.id] = { ...metadata, filename, data: base64Data };
+    allMetadata[metadata.id] = { ...metadata, filename, mediaType, data: base64Data };
     localStorage.setItem(METADATA_KEY, JSON.stringify(allMetadata));
     return filename;
   }
 }
 
-// Load photo from filesystem
+// Load media (photo or video) from filesystem
 export async function loadPhoto(photoId: string): Promise<string | null> {
   try {
     const allMetadata = await loadAllPhotoMetadata();
     const metadata = allMetadata[photoId];
     
     if (!metadata) {
-      console.log(`Photo metadata not found: ${photoId}`);
+      console.log(`Media metadata not found: ${photoId}`);
       return null;
     }
     
@@ -96,13 +113,27 @@ export async function loadPhoto(photoId: string): Promise<string | null> {
         directory: Directory.Data
       });
       
-      return `data:image/jpeg;base64,${result.data}`;
+      // Determine MIME type from filename or metadata
+      const isVideo = metadata.mediaType === 'video' || metadata.filename.includes('video_');
+      let mimeType = 'image/jpeg';
+      
+      if (isVideo) {
+        if (metadata.filename.endsWith('.mp4')) mimeType = 'video/mp4';
+        else if (metadata.filename.endsWith('.webm')) mimeType = 'video/webm';
+        else if (metadata.filename.endsWith('.mov')) mimeType = 'video/quicktime';
+      } else {
+        if (metadata.filename.endsWith('.png')) mimeType = 'image/png';
+        else if (metadata.filename.endsWith('.gif')) mimeType = 'image/gif';
+        else if (metadata.filename.endsWith('.webp')) mimeType = 'image/webp';
+      }
+      
+      return `data:${mimeType};base64,${result.data}`;
     } else {
       // Fallback for web: return from metadata (localStorage)
       return (metadata as any).data || null;
     }
   } catch (error) {
-    console.error('Error loading photo:', error);
+    console.error('Error loading media:', error);
     return null;
   }
 }

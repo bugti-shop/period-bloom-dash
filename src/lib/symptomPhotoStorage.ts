@@ -1,4 +1,4 @@
-// Photo storage for symptom-related trackers (skin condition, etc.)
+// Media storage for symptom-related trackers (skin condition, etc.)
 import { savePhoto, loadPhoto, deletePhoto, listPhotos } from './photoStorage';
 
 export type SymptomPhotoType = 'skin' | 'general';
@@ -11,9 +11,11 @@ interface SymptomPhoto {
   notes?: string;
   severity?: number;
   conditions?: string[];
+  mediaType?: 'image' | 'video';
+  duration?: number;
 }
 
-// Save symptom photo - instant save
+// Save symptom media (photo or video) - instant save
 export async function saveSymptomPhoto(
   base64Data: string,
   type: SymptomPhotoType,
@@ -22,6 +24,8 @@ export async function saveSymptomPhoto(
     notes?: string;
     severity?: number;
     conditions?: string[];
+    mediaType?: 'image' | 'video';
+    duration?: number;
   } = {}
 ): Promise<string> {
   const photoId = `symptom_${type}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
@@ -33,7 +37,9 @@ export async function saveSymptomPhoto(
     await savePhoto(base64Data, {
       id: photoId,
       timestamp: date.getTime(),
-      tags
+      tags,
+      mediaType: options.mediaType,
+      duration: options.duration
     });
     
     // Store additional symptom data in localStorage (small metadata only)
@@ -43,7 +49,9 @@ export async function saveSymptomPhoto(
       date: date.toISOString(),
       notes: options.notes,
       severity: options.severity,
-      conditions: options.conditions
+      conditions: options.conditions,
+      mediaType: options.mediaType,
+      duration: options.duration
     };
     saveSymptomPhotoData(symptomData);
     
@@ -87,7 +95,9 @@ export async function loadSymptomPhotos(
           imageData,
           notes: extraData.notes,
           severity: extraData.severity,
-          conditions: extraData.conditions
+          conditions: extraData.conditions,
+          mediaType: extraData.mediaType || metadata.mediaType || 'image',
+          duration: extraData.duration || metadata.duration
         });
       }
     }

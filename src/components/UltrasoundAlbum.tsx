@@ -11,6 +11,7 @@ import { format } from "date-fns";
 import jsPDF from "jspdf";
 import { useAlbumPhotos } from "@/hooks/useAlbumPhotos";
 import { BatchPhotoUpload } from "./BatchPhotoUpload";
+import { MediaViewer } from "./MediaViewer";
 
 interface UltrasoundAlbumProps {
   onClose: () => void;
@@ -288,8 +289,10 @@ export const UltrasoundAlbum = ({ onClose }: UltrasoundAlbumProps) => {
                 className="relative group aspect-square rounded-lg overflow-hidden bg-muted cursor-pointer"
                 onClick={() => !selectionMode && setSelectedPhoto(photo.id)}
               >
-                <img
+                <MediaViewer
                   src={photo.imageData}
+                  mediaType={photo.mediaType}
+                  duration={photo.duration}
                   alt={photo.caption || "Ultrasound"}
                   className="w-full h-full object-cover"
                 />
@@ -338,8 +341,10 @@ export const UltrasoundAlbum = ({ onClose }: UltrasoundAlbumProps) => {
               </DialogHeader>
               
               <div className="space-y-4">
-                <img
+                <MediaViewer
                   src={selectedPhotoData.imageData}
+                  mediaType={selectedPhotoData.mediaType}
+                  duration={selectedPhotoData.duration}
                   alt="Ultrasound"
                   className="w-full rounded-lg"
                 />
