@@ -15,6 +15,7 @@ import { exportAllData, importData } from "@/lib/dataExport";
 import { Button } from "@/components/ui/button";
 import { useRef } from "react";
 import { AppleHealthSync } from "@/components/AppleHealthSync";
+import { PhotoStorageMigration } from "@/components/PhotoStorageMigration";
 
 export const SettingsPage = () => {
   const [pregnancyMode, setPregnancyMode] = useState(loadPregnancyMode());
@@ -266,6 +267,11 @@ export const SettingsPage = () => {
               <span className="text-foreground text-base">Health integration & medical export</span>
               <ChevronRight className="w-5 h-5 text-primary" />
             </button>
+            
+            {/* Photo Storage Status */}
+            <div className="px-4 py-4">
+              <PhotoStorageMigration />
+            </div>
           </div>
 
           {/* Theme Section */}
