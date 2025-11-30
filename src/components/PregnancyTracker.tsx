@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { PregnancyProgress } from "@/components/PregnancyProgress";
+import { PregnancyCalendar } from "@/components/PregnancyCalendar";
 import { StickyNotes } from "@/components/StickyNotes";
 import { BumpGalleryCard } from "@/components/BumpGalleryCard";
 import { BumpGallery } from "@/components/BumpGallery";
@@ -104,11 +105,9 @@ export const PregnancyTracker = ({ lastPeriodDate: initialLastPeriodDate }: Preg
         <div className="max-w-2xl mx-auto py-4 px-4 pb-20">
           <div className="space-y-4">
             {visibility.pregnancyProgress && (
-              <PregnancyProgress 
-                week={currentWeek} 
-                dueDate={dueDate}
-                onUpdateLastPeriod={handleUpdateLastPeriod}
-                onSwitchWeek={handleSwitchWeek}
+              <PregnancyCalendar 
+                lastPeriodDate={lastPeriodDate}
+                currentWeek={currentWeek}
               />
             )}
             {visibility.bumpGallery && <BumpGalleryCard onClick={() => setShowGallery(true)} />}
