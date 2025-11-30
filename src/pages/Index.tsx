@@ -236,7 +236,7 @@ const Index = () => {
                       <>
                         <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Next Period</p>
                         <h1 className="text-2xl font-bold text-gray-900 mb-1">
-                          {daysUntilPeriod} days remaining
+                          {daysUntilPeriod} days
                         </h1>
                         <p className="text-lg text-gray-700">
                           Next Ovulation ({daysUntilOvulation > 0 ? `${daysUntilOvulation} days left` : 'Today or passed'})
