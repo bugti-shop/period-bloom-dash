@@ -10,6 +10,8 @@ import {
 } from "@/lib/fertilityReminderStorage";
 import { useToast } from "@/hooks/use-toast";
 import { requestNotificationPermission } from "@/lib/notifications";
+import { rescheduleFertilityNotifications } from "@/lib/fertilityNotifications";
+import { loadFromLocalStorage } from "@/lib/storage";
 
 export const FertilityReminderSettings = () => {
   const [reminders, setReminders] = useState<FertilityReminder>(loadFertilityReminders());
@@ -19,6 +21,16 @@ export const FertilityReminderSettings = () => {
     const savedReminders = loadFertilityReminders();
     setReminders(savedReminders);
   }, []);
+
+  const rescheduleNotifications = async () => {
+    const periodData = loadFromLocalStorage<any>("current-period-data");
+    if (periodData?.cycleType === 'regular' && periodData.lastPeriodDate) {
+      await rescheduleFertilityNotifications(
+        new Date(periodData.lastPeriodDate),
+        periodData.cycleLength
+      );
+    }
+  };
 
   const handleToggle = async (type: keyof Omit<FertilityReminder, "reminderTime">) => {
     const hasPermission = await requestNotificationPermission();
@@ -40,13 +52,16 @@ export const FertilityReminderSettings = () => {
     setReminders(updatedReminders);
     saveFertilityReminders(updatedReminders);
     
+    // Reschedule notifications with new settings
+    await rescheduleNotifications();
+    
     toast({
       title: reminders[type] ? "Reminder Disabled" : "Reminder Enabled",
-      description: `${type === "fertileWindow" ? "Fertile Window" : type === "ovulationDay" ? "Ovulation Day" : "Period Start"} reminder ${reminders[type] ? "disabled" : "enabled"}.`,
+      description: `${type === "fertileWindow" ? "Fertile Window" : type === "ovulationDay" ? "Ovulation Day" : "Period Start"} reminder ${reminders[type] ? "disabled" : "enabled"} and scheduled.`,
     });
   };
 
-  const handleTimeChange = (time: string) => {
+  const handleTimeChange = async (time: string) => {
     const updatedReminders = {
       ...reminders,
       reminderTime: time,
@@ -55,9 +70,12 @@ export const FertilityReminderSettings = () => {
     setReminders(updatedReminders);
     saveFertilityReminders(updatedReminders);
     
+    // Reschedule notifications with new time
+    await rescheduleNotifications();
+    
     toast({
       title: "Reminder Time Updated",
-      description: `Reminders will be sent at ${time}.`,
+      description: `Reminders will be sent at ${time} every day.`,
     });
   };
 
@@ -101,9 +119,9 @@ export const FertilityReminderSettings = () => {
           </div>
           <div>
             <Label htmlFor="fertile-window" className="text-sm font-medium text-foreground cursor-pointer">
-              Fertile Window
+              Fertile Window (Daily)
             </Label>
-            <p className="text-xs text-muted-foreground">5 days before ovulation</p>
+            <p className="text-xs text-muted-foreground">Daily reminders during fertile window</p>
           </div>
         </div>
         <Switch
@@ -123,7 +141,7 @@ export const FertilityReminderSettings = () => {
             <Label htmlFor="ovulation" className="text-sm font-medium text-foreground cursor-pointer">
               Ovulation Day
             </Label>
-            <p className="text-xs text-muted-foreground">Peak fertility day</p>
+            <p className="text-xs text-muted-foreground">Day before & day of ovulation</p>
           </div>
         </div>
         <Switch
@@ -136,7 +154,7 @@ export const FertilityReminderSettings = () => {
       {/* Reminder Time */}
       <div className="p-4 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl">
         <Label htmlFor="reminder-time" className="text-sm font-medium text-foreground mb-2 block">
-          Reminder Time
+          ⏰ Reminder Time
         </Label>
         <Input
           id="reminder-time"
@@ -146,7 +164,7 @@ export const FertilityReminderSettings = () => {
           className="bg-white"
         />
         <p className="text-xs text-muted-foreground mt-2">
-          All reminders will be sent at this time
+          All reminders will be sent at exactly this time every day
         </p>
       </div>
     </div>

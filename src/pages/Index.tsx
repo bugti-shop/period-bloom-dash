@@ -107,7 +107,7 @@ const Index = () => {
     
     saveToLocalStorage("current-period-data", data);
     
-    // Schedule notifications
+    // Schedule all notifications
     if (data.cycleType === 'regular') {
       const nextPeriodDate = addDays(data.lastPeriodDate, data.cycleLength);
       schedulePeriodReminder(nextPeriodDate, data.cycleLength);
@@ -116,6 +116,8 @@ const Index = () => {
       const lastCycle = data.cycles[data.cycles.length - 1];
       const nextPeriodDate = addDays(lastCycle.endDate, data.mean);
       schedulePeriodReminder(nextPeriodDate, data.mean);
+      // Schedule fertility reminders for irregular cycles using mean cycle length
+      scheduleFertilityReminders(lastCycle.endDate, data.mean);
     }
   };
 
