@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 import { Header } from "@/components/Header";
 import { BottomNav } from "@/components/BottomNav";
+import { useMobileBackButton } from "@/hooks/useMobileBackButton";
+import { ArrowLeft } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -30,6 +33,8 @@ interface PeriodData {
 }
 
 export const WaterPage = () => {
+  const navigate = useNavigate();
+  useMobileBackButton();
   const [date, setDate] = useState<Date>(new Date());
   const [glasses, setGlasses] = useState<number>(0);
   const [goal, setGoal] = useState<number>(8);
@@ -96,13 +101,20 @@ export const WaterPage = () => {
 
   return (
     <div className="min-h-screen bg-background pb-20">
-      <Header />
+      <div className="bg-primary text-primary-foreground p-4 sticky top-0 z-10">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => navigate(-1)}
+          className="text-primary-foreground hover:bg-primary-foreground/20"
+        >
+          <ArrowLeft className="h-5 w-5" />
+        </Button>
+        <h1 className="text-xl font-bold mt-2">Water Intake Tracker</h1>
+      </div>
+
       <div className="max-w-4xl mx-auto px-4 py-6 space-y-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Droplets className="h-8 w-8 text-primary" />
-            <h1 className="text-3xl font-bold text-foreground">Water Intake Tracker</h1>
-          </div>
+        <div className="flex items-center justify-end">
           <Button
             variant="outline"
             size="icon"
@@ -236,7 +248,6 @@ export const WaterPage = () => {
           )}
         </div>
       </div>
-      <BottomNav />
     </div>
   );
 };

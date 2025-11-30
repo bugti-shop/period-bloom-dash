@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { ArrowLeft, ImageIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useMobileBackButton } from "@/hooks/useMobileBackButton";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { SkinTracker } from "@/components/SkinTracker";
@@ -16,6 +17,7 @@ import { format, parseISO } from "date-fns";
 
 const SkinPage = () => {
   const navigate = useNavigate();
+  useMobileBackButton();
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [compareDialogOpen, setCompareDialogOpen] = useState(false);
   const [selectedPhoto1, setSelectedPhoto1] = useState<string | null>(null);

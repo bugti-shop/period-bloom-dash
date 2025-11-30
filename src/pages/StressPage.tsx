@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useMobileBackButton } from "@/hooks/useMobileBackButton";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { StressTracker } from "@/components/StressTracker";
@@ -10,6 +11,7 @@ import { format, parseISO } from "date-fns";
 
 const StressPage = () => {
   const navigate = useNavigate();
+  useMobileBackButton();
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const allLogs = getAllStressLogs();
   const avgStress = getAverageStressLevel(7);

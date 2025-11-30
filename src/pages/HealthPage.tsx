@@ -2,9 +2,11 @@ import { useState } from "react";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { HealthTracker } from "@/components/HealthTracker";
+import { useMobileBackButton } from "@/hooks/useMobileBackButton";
 
 export const HealthPage = () => {
   const navigate = useNavigate();
+  useMobileBackButton();
   const [selectedDate] = useState<Date>(new Date());
 
   return (
