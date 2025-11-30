@@ -4,6 +4,7 @@ import { Mic, Square, Play, Trash2, Download, Pause } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { saveToLocalStorage, loadFromLocalStorage } from "@/lib/storage";
 import { format } from "date-fns";
+import { Capacitor } from "@capacitor/core";
 
 interface VoiceNote {
   id: string;
@@ -53,6 +54,25 @@ export const VoiceNotes = ({ selectedDate }: VoiceNotesProps) => {
 
   const startRecording = async () => {
     try {
+      // Request microphone permission on native platforms
+      if (Capacitor.isNativePlatform()) {
+        try {
+          // Check and request permission
+          const micPermission = await (navigator as any).permissions.query({ name: 'microphone' as PermissionName });
+          
+          if (micPermission.state === 'denied') {
+            toast({
+              title: "Microphone Permission Required",
+              description: "Please enable microphone access in your device settings",
+              variant: "destructive"
+            });
+            return;
+          }
+        } catch (permError) {
+          console.log('Permission query not supported, proceeding with getUserMedia');
+        }
+      }
+
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const mediaRecorder = new MediaRecorder(stream);
       mediaRecorderRef.current = mediaRecorder;

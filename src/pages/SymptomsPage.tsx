@@ -177,20 +177,6 @@ export const SymptomsPage = () => {
           {/* Mood Tracker */}
           <MoodTracker selectedDate={selectedDate} />
 
-          {/* Mood & Symptom Correlation */}
-          <MoodSymptomCorrelation />
-
-          {/* Stress & Symptom Correlation */}
-          <StressSymptomCorrelation />
-
-          {/* PMS Severity Predictor */}
-          {periodData && (
-            <PMSSeverityPredictor 
-              lastPeriodDate={periodData.lastPeriodDate}
-              cycleLength={periodData.cycleLength}
-            />
-          )}
-
           {/* Symptoms Checker */}
           {visibility.symptomsChecker && <SymptomsChecker />}
 
