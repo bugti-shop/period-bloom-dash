@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Header } from "@/components/Header";
+import { useMobileBackButton } from "@/hooks/useMobileBackButton";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -13,6 +13,7 @@ import { format } from "date-fns";
 
 export default function PeriodProductPage() {
   const navigate = useNavigate();
+  useMobileBackButton();
   const { toast } = useToast();
   const [productType, setProductType] = useState<"pad" | "tampon" | "cup" | "liner">("pad");
   const [brand, setBrand] = useState("");
@@ -58,7 +59,6 @@ export default function PeriodProductPage() {
 
   return (
     <div className="min-h-screen bg-background pb-20">
-      <Header />
       
       <div className="container mx-auto px-4 py-6 max-w-2xl">
         <Button

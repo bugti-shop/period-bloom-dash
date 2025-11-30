@@ -1,9 +1,11 @@
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { BBTTracker } from "@/components/BBTTracker";
+import { useMobileBackButton } from "@/hooks/useMobileBackButton";
 
 export const BBTPage = () => {
   const navigate = useNavigate();
+  useMobileBackButton();
 
   return (
     <div className="min-h-screen bg-background pb-20">

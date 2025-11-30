@@ -1,9 +1,11 @@
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { IntimacyTracker } from "@/components/IntimacyTracker";
+import { useMobileBackButton } from "@/hooks/useMobileBackButton";
 
 export const IntimacyPage = () => {
   const navigate = useNavigate();
+  useMobileBackButton();
 
   return (
     <div className="min-h-screen bg-background pb-20">
