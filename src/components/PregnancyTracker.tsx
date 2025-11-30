@@ -106,15 +106,15 @@ export const PregnancyTracker = ({ lastPeriodDate: initialLastPeriodDate }: Preg
           <div className="space-y-4">
             {visibility.pregnancyProgress && (
               <>
+                <PregnancyCalendar 
+                  lastPeriodDate={lastPeriodDate}
+                  currentWeek={currentWeek}
+                />
                 <PregnancyProgress 
                   week={currentWeek}
                   dueDate={dueDate}
                   onUpdateLastPeriod={handleUpdateLastPeriod}
                   onSwitchWeek={handleSwitchWeek}
-                />
-                <PregnancyCalendar 
-                  lastPeriodDate={lastPeriodDate}
-                  currentWeek={currentWeek}
                 />
               </>
             )}
