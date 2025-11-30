@@ -105,35 +105,34 @@ export const PregnancyTracker = ({ lastPeriodDate: initialLastPeriodDate }: Preg
       <Header showArticlesToggle={true} />
       
       {activeTab === "home" && (
-        <div className="max-w-2xl mx-auto py-4 px-4 pb-20">
-          <div className="space-y-4">
-            {visibility.pregnancyProgress && (
+        <div className="max-w-2xl mx-auto py-2 px-2 pb-20">
+          <div className="space-y-2">{visibility.pregnancyProgress && (
               <>
                 {/* Calendar View Switchers */}
-                <div className="flex items-center justify-between px-2">
-                  <h3 className="text-sm font-semibold text-foreground">Your Pregnancy Journey</h3>
-                  <div className="flex items-center gap-2 bg-white/80 rounded-lg p-1 shadow-sm border border-gray-200">
+                <div className="flex items-center justify-between px-1">
+                  <h3 className="text-xs font-semibold text-foreground">Your Pregnancy Journey</h3>
+                  <div className="flex items-center gap-1 bg-white/80 rounded-lg p-0.5 shadow-sm border border-gray-200">
                     <button
                       onClick={() => setCalendarView('month')}
-                      className={`p-2 rounded-md transition-all ${
+                      className={`p-1.5 rounded-md transition-all ${
                         calendarView === 'month'
                           ? 'bg-[hsl(348,83%,47%)] text-white shadow-sm'
                           : 'text-gray-500 hover:bg-gray-100'
                       }`}
                       aria-label="Month view"
                     >
-                      <Grid3x3 className="w-4 h-4" />
+                      <Grid3x3 className="w-3.5 h-3.5" />
                     </button>
                     <button
                       onClick={() => setCalendarView('list')}
-                      className={`p-2 rounded-md transition-all ${
+                      className={`p-1.5 rounded-md transition-all ${
                         calendarView === 'list'
                           ? 'bg-[hsl(348,83%,47%)] text-white shadow-sm'
                           : 'text-gray-500 hover:bg-gray-100'
                       }`}
                       aria-label="List view"
                     >
-                      <List className="w-4 h-4" />
+                      <List className="w-3.5 h-3.5" />
                     </button>
                   </div>
                 </div>
@@ -159,61 +158,61 @@ export const PregnancyTracker = ({ lastPeriodDate: initialLastPeriodDate }: Preg
                       onUpdateLastPeriod={handleUpdateLastPeriod}
                       onSwitchWeek={handleSwitchWeek}
                     />
-                    <div className="glass-card p-4 rounded-2xl">
-                      <h4 className="text-sm font-semibold text-foreground mb-3">Key Milestones</h4>
-                      <div className="space-y-2">
-                        <div className="flex items-center gap-3 p-3 bg-[hsl(280,70%,95%)] rounded-lg">
-                          <div className="w-10 h-10 rounded-full bg-[hsl(280,70%,50%)] flex items-center justify-center flex-shrink-0">
-                            <Calendar className="w-5 h-5 text-white" />
+                    <div className="glass-card p-2 rounded-xl">
+                      <h4 className="text-xs font-semibold text-foreground mb-2">Key Milestones</h4>
+                      <div className="space-y-1.5">
+                        <div className="flex items-center gap-2 p-2 bg-[hsl(280,70%,95%)] rounded-lg">
+                          <div className="w-8 h-8 rounded-full bg-[hsl(280,70%,50%)] flex items-center justify-center flex-shrink-0">
+                            <Calendar className="w-4 h-4 text-white" />
                           </div>
                           <div className="flex-1">
-                            <p className="text-sm font-semibold text-gray-900">Current Week</p>
-                            <p className="text-xs text-gray-600">Week {currentWeek} of 40</p>
+                            <p className="text-xs font-semibold text-gray-900">Current Week</p>
+                            <p className="text-[10px] text-gray-600">Week {currentWeek} of 40</p>
                           </div>
                         </div>
                         
-                        <div className="flex items-center gap-3 p-3 bg-[hsl(348,83%,95%)] rounded-lg">
-                          <div className="w-10 h-10 rounded-full bg-[hsl(348,83%,47%)] flex items-center justify-center flex-shrink-0">
-                            <Calendar className="w-5 h-5 text-white" />
+                        <div className="flex items-center gap-2 p-2 bg-[hsl(348,83%,95%)] rounded-lg">
+                          <div className="w-8 h-8 rounded-full bg-[hsl(348,83%,47%)] flex items-center justify-center flex-shrink-0">
+                            <Calendar className="w-4 h-4 text-white" />
                           </div>
                           <div className="flex-1">
-                            <p className="text-sm font-semibold text-gray-900">Due Date</p>
-                            <p className="text-xs text-gray-600">{format(dueDate, 'MMMM dd, yyyy')}</p>
+                            <p className="text-xs font-semibold text-gray-900">Due Date</p>
+                            <p className="text-[10px] text-gray-600">{format(dueDate, 'MMM dd, yyyy')}</p>
                           </div>
                         </div>
                         
                         {currentWeek <= 13 && (
-                          <div className="flex items-center gap-3 p-3 bg-[hsl(200,80%,95%)] rounded-lg">
-                            <div className="w-10 h-10 rounded-full bg-[hsl(200,80%,60%)] flex items-center justify-center flex-shrink-0">
-                              <Calendar className="w-5 h-5 text-white" />
+                          <div className="flex items-center gap-2 p-2 bg-[hsl(200,80%,95%)] rounded-lg">
+                            <div className="w-8 h-8 rounded-full bg-[hsl(200,80%,60%)] flex items-center justify-center flex-shrink-0">
+                              <Calendar className="w-4 h-4 text-white" />
                             </div>
                             <div className="flex-1">
-                              <p className="text-sm font-semibold text-gray-900">First Trimester</p>
-                              <p className="text-xs text-gray-600">Weeks 1-13 • Critical development period</p>
+                              <p className="text-xs font-semibold text-gray-900">First Trimester</p>
+                              <p className="text-[10px] text-gray-600">Weeks 1-13</p>
                             </div>
                           </div>
                         )}
                         
                         {currentWeek > 13 && currentWeek <= 27 && (
-                          <div className="flex items-center gap-3 p-3 bg-[hsl(200,80%,95%)] rounded-lg">
-                            <div className="w-10 h-10 rounded-full bg-[hsl(200,80%,60%)] flex items-center justify-center flex-shrink-0">
-                              <Calendar className="w-5 h-5 text-white" />
+                          <div className="flex items-center gap-2 p-2 bg-[hsl(200,80%,95%)] rounded-lg">
+                            <div className="w-8 h-8 rounded-full bg-[hsl(200,80%,60%)] flex items-center justify-center flex-shrink-0">
+                              <Calendar className="w-4 h-4 text-white" />
                             </div>
                             <div className="flex-1">
-                              <p className="text-sm font-semibold text-gray-900">Second Trimester</p>
-                              <p className="text-xs text-gray-600">Weeks 14-27 • Growth & movement</p>
+                              <p className="text-xs font-semibold text-gray-900">Second Trimester</p>
+                              <p className="text-[10px] text-gray-600">Weeks 14-27</p>
                             </div>
                           </div>
                         )}
                         
                         {currentWeek > 27 && (
-                          <div className="flex items-center gap-3 p-3 bg-[hsl(200,80%,95%)] rounded-lg">
-                            <div className="w-10 h-10 rounded-full bg-[hsl(200,80%,60%)] flex items-center justify-center flex-shrink-0">
-                              <Calendar className="w-5 h-5 text-white" />
+                          <div className="flex items-center gap-2 p-2 bg-[hsl(200,80%,95%)] rounded-lg">
+                            <div className="w-8 h-8 rounded-full bg-[hsl(200,80%,60%)] flex items-center justify-center flex-shrink-0">
+                              <Calendar className="w-4 h-4 text-white" />
                             </div>
                             <div className="flex-1">
-                              <p className="text-sm font-semibold text-gray-900">Third Trimester</p>
-                              <p className="text-xs text-gray-600">Weeks 28-40 • Final preparations</p>
+                              <p className="text-xs font-semibold text-gray-900">Third Trimester</p>
+                              <p className="text-[10px] text-gray-600">Weeks 28-40</p>
                             </div>
                           </div>
                         )}
