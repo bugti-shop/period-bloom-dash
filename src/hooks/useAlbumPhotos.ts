@@ -75,6 +75,47 @@ export function useAlbumPhotos(albumType: AlbumType, week?: number) {
     }
   };
 
+  const addPhotoBatch = async (
+    files: FileList | File[],
+    options: {
+      week?: number;
+      caption?: string;
+      tags?: string[];
+    } = {}
+  ) => {
+    const fileArray = Array.from(files);
+    let successCount = 0;
+    let failCount = 0;
+
+    toast.info(`Uploading ${fileArray.length} photos...`);
+
+    for (const file of fileArray) {
+      try {
+        const base64Data = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result as string);
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+
+        await saveAlbumPhoto(base64Data, albumType, options);
+        successCount++;
+      } catch (error) {
+        console.error('Error saving photo:', error);
+        failCount++;
+      }
+    }
+
+    if (successCount > 0) {
+      toast.success(`${successCount} photo${successCount > 1 ? 's' : ''} saved instantly!`);
+    }
+    if (failCount > 0) {
+      toast.error(`Failed to save ${failCount} photo${failCount > 1 ? 's' : ''}`);
+    }
+
+    await loadPhotos(); // Reload to show new photos
+  };
+
   const removePhoto = async (photoId: string) => {
     try {
       await deleteAlbumPhoto(photoId, albumType);
@@ -107,6 +148,7 @@ export function useAlbumPhotos(albumType: AlbumType, week?: number) {
     photos,
     isLoading,
     addPhoto,
+    addPhotoBatch,
     removePhoto,
     updatePhoto,
     reload: loadPhotos
