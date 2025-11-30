@@ -55,11 +55,20 @@ export const PregnancyCalendar = ({ lastPeriodDate, currentWeek }: PregnancyCale
           const daysInMonth = eachDayOfInterval({ start: monthStart, end: monthEnd });
           const startPadding = getDay(monthStart);
 
+          // Calculate pregnancy week at the start of this month
+          const monthWeek = Math.ceil(differenceInMonths(monthDate, lastPeriodDate) * 4.33) + 1;
+          const monthWeekEnd = Math.min(monthWeek + 3, 40); // Approximately 4 weeks per month
+
           return (
             <div key={monthDate.toString()}>
-              <h3 className="text-sm font-semibold text-foreground text-center mb-3">
-                {format(monthDate, "MMMM yyyy")}
-              </h3>
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-sm font-semibold text-foreground">
+                  {format(monthDate, "MMMM yyyy")}
+                </h3>
+                <span className="text-xs font-medium text-pink-600 bg-pink-50 px-2 py-1 rounded-full">
+                  Week {monthWeek}-{monthWeekEnd}
+                </span>
+              </div>
 
               <div className="grid grid-cols-7 gap-0.5 mb-1">
                 {weekDays.map((day) => (
