@@ -118,176 +118,176 @@ export const SettingsPage = () => {
 
   return (
     <div className="min-h-screen bg-background pb-20">
-      <div className="max-w-7xl mx-auto px-4 py-6">
-        <div className="space-y-8">
+      <div className="max-w-7xl mx-auto px-2 py-3">
+        <div className="space-y-4">
           {/* My Mode Section */}
           <div className="space-y-0">
-            <div className="flex items-center gap-3 mb-4 px-2">
-              <Layers className="w-5 h-5 text-primary" />
-              <h2 className="text-lg font-semibold text-primary">
+            <div className="flex items-center gap-2 mb-2 px-1">
+              <Layers className="w-4 h-4 text-primary" />
+              <h2 className="text-sm font-semibold text-primary">
                 My Mode: {pregnancyMode.isPregnancyMode ? "Pregnancy Tracking" : "Period Tracking"}
               </h2>
             </div>
             
             <button
               onClick={handlePregnancyToggle}
-              className="w-full flex items-center justify-between px-4 py-4 border-b border-border hover:bg-muted/30 transition-colors"
+              className="w-full flex items-center justify-between px-3 py-2.5 border-b border-border hover:bg-muted/30 transition-colors"
             >
-              <span className="text-foreground text-base">
+              <span className="text-foreground text-sm">
                 {pregnancyMode.isPregnancyMode ? "Switch to Period Tracking" : "Switch to Pregnancy Tracking"}
               </span>
-              <ChevronRight className="w-5 h-5 text-primary" />
+              <ChevronRight className="w-4 h-4 text-primary" />
             </button>
           </div>
 
           {/* My Pregnancy/Period Section */}
           <div className="space-y-0">
-            <div className="flex items-center gap-3 mb-4 px-2">
-              <Moon className="w-5 h-5 text-primary" />
-              <h2 className="text-lg font-semibold text-primary">
+            <div className="flex items-center gap-2 mb-2 px-1">
+              <Moon className="w-4 h-4 text-primary" />
+              <h2 className="text-sm font-semibold text-primary">
                 {pregnancyMode.isPregnancyMode ? "My Pregnancy" : "My Period"}
               </h2>
             </div>
             
             <button
               onClick={() => setShowDatesDialog(true)}
-              className="w-full flex items-center justify-between px-4 py-4 border-b border-border hover:bg-muted/30 transition-colors"
+              className="w-full flex items-center justify-between px-3 py-2.5 border-b border-border hover:bg-muted/30 transition-colors"
             >
-              <span className="text-foreground text-base">Dates</span>
-              <ChevronRight className="w-5 h-5 text-primary" />
+              <span className="text-foreground text-sm">Dates</span>
+              <ChevronRight className="w-4 h-4 text-primary" />
             </button>
           </div>
 
           {/* Reminders & Notifications Section */}
           <div className="space-y-0">
-            <div className="flex items-center gap-3 mb-4 px-2">
-              <Bell className="w-5 h-5 text-primary" />
-              <h2 className="text-lg font-semibold text-primary">Reminders & Notifications</h2>
+            <div className="flex items-center gap-2 mb-2 px-1">
+              <Bell className="w-4 h-4 text-primary" />
+              <h2 className="text-sm font-semibold text-primary">Reminders & Notifications</h2>
             </div>
             
             <button
               onClick={() => setShowFertilityRemindersDialog(true)}
-              className="w-full flex items-center justify-between px-4 py-4 border-b border-border hover:bg-muted/30 transition-colors"
+              className="w-full flex items-center justify-between px-3 py-2.5 border-b border-border hover:bg-muted/30 transition-colors"
             >
-              <span className="text-foreground text-base">Fertility & Period reminders</span>
-              <ChevronRight className="w-5 h-5 text-primary" />
+              <span className="text-foreground text-sm">Fertility & Period reminders</span>
+              <ChevronRight className="w-4 h-4 text-primary" />
             </button>
             
             <button
               onClick={() => setShowSymptomRemindersDialog(true)}
-              className="w-full flex items-center justify-between px-4 py-4 border-b border-border hover:bg-muted/30 transition-colors"
+              className="w-full flex items-center justify-between px-3 py-2.5 border-b border-border hover:bg-muted/30 transition-colors"
             >
-              <span className="text-foreground text-base">Symptom logging reminders</span>
-              <ChevronRight className="w-5 h-5 text-primary" />
+              <span className="text-foreground text-sm">Symptom logging reminders</span>
+              <ChevronRight className="w-4 h-4 text-primary" />
             </button>
             
             <button
               onClick={() => setShowRemindersDialog(true)}
-              className="w-full flex items-center justify-between px-4 py-4 border-b border-border hover:bg-muted/30 transition-colors"
+              className="w-full flex items-center justify-between px-3 py-2.5 border-b border-border hover:bg-muted/30 transition-colors"
             >
-              <span className="text-foreground text-base">Medication reminder</span>
-              <ChevronRight className="w-5 h-5 text-primary" />
+              <span className="text-foreground text-sm">Medication reminder</span>
+              <ChevronRight className="w-4 h-4 text-primary" />
             </button>
             
             <button
               onClick={() => setShowRemindersDialog(true)}
-              className="w-full flex items-center justify-between px-4 py-4 border-b border-border hover:bg-muted/30 transition-colors"
+              className="w-full flex items-center justify-between px-3 py-2.5 border-b border-border hover:bg-muted/30 transition-colors"
             >
-              <span className="text-foreground text-base">Contraception reminder</span>
-              <ChevronRight className="w-5 h-5 text-primary" />
+              <span className="text-foreground text-sm">Contraception reminder</span>
+              <ChevronRight className="w-4 h-4 text-primary" />
             </button>
             
             <button
               onClick={() => setShowRemindersDialog(true)}
-              className="w-full flex items-center justify-between px-4 py-4 border-b border-border hover:bg-muted/30 transition-colors"
+              className="w-full flex items-center justify-between px-3 py-2.5 border-b border-border hover:bg-muted/30 transition-colors"
             >
-              <span className="text-foreground text-base">Meditation reminder</span>
-              <ChevronRight className="w-5 h-5 text-primary" />
+              <span className="text-foreground text-sm">Meditation reminder</span>
+              <ChevronRight className="w-4 h-4 text-primary" />
             </button>
             
             <button
               onClick={() => setShowRemindersDialog(true)}
-              className="w-full flex items-center justify-between px-4 py-4 border-b border-border hover:bg-muted/30 transition-colors"
+              className="w-full flex items-center justify-between px-3 py-2.5 border-b border-border hover:bg-muted/30 transition-colors"
             >
-              <span className="text-foreground text-base">Daily logging reminder</span>
-              <ChevronRight className="w-5 h-5 text-primary" />
+              <span className="text-foreground text-sm">Daily logging reminder</span>
+              <ChevronRight className="w-4 h-4 text-primary" />
             </button>
             
             <button
               onClick={() => setShowRemindersDialog(true)}
-              className="w-full flex items-center justify-between px-4 py-4 border-b border-border hover:bg-muted/30 transition-colors"
+              className="w-full flex items-center justify-between px-3 py-2.5 border-b border-border hover:bg-muted/30 transition-colors"
             >
-              <span className="text-foreground text-base">Tracking reminder</span>
-              <ChevronRight className="w-5 h-5 text-primary" />
+              <span className="text-foreground text-sm">Tracking reminder</span>
+              <ChevronRight className="w-4 h-4 text-primary" />
             </button>
           </div>
 
           {/* My Data Section */}
           <div className="space-y-0">
-            <div className="flex items-center gap-3 mb-4 px-2">
-              <Folder className="w-5 h-5 text-primary" />
-              <h2 className="text-lg font-semibold text-primary">My Data</h2>
+            <div className="flex items-center gap-2 mb-2 px-1">
+              <Folder className="w-4 h-4 text-primary" />
+              <h2 className="text-sm font-semibold text-primary">My Data</h2>
             </div>
             
             <button
               onClick={exportAllData}
-              className="w-full flex items-center justify-between px-4 py-4 border-b border-border hover:bg-muted/30 transition-colors"
+              className="w-full flex items-center justify-between px-3 py-2.5 border-b border-border hover:bg-muted/30 transition-colors"
             >
-              <span className="text-foreground text-base">Back up data</span>
-              <ChevronRight className="w-5 h-5 text-primary" />
+              <span className="text-foreground text-sm">Back up data</span>
+              <ChevronRight className="w-4 h-4 text-primary" />
             </button>
             
             <button
               onClick={() => fileInputRef.current?.click()}
-              className="w-full flex items-center justify-between px-4 py-4 border-b border-border hover:bg-muted/30 transition-colors"
+              className="w-full flex items-center justify-between px-3 py-2.5 border-b border-border hover:bg-muted/30 transition-colors"
             >
-              <span className="text-foreground text-base">Restore data</span>
-              <ChevronRight className="w-5 h-5 text-primary" />
+              <span className="text-foreground text-sm">Restore data</span>
+              <ChevronRight className="w-4 h-4 text-primary" />
             </button>
             
             <button
               onClick={exportAllData}
-              className="w-full flex items-center justify-between px-4 py-4 border-b border-border hover:bg-muted/30 transition-colors"
+              className="w-full flex items-center justify-between px-3 py-2.5 border-b border-border hover:bg-muted/30 transition-colors"
             >
-              <span className="text-foreground text-base">Download my data</span>
-              <ChevronRight className="w-5 h-5 text-primary" />
+              <span className="text-foreground text-sm">Download my data</span>
+              <ChevronRight className="w-4 h-4 text-primary" />
             </button>
             
             <button
               onClick={handleDeleteAllData}
-              className="w-full flex items-center justify-between px-4 py-4 border-b border-border hover:bg-muted/30 transition-colors"
+              className="w-full flex items-center justify-between px-3 py-2.5 border-b border-border hover:bg-muted/30 transition-colors"
             >
-              <span className="text-foreground text-base">Delete app data</span>
-              <ChevronRight className="w-5 h-5 text-primary" />
+              <span className="text-foreground text-sm">Delete app data</span>
+              <ChevronRight className="w-4 h-4 text-primary" />
             </button>
             
             <button
               onClick={() => setShowHealthExportDialog(true)}
-              className="w-full flex items-center justify-between px-4 py-4 border-b border-border hover:bg-muted/30 transition-colors"
+              className="w-full flex items-center justify-between px-3 py-2.5 border-b border-border hover:bg-muted/30 transition-colors"
             >
-              <span className="text-foreground text-base">Health integration & medical export</span>
-              <ChevronRight className="w-5 h-5 text-primary" />
+              <span className="text-foreground text-sm">Health integration & medical export</span>
+              <ChevronRight className="w-4 h-4 text-primary" />
             </button>
             
             {/* Photo Storage Status */}
-            <div className="px-4 py-4">
+            <div className="px-3 py-2.5">
               <PhotoStorageMigration />
             </div>
           </div>
 
           {/* Theme Section */}
           <div className="space-y-0">
-            <div className="flex items-center gap-3 mb-4 px-2">
-              <Palette className="w-5 h-5 text-primary" />
-              <h2 className="text-lg font-semibold text-primary">Appearance</h2>
+            <div className="flex items-center gap-2 mb-2 px-1">
+              <Palette className="w-4 h-4 text-primary" />
+              <h2 className="text-sm font-semibold text-primary">Appearance</h2>
             </div>
             
             <button
               onClick={() => setShowThemeDialog(true)}
-              className="w-full flex items-center justify-between px-4 py-4 border-b border-border hover:bg-muted/30 transition-colors"
+              className="w-full flex items-center justify-between px-3 py-2.5 border-b border-border hover:bg-muted/30 transition-colors"
             >
-              <span className="text-foreground text-base">Theme</span>
-              <ChevronRight className="w-5 h-5 text-primary" />
+              <span className="text-foreground text-sm">Theme</span>
+              <ChevronRight className="w-4 h-4 text-primary" />
             </button>
           </div>
         </div>
