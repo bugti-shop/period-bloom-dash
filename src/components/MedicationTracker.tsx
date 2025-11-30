@@ -63,6 +63,10 @@ export const MedicationTracker = () => {
 
     addMedication(medication);
     setMedications(loadMedications());
+    
+    // Reschedule all medication reminders
+    scheduleMedicationReminders();
+    
     setIsDialogOpen(false);
     setNewMed({
       name: "",
@@ -73,12 +77,16 @@ export const MedicationTracker = () => {
       reminderEnabled: true,
       notes: "",
     });
-    notifySuccess("Medication added successfully");
+    notifySuccess("Medication added & reminder scheduled");
   };
 
   const handleDelete = (id: string) => {
     deleteMedication(id);
     setMedications(loadMedications());
+    
+    // Reschedule all medication reminders after deletion
+    scheduleMedicationReminders();
+    
     notifySuccess("Medication removed");
   };
 

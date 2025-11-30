@@ -10,7 +10,7 @@ import {
   saveWaterReminderSettings,
   type WaterReminderSettings,
 } from "@/lib/waterReminderStorage";
-import { scheduleWaterReminders, sendWaterReminderNow } from "@/lib/waterNotifications";
+import { scheduleWaterReminders, updateWaterReminders } from "@/lib/waterNotifications";
 import { toast } from "sonner";
 
 export const WaterReminderSettingsCard = () => {
@@ -88,11 +88,6 @@ export const WaterReminderSettingsCard = () => {
     };
     setSettings(updated);
     saveWaterReminderSettings(updated);
-  };
-
-  const handleTestNotification = () => {
-    sendWaterReminderNow(`Test reminder - Your goal: ${settings.dailyGoal} glasses/day`);
-    toast.success("Test notification sent!");
   };
 
   return (
@@ -205,11 +200,6 @@ export const WaterReminderSettingsCard = () => {
               )}
             </div>
           </div>
-
-          <Button onClick={handleTestNotification} variant="outline" className="w-full">
-            <Bell className="h-4 w-4 mr-2" />
-            Test Notification
-          </Button>
         </>
       )}
     </Card>
