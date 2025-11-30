@@ -17,6 +17,8 @@ import { SymptomsPage } from "@/pages/SymptomsPage";
 import { SettingsPage } from "@/pages/SettingsPage";
 import { ToolsPage } from "@/pages/ToolsPage";
 import { ChecklistsPage } from "@/pages/ChecklistsPage";
+import { Grid3x3, List, Calendar } from "lucide-react";
+import { addDays, format } from "date-fns";
 import { 
   calculatePregnancyWeek, 
   calculateDueDate, 
@@ -37,6 +39,7 @@ export const PregnancyTracker = ({ lastPeriodDate: initialLastPeriodDate }: Preg
   const [showBabyAlbum, setShowBabyAlbum] = useState(false);
   const [showFamilyAlbum, setShowFamilyAlbum] = useState(false);
   const [showUltrasoundAlbum, setShowUltrasoundAlbum] = useState(false);
+  const [calendarView, setCalendarView] = useState<'month' | 'list'>('month');
   const visibility = loadSectionVisibility();
   
   // Load saved manual week override on mount
@@ -106,16 +109,118 @@ export const PregnancyTracker = ({ lastPeriodDate: initialLastPeriodDate }: Preg
           <div className="space-y-4">
             {visibility.pregnancyProgress && (
               <>
-                <PregnancyCalendar 
-                  lastPeriodDate={lastPeriodDate}
-                  currentWeek={currentWeek}
-                />
-                <PregnancyProgress 
-                  week={currentWeek}
-                  dueDate={dueDate}
-                  onUpdateLastPeriod={handleUpdateLastPeriod}
-                  onSwitchWeek={handleSwitchWeek}
-                />
+                {/* Calendar View Switchers */}
+                <div className="flex items-center justify-between px-2">
+                  <h3 className="text-sm font-semibold text-foreground">Your Pregnancy Journey</h3>
+                  <div className="flex items-center gap-2 bg-white/80 rounded-lg p-1 shadow-sm border border-gray-200">
+                    <button
+                      onClick={() => setCalendarView('month')}
+                      className={`p-2 rounded-md transition-all ${
+                        calendarView === 'month'
+                          ? 'bg-[hsl(348,83%,47%)] text-white shadow-sm'
+                          : 'text-gray-500 hover:bg-gray-100'
+                      }`}
+                      aria-label="Month view"
+                    >
+                      <Grid3x3 className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => setCalendarView('list')}
+                      className={`p-2 rounded-md transition-all ${
+                        calendarView === 'list'
+                          ? 'bg-[hsl(348,83%,47%)] text-white shadow-sm'
+                          : 'text-gray-500 hover:bg-gray-100'
+                      }`}
+                      aria-label="List view"
+                    >
+                      <List className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+
+                {calendarView === 'month' ? (
+                  <>
+                    <PregnancyCalendar 
+                      lastPeriodDate={lastPeriodDate}
+                      currentWeek={currentWeek}
+                    />
+                    <PregnancyProgress 
+                      week={currentWeek}
+                      dueDate={dueDate}
+                      onUpdateLastPeriod={handleUpdateLastPeriod}
+                      onSwitchWeek={handleSwitchWeek}
+                    />
+                  </>
+                ) : (
+                  <>
+                    <PregnancyProgress 
+                      week={currentWeek}
+                      dueDate={dueDate}
+                      onUpdateLastPeriod={handleUpdateLastPeriod}
+                      onSwitchWeek={handleSwitchWeek}
+                    />
+                    <div className="glass-card p-4 rounded-2xl">
+                      <h4 className="text-sm font-semibold text-foreground mb-3">Key Milestones</h4>
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-3 p-3 bg-[hsl(280,70%,95%)] rounded-lg">
+                          <div className="w-10 h-10 rounded-full bg-[hsl(280,70%,50%)] flex items-center justify-center flex-shrink-0">
+                            <Calendar className="w-5 h-5 text-white" />
+                          </div>
+                          <div className="flex-1">
+                            <p className="text-sm font-semibold text-gray-900">Current Week</p>
+                            <p className="text-xs text-gray-600">Week {currentWeek} of 40</p>
+                          </div>
+                        </div>
+                        
+                        <div className="flex items-center gap-3 p-3 bg-[hsl(348,83%,95%)] rounded-lg">
+                          <div className="w-10 h-10 rounded-full bg-[hsl(348,83%,47%)] flex items-center justify-center flex-shrink-0">
+                            <Calendar className="w-5 h-5 text-white" />
+                          </div>
+                          <div className="flex-1">
+                            <p className="text-sm font-semibold text-gray-900">Due Date</p>
+                            <p className="text-xs text-gray-600">{format(dueDate, 'MMMM dd, yyyy')}</p>
+                          </div>
+                        </div>
+                        
+                        {currentWeek <= 13 && (
+                          <div className="flex items-center gap-3 p-3 bg-[hsl(200,80%,95%)] rounded-lg">
+                            <div className="w-10 h-10 rounded-full bg-[hsl(200,80%,60%)] flex items-center justify-center flex-shrink-0">
+                              <Calendar className="w-5 h-5 text-white" />
+                            </div>
+                            <div className="flex-1">
+                              <p className="text-sm font-semibold text-gray-900">First Trimester</p>
+                              <p className="text-xs text-gray-600">Weeks 1-13 • Critical development period</p>
+                            </div>
+                          </div>
+                        )}
+                        
+                        {currentWeek > 13 && currentWeek <= 27 && (
+                          <div className="flex items-center gap-3 p-3 bg-[hsl(200,80%,95%)] rounded-lg">
+                            <div className="w-10 h-10 rounded-full bg-[hsl(200,80%,60%)] flex items-center justify-center flex-shrink-0">
+                              <Calendar className="w-5 h-5 text-white" />
+                            </div>
+                            <div className="flex-1">
+                              <p className="text-sm font-semibold text-gray-900">Second Trimester</p>
+                              <p className="text-xs text-gray-600">Weeks 14-27 • Growth & movement</p>
+                            </div>
+                          </div>
+                        )}
+                        
+                        {currentWeek > 27 && (
+                          <div className="flex items-center gap-3 p-3 bg-[hsl(200,80%,95%)] rounded-lg">
+                            <div className="w-10 h-10 rounded-full bg-[hsl(200,80%,60%)] flex items-center justify-center flex-shrink-0">
+                              <Calendar className="w-5 h-5 text-white" />
+                            </div>
+                            <div className="flex-1">
+                              <p className="text-sm font-semibold text-gray-900">Third Trimester</p>
+                              <p className="text-xs text-gray-600">Weeks 28-40 • Final preparations</p>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </>
+                )}
               </>
             )}
             {visibility.bumpGallery && <BumpGalleryCard onClick={() => setShowGallery(true)} />}
