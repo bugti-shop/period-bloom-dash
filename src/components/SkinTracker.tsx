@@ -10,6 +10,7 @@ import {
   getSkinForDate,
   skinConditions,
 } from "@/lib/skinStorage";
+import { saveSymptomPhoto, loadSymptomPhotosForDate, deleteSymptomPhoto } from "@/lib/symptomPhotoStorage";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { Camera, X } from "lucide-react";
@@ -22,24 +23,34 @@ export const SkinTracker = ({ selectedDate }: SkinTrackerProps) => {
   const [selectedConditions, setSelectedConditions] = useState<string[]>([]);
   const [severity, setSeverity] = useState<{ [condition: string]: number }>({});
   const [photos, setPhotos] = useState<string[]>([]);
+  const [photoIds, setPhotoIds] = useState<string[]>([]);
   const [notes, setNotes] = useState("");
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
+    loadDataForDate();
+  }, [selectedDate]);
+
+  const loadDataForDate = async () => {
     const log = getSkinForDate(selectedDate);
     if (log) {
       setSelectedConditions(log.conditions);
       setSeverity(log.severity);
-      setPhotos(log.photos);
       setNotes(log.notes);
+      
+      // Load photos from filesystem
+      const symptomPhotos = await loadSymptomPhotosForDate('skin', selectedDate);
+      setPhotos(symptomPhotos.map(p => p.imageData || ''));
+      setPhotoIds(symptomPhotos.map(p => p.id));
     } else {
       setSelectedConditions([]);
       setSeverity({});
       setPhotos([]);
+      setPhotoIds([]);
       setNotes("");
     }
-  }, [selectedDate]);
+  };
 
   const handleConditionToggle = (condition: string) => {
     if (selectedConditions.includes(condition)) {
@@ -59,28 +70,78 @@ export const SkinTracker = ({ selectedDate }: SkinTrackerProps) => {
     setSeverity(prev => ({ ...prev, [condition]: value[0] }));
   };
 
-  const handlePhotoCapture = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePhotoCapture = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files) return;
 
-    Array.from(files).forEach(file => {
+    const newPhotoIds: string[] = [];
+    const newPhotos: string[] = [];
+
+    for (const file of Array.from(files)) {
       const reader = new FileReader();
-      reader.onloadend = () => {
-        setPhotos(prev => [...prev, reader.result as string]);
-      };
-      reader.readAsDataURL(file);
-    });
+      await new Promise<void>((resolve) => {
+        reader.onloadend = async () => {
+          const base64Data = reader.result as string;
+          
+          // Save photo instantly to filesystem
+          try {
+            const photoId = await saveSymptomPhoto(base64Data, 'skin', {
+              date: selectedDate,
+              notes: notes,
+              severity: Object.values(severity).reduce((a, b) => a + b, 0) / Object.keys(severity).length,
+              conditions: selectedConditions
+            });
+            
+            newPhotoIds.push(photoId);
+            newPhotos.push(base64Data);
+            toast({
+              title: "Photo saved",
+              description: "Photo saved instantly to device storage",
+            });
+          } catch (error) {
+            console.error('Error saving photo:', error);
+            toast({
+              title: "Error",
+              description: "Failed to save photo",
+              variant: "destructive"
+            });
+          }
+          
+          resolve();
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    setPhotos(prev => [...prev, ...newPhotos]);
+    setPhotoIds(prev => [...prev, ...newPhotoIds]);
   };
 
-  const removePhoto = (index: number) => {
+  const removePhoto = async (index: number) => {
+    const photoId = photoIds[index];
+    if (photoId) {
+      try {
+        await deleteSymptomPhoto(photoId);
+        toast({
+          title: "Photo deleted",
+          description: "Photo removed from device storage",
+        });
+      } catch (error) {
+        console.error('Error deleting photo:', error);
+      }
+    }
+    
     setPhotos(prev => prev.filter((_, i) => i !== index));
+    setPhotoIds(prev => prev.filter((_, i) => i !== index));
   };
 
   const handleSave = () => {
-    saveSkinLog(selectedDate, selectedConditions, severity, photos, notes);
+    // Photos are already saved to filesystem instantly
+    // Only save the metadata (conditions, severity, notes)
+    saveSkinLog(selectedDate, selectedConditions, severity, [], notes);
     toast({
       title: "Skin condition saved",
-      description: `Logged for ${format(selectedDate, "MMM dd, yyyy")}`,
+      description: `Logged for ${format(selectedDate, "MMM dd, yyyy")}. Photos saved to device storage.`,
     });
   };
 
