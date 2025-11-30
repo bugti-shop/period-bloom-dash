@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { X, Plus, Trash2, Download, Baby, Filter, MessageSquare, Mic, Camera, ArrowLeftRight, Play, Pause, Edit, Tag, FileDown, Share2, CheckSquare, Square, MoveRight, Users } from "lucide-react";
 import { saveToLocalStorage, loadFromLocalStorage } from "@/lib/storage";
+import { saveAlbumPhoto, loadAlbumPhotos, deleteAlbumPhoto, updateAlbumPhoto, getAlbumPhotoWithData, movePhotoToAlbum } from "@/lib/albumStorage";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -111,61 +112,88 @@ export const BumpGallery = ({ onClose }: BumpGalleryProps) => {
     return () => clearTimeout(timer);
   }, [isSlideshow, currentSlideWeek, weekPhotos]);
 
-  const loadData = () => {
-    const storedPhotos = loadFromLocalStorage<WeekPhotos>(PREGNANCY_PHOTOS_KEY);
-    const storedBabyPhoto = loadFromLocalStorage<WeekPhoto>(BABY_BORN_PHOTO_KEY);
+  const loadData = async () => {
+    // Load notes and voice notes from localStorage (small metadata)
     const storedNotes = loadFromLocalStorage<WeekNotes>(PREGNANCY_NOTES_KEY) || {};
     const storedVoiceNotes = loadFromLocalStorage<WeekVoiceNotes>(PREGNANCY_VOICE_NOTES_KEY) || {};
     
-    if (storedPhotos) {
-      const photosWithDates: WeekPhotos = {};
-      Object.keys(storedPhotos).forEach(week => {
-        photosWithDates[parseInt(week)] = {
-          ...storedPhotos[parseInt(week)],
-          timestamp: new Date(storedPhotos[parseInt(week)].timestamp)
-        };
-      });
-      setWeekPhotos(photosWithDates);
-    }
-    
-    if (storedBabyPhoto) {
-      setBabyPhoto({
-        ...storedBabyPhoto,
-        timestamp: new Date(storedBabyPhoto.timestamp)
-      });
-    }
-
     setWeekNotes(storedNotes);
     setWeekVoiceNotes(storedVoiceNotes);
+    
+    // Load photos from filesystem
+    try {
+      const bumpPhotos = await loadAlbumPhotos('bump');
+      const photosMap: WeekPhotos = {};
+      
+      for (const photo of bumpPhotos) {
+        if (photo.week) {
+          const photoData = await getAlbumPhotoWithData(photo.id, 'bump');
+          if (photoData) {
+            photosMap[photo.week] = {
+              imageData: photoData.imageData,
+              timestamp: photo.timestamp,
+              caption: photo.caption,
+              tags: photo.tags
+            };
+          }
+        }
+      }
+      
+      setWeekPhotos(photosMap);
+      
+      // Load baby born photo
+      const babyPhotos = await loadAlbumPhotos('baby');
+      if (babyPhotos.length > 0) {
+        const babyPhotoData = await getAlbumPhotoWithData(babyPhotos[0].id, 'baby');
+        if (babyPhotoData) {
+          setBabyPhoto({
+            imageData: babyPhotoData.imageData,
+            timestamp: babyPhotoData.timestamp,
+            caption: babyPhotoData.caption,
+            tags: babyPhotoData.tags
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Error loading photos:', error);
+      toast.error('Failed to load photos');
+    }
   };
 
-  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || uploadTarget === null) return;
 
     const reader = new FileReader();
-    reader.onloadend = () => {
-      const newPhoto: WeekPhoto = {
-        imageData: reader.result as string,
-        timestamp: new Date()
-      };
-
-      if (uploadTarget === "baby") {
-        setBabyPhoto(newPhoto);
-        saveToLocalStorage(BABY_BORN_PHOTO_KEY, newPhoto);
-        toast.success("Baby photo added!");
-      } else {
-        const updatedPhotos = {
-          ...weekPhotos,
-          [uploadTarget]: newPhoto
-        };
-        setWeekPhotos(updatedPhotos);
-        saveToLocalStorage(PREGNANCY_PHOTOS_KEY, updatedPhotos);
-        toast.success(`Week ${uploadTarget} photo added!`);
-      }
+    reader.onloadend = async () => {
+      const base64Data = reader.result as string;
       
-      setShowUploadDialog(false);
-      setUploadTarget(null);
+      try {
+        if (uploadTarget === "baby") {
+          // Save to baby album
+          await saveAlbumPhoto(base64Data, 'baby', {
+            caption: '',
+            tags: []
+          });
+          toast.success("Baby photo saved instantly!");
+        } else {
+          // Save to bump album
+          await saveAlbumPhoto(base64Data, 'bump', {
+            week: uploadTarget,
+            caption: '',
+            tags: []
+          });
+          toast.success(`Week ${uploadTarget} photo saved instantly!`);
+        }
+        
+        // Reload data to show new photo
+        await loadData();
+        setShowUploadDialog(false);
+        setUploadTarget(null);
+      } catch (error) {
+        console.error('Error saving photo:', error);
+        toast.error('Failed to save photo');
+      }
     };
     reader.readAsDataURL(file);
   };
