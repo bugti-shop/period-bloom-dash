@@ -11,18 +11,21 @@ interface PhotoMetadata {
   caption?: string;
   week?: number;
   tags?: string[];
-  mediaType?: 'image' | 'video'; // Track media type
-  duration?: number; // Video duration in seconds
+  mediaType?: 'image' | 'video';
+  duration?: number;
 }
 
 const PHOTO_DIRECTORY = 'photos';
 const METADATA_KEY = 'photo-metadata';
 
+// Track save operations to prevent race conditions
+let saveQueue: Promise<void> = Promise.resolve();
+
 // Initialize photo directory
-async function ensurePhotoDirectory() {
+async function ensurePhotoDirectory(): Promise<boolean> {
   if (!Capacitor.isNativePlatform()) {
     console.log('Running in web mode, using localStorage fallback');
-    return;
+    return true;
   }
 
   try {
@@ -31,68 +34,148 @@ async function ensurePhotoDirectory() {
       directory: Directory.Data,
       recursive: true
     });
-  } catch (error) {
+    return true;
+  } catch (error: any) {
     // Directory might already exist, that's fine
+    if (error?.message?.includes('Directory exists') || error?.code === 'EEXIST') {
+      return true;
+    }
     console.log('Photo directory check:', error);
+    return true;
   }
 }
 
-// Save media (photo or video) to filesystem
+// Safely save metadata with retry logic
+async function saveMetadataSafely(metadata: Record<string, PhotoMetadata & { data?: string }>): Promise<boolean> {
+  const maxRetries = 3;
+  let lastError: Error | null = null;
+
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    try {
+      const jsonString = JSON.stringify(metadata);
+      localStorage.setItem(METADATA_KEY, jsonString);
+      
+      // Verify the save was successful
+      const verified = localStorage.getItem(METADATA_KEY);
+      if (verified === jsonString) {
+        return true;
+      }
+    } catch (error) {
+      lastError = error as Error;
+      console.error(`Metadata save attempt ${attempt + 1} failed:`, error);
+      await new Promise(resolve => setTimeout(resolve, 100 * (attempt + 1)));
+    }
+  }
+
+  console.error('All metadata save attempts failed:', lastError);
+  return false;
+}
+
+// Save media (photo or video) to filesystem with improved reliability
 export async function savePhoto(
   base64Data: string,
   metadata: Omit<PhotoMetadata, 'filename'>
 ): Promise<string> {
-  // Detect media type and extension from base64 data
-  const isVideo = base64Data.startsWith('data:video/');
-  const mediaType = metadata.mediaType || (isVideo ? 'video' : 'image');
-  
-  let extension = 'jpg';
-  if (isVideo) {
-    if (base64Data.includes('video/mp4')) extension = 'mp4';
-    else if (base64Data.includes('video/webm')) extension = 'webm';
-    else if (base64Data.includes('video/quicktime')) extension = 'mov';
-  } else {
-    if (base64Data.includes('image/png')) extension = 'png';
-    else if (base64Data.includes('image/gif')) extension = 'gif';
-    else if (base64Data.includes('image/webp')) extension = 'webp';
-  }
-  
-  const filename = `${mediaType}_${metadata.id}_${Date.now()}.${extension}`;
-  
-  // For native platform, use Filesystem API
-  if (Capacitor.isNativePlatform()) {
-    try {
-      await ensurePhotoDirectory();
-      
-      // Remove data URL prefix if present
-      const base64Media = base64Data.replace(/^data:(image|video)\/[a-z]+;base64,/, '');
-      
-      // Save media file
-      await Filesystem.writeFile({
-        path: `${PHOTO_DIRECTORY}/${filename}`,
-        data: base64Media,
-        directory: Directory.Data
-      });
-      
-      // Save metadata
-      const allMetadata = await loadAllPhotoMetadata();
-      allMetadata[metadata.id] = { ...metadata, filename, mediaType };
-      localStorage.setItem(METADATA_KEY, JSON.stringify(allMetadata));
-      
-      console.log(`Media saved: ${filename}`);
-      return filename;
-    } catch (error) {
-      console.error('Error saving photo to filesystem:', error);
-      throw error;
-    }
-  } else {
-    // Fallback for web: use localStorage (with size limitations)
-    console.log('Web fallback: storing in localStorage');
-    const allMetadata = await loadAllPhotoMetadata();
-    allMetadata[metadata.id] = { ...metadata, filename, mediaType, data: base64Data };
-    localStorage.setItem(METADATA_KEY, JSON.stringify(allMetadata));
-    return filename;
-  }
+  // Queue saves to prevent race conditions
+  return new Promise((resolve, reject) => {
+    saveQueue = saveQueue.then(async () => {
+      try {
+        // Detect media type and extension from base64 data
+        const isVideo = base64Data.startsWith('data:video/');
+        const mediaType = metadata.mediaType || (isVideo ? 'video' : 'image');
+        
+        let extension = 'jpg';
+        if (isVideo) {
+          if (base64Data.includes('video/mp4')) extension = 'mp4';
+          else if (base64Data.includes('video/webm')) extension = 'webm';
+          else if (base64Data.includes('video/quicktime')) extension = 'mov';
+        } else {
+          if (base64Data.includes('image/png')) extension = 'png';
+          else if (base64Data.includes('image/gif')) extension = 'gif';
+          else if (base64Data.includes('image/webp')) extension = 'webp';
+        }
+        
+        const filename = `${mediaType}_${metadata.id}_${Date.now()}.${extension}`;
+        
+        // For native platform, use Filesystem API
+        if (Capacitor.isNativePlatform()) {
+          const directoryReady = await ensurePhotoDirectory();
+          if (!directoryReady) {
+            throw new Error('Failed to ensure photo directory');
+          }
+          
+          // Remove data URL prefix if present
+          const base64Media = base64Data.replace(/^data:(image|video)\/[a-z]+;base64,/, '');
+          
+          // Save media file with retry
+          let fileSaved = false;
+          for (let attempt = 0; attempt < 3; attempt++) {
+            try {
+              await Filesystem.writeFile({
+                path: `${PHOTO_DIRECTORY}/${filename}`,
+                data: base64Media,
+                directory: Directory.Data
+              });
+              
+              // Verify file was saved
+              try {
+                await Filesystem.stat({
+                  path: `${PHOTO_DIRECTORY}/${filename}`,
+                  directory: Directory.Data
+                });
+                fileSaved = true;
+                break;
+              } catch {
+                console.log(`File verification failed on attempt ${attempt + 1}`);
+              }
+            } catch (error) {
+              console.error(`File save attempt ${attempt + 1} failed:`, error);
+              await new Promise(r => setTimeout(r, 100 * (attempt + 1)));
+            }
+          }
+          
+          if (!fileSaved) {
+            throw new Error('Failed to save photo file after multiple attempts');
+          }
+          
+          // Save metadata
+          const allMetadata = await loadAllPhotoMetadata();
+          allMetadata[metadata.id] = { ...metadata, filename, mediaType };
+          
+          const metadataSaved = await saveMetadataSafely(allMetadata);
+          if (!metadataSaved) {
+            // Try to clean up the file if metadata save failed
+            try {
+              await Filesystem.deleteFile({
+                path: `${PHOTO_DIRECTORY}/${filename}`,
+                directory: Directory.Data
+              });
+            } catch {}
+            throw new Error('Failed to save photo metadata');
+          }
+          
+          console.log(`Media saved successfully: ${filename}`);
+          resolve(filename);
+        } else {
+          // Fallback for web: use localStorage (with size limitations)
+          console.log('Web fallback: storing in localStorage');
+          const allMetadata = await loadAllPhotoMetadata();
+          allMetadata[metadata.id] = { ...metadata, filename, mediaType, data: base64Data };
+          
+          const metadataSaved = await saveMetadataSafely(allMetadata);
+          if (!metadataSaved) {
+            throw new Error('Failed to save photo to localStorage');
+          }
+          
+          console.log(`Media saved to localStorage: ${filename}`);
+          resolve(filename);
+        }
+      } catch (error) {
+        console.error('Error saving photo:', error);
+        reject(error);
+      }
+    });
+  });
 }
 
 // Load media (photo or video) from filesystem
@@ -108,26 +191,35 @@ export async function loadPhoto(photoId: string): Promise<string | null> {
     
     // For native platform, read from filesystem
     if (Capacitor.isNativePlatform()) {
-      const result = await Filesystem.readFile({
-        path: `${PHOTO_DIRECTORY}/${metadata.filename}`,
-        directory: Directory.Data
-      });
-      
-      // Determine MIME type from filename or metadata
-      const isVideo = metadata.mediaType === 'video' || metadata.filename.includes('video_');
-      let mimeType = 'image/jpeg';
-      
-      if (isVideo) {
-        if (metadata.filename.endsWith('.mp4')) mimeType = 'video/mp4';
-        else if (metadata.filename.endsWith('.webm')) mimeType = 'video/webm';
-        else if (metadata.filename.endsWith('.mov')) mimeType = 'video/quicktime';
-      } else {
-        if (metadata.filename.endsWith('.png')) mimeType = 'image/png';
-        else if (metadata.filename.endsWith('.gif')) mimeType = 'image/gif';
-        else if (metadata.filename.endsWith('.webp')) mimeType = 'image/webp';
+      try {
+        const result = await Filesystem.readFile({
+          path: `${PHOTO_DIRECTORY}/${metadata.filename}`,
+          directory: Directory.Data
+        });
+        
+        // Determine MIME type from filename or metadata
+        const isVideo = metadata.mediaType === 'video' || metadata.filename.includes('video_');
+        let mimeType = 'image/jpeg';
+        
+        if (isVideo) {
+          if (metadata.filename.endsWith('.mp4')) mimeType = 'video/mp4';
+          else if (metadata.filename.endsWith('.webm')) mimeType = 'video/webm';
+          else if (metadata.filename.endsWith('.mov')) mimeType = 'video/quicktime';
+        } else {
+          if (metadata.filename.endsWith('.png')) mimeType = 'image/png';
+          else if (metadata.filename.endsWith('.gif')) mimeType = 'image/gif';
+          else if (metadata.filename.endsWith('.webp')) mimeType = 'image/webp';
+        }
+        
+        return `data:${mimeType};base64,${result.data}`;
+      } catch (fileError) {
+        console.error('Error reading file from filesystem:', fileError);
+        // Check if we have fallback data in metadata
+        if ((metadata as any).data) {
+          return (metadata as any).data;
+        }
+        return null;
       }
-      
-      return `data:${mimeType};base64,${result.data}`;
     } else {
       // Fallback for web: return from metadata (localStorage)
       return (metadata as any).data || null;
@@ -148,15 +240,19 @@ export async function deletePhoto(photoId: string): Promise<void> {
     
     // For native platform, delete from filesystem
     if (Capacitor.isNativePlatform()) {
-      await Filesystem.deleteFile({
-        path: `${PHOTO_DIRECTORY}/${metadata.filename}`,
-        directory: Directory.Data
-      });
+      try {
+        await Filesystem.deleteFile({
+          path: `${PHOTO_DIRECTORY}/${metadata.filename}`,
+          directory: Directory.Data
+        });
+      } catch (error) {
+        console.log('File might not exist, continuing with metadata cleanup');
+      }
     }
     
     // Remove metadata
     delete allMetadata[photoId];
-    localStorage.setItem(METADATA_KEY, JSON.stringify(allMetadata));
+    await saveMetadataSafely(allMetadata);
     
     console.log(`Photo deleted: ${photoId}`);
   } catch (error) {
@@ -169,7 +265,10 @@ export async function deletePhoto(photoId: string): Promise<void> {
 async function loadAllPhotoMetadata(): Promise<Record<string, PhotoMetadata & { data?: string }>> {
   try {
     const stored = localStorage.getItem(METADATA_KEY);
-    return stored ? JSON.parse(stored) : {};
+    if (!stored) return {};
+    
+    const parsed = JSON.parse(stored);
+    return parsed || {};
   } catch (error) {
     console.error('Error loading photo metadata:', error);
     return {};
@@ -195,7 +294,7 @@ export async function updatePhotoMetadata(
   }
   
   allMetadata[photoId] = { ...existing, ...updates };
-  localStorage.setItem(METADATA_KEY, JSON.stringify(allMetadata));
+  await saveMetadataSafely(allMetadata);
 }
 
 // List all photos with optional filtering
@@ -259,6 +358,57 @@ export async function getStorageInfo(): Promise<{
   };
 }
 
+// Verify and repair photo storage
+export async function verifyPhotoStorage(): Promise<{
+  verified: number;
+  missing: number;
+  repaired: number;
+}> {
+  const allMetadata = await loadAllPhotoMetadata();
+  let verified = 0;
+  let missing = 0;
+  let repaired = 0;
+
+  if (Capacitor.isNativePlatform()) {
+    for (const [id, metadata] of Object.entries(allMetadata)) {
+      try {
+        await Filesystem.stat({
+          path: `${PHOTO_DIRECTORY}/${metadata.filename}`,
+          directory: Directory.Data
+        });
+        verified++;
+      } catch {
+        // File missing - check if we have fallback data
+        if ((metadata as any).data) {
+          try {
+            await Filesystem.writeFile({
+              path: `${PHOTO_DIRECTORY}/${metadata.filename}`,
+              data: (metadata as any).data.replace(/^data:(image|video)\/[a-z]+;base64,/, ''),
+              directory: Directory.Data
+            });
+            repaired++;
+          } catch {
+            missing++;
+          }
+        } else {
+          missing++;
+        }
+      }
+    }
+  } else {
+    // For web, just count entries with data
+    for (const metadata of Object.values(allMetadata)) {
+      if ((metadata as any).data) {
+        verified++;
+      } else {
+        missing++;
+      }
+    }
+  }
+
+  return { verified, missing, repaired };
+}
+
 // Migrate existing localStorage photos to filesystem (one-time migration)
 export async function migratePhotosToFilesystem(): Promise<{
   migrated: number;
@@ -300,8 +450,6 @@ export async function migratePhotosToFilesystem(): Promise<{
       console.error('Error migrating bump photos:', error);
     }
   }
-  
-  // Similar migrations for other photo types can be added here
   
   console.log(`Migration complete: ${migrated} migrated, ${failed} failed`);
   return { migrated, failed };
