@@ -16,24 +16,31 @@ import {
   TestTube,
   FileText,
   Sparkles,
-  Utensils
+  Utensils,
+  HeartPulse,
+  Thermometer,
+  UtensilsCrossed
 } from "lucide-react";
 
 const periodTools = [
+  { name: "Intimacy", icon: HeartPulse, route: "/intimacy", color: "bg-pink-500", description: "Track intimacy" },
+  { name: "BBT", icon: Thermometer, route: "/bbt", color: "bg-blue-600", description: "Basal temperature" },
+  { name: "Appetite", icon: UtensilsCrossed, route: "/appetite", color: "bg-green-500", description: "Log appetite" },
+  { name: "Health", icon: Heart, route: "/health", color: "bg-emerald-500", description: "Health monitor" },
   { name: "Water Intake", icon: Droplets, route: "/water", color: "bg-blue-500", description: "Track hydration" },
   { name: "Sleep Quality", icon: Moon, route: "/sleep", color: "bg-indigo-500", description: "Monitor sleep" },
-  { name: "Exercise", icon: Activity, route: "/exercise", color: "bg-green-500", description: "Log workouts" },
+  { name: "Exercise", icon: Activity, route: "/exercise", color: "bg-lime-500", description: "Log workouts" },
   { name: "Cervical Mucus", icon: Droplet, route: "/cervical-mucus", color: "bg-pink-400", description: "Fertility tracking" },
   { name: "Stress Level", icon: Brain, route: "/stress", color: "bg-purple-500", description: "Track stress" },
   { name: "Energy Level", icon: Zap, route: "/energy", color: "bg-yellow-500", description: "Monitor energy" },
-  { name: "Skin Condition", icon: Heart, route: "/skin", color: "bg-rose-400", description: "Track skin health" },
+  { name: "Skin Condition", icon: Sparkles, route: "/skin", color: "bg-rose-400", description: "Track skin health" },
   { name: "Digestive Health", icon: Utensils, route: "/digestive", color: "bg-orange-500", description: "GI tracking" },
   { name: "Weight", icon: Scale, route: "/weight", color: "bg-teal-500", description: "Track weight" },
   { name: "Birth Control", icon: Pill, route: "/birth-control", color: "bg-violet-500", description: "Pill reminders" },
   { name: "Period Products", icon: Timer, route: "/period-products", color: "bg-red-400", description: "Usage tracker" },
   { name: "Ovulation Test", icon: TestTube, route: "/ovulation-test", color: "bg-fuchsia-500", description: "LH test results" },
   { name: "Cycle Reports", icon: FileText, route: "/cycle-reports", color: "bg-cyan-500", description: "View summaries" },
-  { name: "PCOS Mode", icon: Brain, route: "/pcos", color: "bg-emerald-500", description: "PCOS tracking" },
+  { name: "PCOS Mode", icon: Brain, route: "/pcos", color: "bg-emerald-600", description: "PCOS tracking" },
   { name: "Perimenopause", icon: Sparkles, route: "/perimenopause", color: "bg-amber-500", description: "Track changes" },
 ];
 
