@@ -1,26 +1,43 @@
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Mic, Square, Play, Trash2, Download, Pause, Pencil, Check, X } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Mic, Square, Play, Trash2, Download, Pause, Pencil, Check, X, Tag, Plus, Filter } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { saveToLocalStorage, loadFromLocalStorage } from "@/lib/storage";
 import { format } from "date-fns";
 import { Capacitor } from "@capacitor/core";
 import { Progress } from "@/components/ui/progress";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface VoiceNote {
   id: string;
-  data: string; // base64 encoded audio
+  data: string;
   timestamp: Date;
   duration: number;
-  date: string; // YYYY-MM-DD format
+  date: string;
   transcription?: string;
   name?: string;
+  tags?: string[];
 }
 
 interface VoiceNotesProps {
   selectedDate: Date;
 }
+
+const DEFAULT_TAGS = [
+  "Personal",
+  "Symptoms",
+  "Doctor Notes",
+  "Reminder",
+  "Mood",
+  "Important"
+];
 
 export const VoiceNotes = ({ selectedDate }: VoiceNotesProps) => {
   const [isRecording, setIsRecording] = useState(false);
@@ -31,6 +48,10 @@ export const VoiceNotes = ({ selectedDate }: VoiceNotesProps) => {
   const [playbackProgress, setPlaybackProgress] = useState<Record<string, number>>({});
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editName, setEditName] = useState("");
+  const [filterTag, setFilterTag] = useState<string | null>(null);
+  const [customTags, setCustomTags] = useState<string[]>([]);
+  const [newTagInput, setNewTagInput] = useState("");
+  const [showNewTagInput, setShowNewTagInput] = useState(false);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const recordingStartTimeRef = useRef<number>(0);
@@ -42,16 +63,18 @@ export const VoiceNotes = ({ selectedDate }: VoiceNotesProps) => {
 
   const dateKey = format(selectedDate, "yyyy-MM-dd");
   
-  // Keep dateKeyRef in sync
+  // Get all available tags
+  const allTags = [...DEFAULT_TAGS, ...customTags];
+  
   useEffect(() => {
     dateKeyRef.current = dateKey;
   }, [dateKey]);
 
   useEffect(() => {
     loadVoiceNotes();
+    loadCustomTags();
   }, [selectedDate]);
 
-  // Cleanup interval on unmount
   useEffect(() => {
     return () => {
       if (progressIntervalRef.current) {
@@ -60,28 +83,40 @@ export const VoiceNotes = ({ selectedDate }: VoiceNotesProps) => {
     };
   }, []);
 
+  const loadCustomTags = () => {
+    const saved = loadFromLocalStorage<string[]>("voice-note-custom-tags") || [];
+    setCustomTags(saved);
+  };
+
+  const saveCustomTag = (tag: string) => {
+    const trimmed = tag.trim();
+    if (trimmed && !allTags.includes(trimmed)) {
+      const updated = [...customTags, trimmed];
+      setCustomTags(updated);
+      saveToLocalStorage("voice-note-custom-tags", updated);
+    }
+  };
+
   const loadVoiceNotes = () => {
     const notes = loadFromLocalStorage<VoiceNote[]>("voice-notes") || [];
     const notesForDate = notes
       .filter(note => note.date === dateKey)
-      .map(note => {
-        const timestamp = new Date(note.timestamp);
-        return {
-          ...note,
-          timestamp: isNaN(timestamp.getTime()) ? new Date() : timestamp
-        };
-      });
+      .map(note => ({
+        ...note,
+        timestamp: new Date(note.timestamp)
+      }));
     setVoiceNotes(notesForDate);
   };
 
+  const filteredNotes = filterTag 
+    ? voiceNotes.filter(note => note.tags?.includes(filterTag))
+    : voiceNotes;
+
   const startRecording = async () => {
     try {
-      // Request microphone permission on native platforms
       if (Capacitor.isNativePlatform()) {
         try {
-          // Check and request permission
           const micPermission = await (navigator as any).permissions.query({ name: 'microphone' as PermissionName });
-          
           if (micPermission.state === 'denied') {
             toast({
               title: "Microphone Permission Required",
@@ -102,7 +137,6 @@ export const VoiceNotes = ({ selectedDate }: VoiceNotesProps) => {
       recordingStartTimeRef.current = Date.now();
       setCurrentTranscript("");
 
-      // Start speech recognition
       const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
       if (SpeechRecognition) {
         const recognition = new SpeechRecognition();
@@ -143,14 +177,14 @@ export const VoiceNotes = ({ selectedDate }: VoiceNotesProps) => {
             duration,
             date: savedDateKey,
             transcription: savedTranscript || undefined,
-            name: undefined
+            name: undefined,
+            tags: []
           };
 
           const allNotes = loadFromLocalStorage<VoiceNote[]>("voice-notes") || [];
           allNotes.unshift(newNote);
           saveToLocalStorage("voice-notes", allNotes);
           
-          // Reload notes for the current view
           const notes = loadFromLocalStorage<VoiceNote[]>("voice-notes") || [];
           const notesForDate = notes
             .filter(note => note.date === dateKeyRef.current)
@@ -169,7 +203,6 @@ export const VoiceNotes = ({ selectedDate }: VoiceNotesProps) => {
         reader.readAsDataURL(audioBlob);
         stream.getTracks().forEach(track => track.stop());
 
-        // Stop speech recognition
         if (recognitionRef.current) {
           recognitionRef.current.stop();
           recognitionRef.current = null;
@@ -216,16 +249,13 @@ export const VoiceNotes = ({ selectedDate }: VoiceNotesProps) => {
   };
 
   const playNote = (note: VoiceNote) => {
-    // If clicking the same note
     if (playingId === note.id) {
       if (currentAudioRef.current) {
         if (isPaused) {
-          // Resume playback
           currentAudioRef.current.play();
           setIsPaused(false);
           startProgressTracking(note.id);
         } else {
-          // Pause playback
           currentAudioRef.current.pause();
           setIsPaused(true);
           stopProgressTracking();
@@ -234,14 +264,12 @@ export const VoiceNotes = ({ selectedDate }: VoiceNotesProps) => {
       return;
     }
 
-    // Stop any currently playing audio
     if (currentAudioRef.current) {
       currentAudioRef.current.pause();
       currentAudioRef.current.currentTime = 0;
       stopProgressTracking();
     }
 
-    // Play new audio
     const audio = new Audio(note.data);
     currentAudioRef.current = audio;
     
@@ -269,14 +297,28 @@ export const VoiceNotes = ({ selectedDate }: VoiceNotesProps) => {
     }
   };
 
+  const toggleTag = (noteId: string, tag: string) => {
+    const allNotes = loadFromLocalStorage<VoiceNote[]>("voice-notes") || [];
+    const updatedNotes = allNotes.map(note => {
+      if (note.id === noteId) {
+        const currentTags = note.tags || [];
+        const newTags = currentTags.includes(tag)
+          ? currentTags.filter(t => t !== tag)
+          : [...currentTags, tag];
+        return { ...note, tags: newTags };
+      }
+      return note;
+    });
+    saveToLocalStorage("voice-notes", updatedNotes);
+    loadVoiceNotes();
+  };
+
   const deleteNote = (noteId: string) => {
     const allNotes = loadFromLocalStorage<VoiceNote[]>("voice-notes") || [];
     const filtered = allNotes.filter(note => note.id !== noteId);
     saveToLocalStorage("voice-notes", filtered);
     loadVoiceNotes();
-    toast({
-      title: "Voice note deleted"
-    });
+    toast({ title: "Voice note deleted" });
   };
 
   const downloadNote = (note: VoiceNote) => {
@@ -306,15 +348,34 @@ export const VoiceNotes = ({ selectedDate }: VoiceNotesProps) => {
     loadVoiceNotes();
     setEditingId(null);
     setEditName("");
-    toast({
-      title: "Voice note renamed"
-    });
+    toast({ title: "Voice note renamed" });
+  };
+
+  const handleAddCustomTag = () => {
+    if (newTagInput.trim()) {
+      saveCustomTag(newTagInput.trim());
+      setNewTagInput("");
+      setShowNewTagInput(false);
+      toast({ title: "Tag added" });
+    }
   };
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  const getTagColor = (tag: string) => {
+    const colors: Record<string, string> = {
+      "Personal": "bg-blue-100 text-blue-700",
+      "Symptoms": "bg-pink-100 text-pink-700",
+      "Doctor Notes": "bg-green-100 text-green-700",
+      "Reminder": "bg-yellow-100 text-yellow-700",
+      "Mood": "bg-purple-100 text-purple-700",
+      "Important": "bg-red-100 text-red-700"
+    };
+    return colors[tag] || "bg-gray-100 text-gray-700";
   };
 
   return (
@@ -355,10 +416,46 @@ export const VoiceNotes = ({ selectedDate }: VoiceNotesProps) => {
         )}
       </div>
 
+      {/* Filter by Tag */}
       {voiceNotes.length > 0 && (
+        <div className="flex items-center gap-2 flex-wrap">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm" className="h-8">
+                <Filter className="w-3 h-3 mr-1" />
+                {filterTag || "All"}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="bg-white z-50">
+              <DropdownMenuItem onClick={() => setFilterTag(null)}>
+                All Notes
+              </DropdownMenuItem>
+              {allTags.map(tag => (
+                <DropdownMenuItem key={tag} onClick={() => setFilterTag(tag)}>
+                  {tag}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+          
+          {filterTag && (
+            <Badge 
+              variant="secondary" 
+              className="cursor-pointer"
+              onClick={() => setFilterTag(null)}
+            >
+              {filterTag} <X className="w-3 h-3 ml-1" />
+            </Badge>
+          )}
+        </div>
+      )}
+
+      {filteredNotes.length > 0 && (
         <div className="space-y-2">
-          <p className="text-sm font-medium text-gray-700">Recordings</p>
-          {voiceNotes.map((note) => (
+          <p className="text-sm font-medium text-gray-700">
+            Recordings {filterTag && `(${filterTag})`}
+          </p>
+          {filteredNotes.map((note) => (
             <div
               key={note.id}
               className="p-3 bg-gray-50 rounded-lg border border-gray-200 space-y-2"
@@ -424,6 +521,32 @@ export const VoiceNotes = ({ selectedDate }: VoiceNotesProps) => {
 
                 {editingId !== note.id && (
                   <>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                          <Tag className="w-4 h-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent className="bg-white z-50 w-48">
+                        {allTags.map(tag => (
+                          <DropdownMenuItem 
+                            key={tag} 
+                            onClick={() => toggleTag(note.id, tag)}
+                            className="flex items-center justify-between"
+                          >
+                            <span>{tag}</span>
+                            {note.tags?.includes(tag) && <Check className="w-4 h-4 text-green-600" />}
+                          </DropdownMenuItem>
+                        ))}
+                        <DropdownMenuItem 
+                          onClick={() => setShowNewTagInput(true)}
+                          className="text-primary"
+                        >
+                          <Plus className="w-4 h-4 mr-1" /> Add Custom Tag
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+
                     <Button
                       onClick={() => startEditing(note)}
                       variant="ghost"
@@ -454,6 +577,21 @@ export const VoiceNotes = ({ selectedDate }: VoiceNotesProps) => {
                 )}
               </div>
 
+              {/* Tags Display */}
+              {note.tags && note.tags.length > 0 && (
+                <div className="flex flex-wrap gap-1">
+                  {note.tags.map(tag => (
+                    <Badge 
+                      key={tag} 
+                      variant="secondary" 
+                      className={`text-[10px] px-1.5 py-0 ${getTagColor(tag)}`}
+                    >
+                      {tag}
+                    </Badge>
+                  ))}
+                </div>
+              )}
+
               {/* Progress Bar */}
               <div 
                 className="cursor-pointer"
@@ -477,6 +615,55 @@ export const VoiceNotes = ({ selectedDate }: VoiceNotesProps) => {
             </div>
           ))}
         </div>
+      )}
+
+      {/* Custom Tag Input Dialog */}
+      {showNewTagInput && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl p-4 w-full max-w-sm space-y-3">
+            <h4 className="font-semibold">Add Custom Tag</h4>
+            <Input
+              value={newTagInput}
+              onChange={(e) => setNewTagInput(e.target.value)}
+              placeholder="Enter tag name..."
+              autoFocus
+              maxLength={20}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') handleAddCustomTag();
+                if (e.key === 'Escape') {
+                  setShowNewTagInput(false);
+                  setNewTagInput("");
+                }
+              }}
+            />
+            <div className="flex gap-2">
+              <Button onClick={handleAddCustomTag} className="flex-1">
+                Add Tag
+              </Button>
+              <Button 
+                variant="outline" 
+                onClick={() => {
+                  setShowNewTagInput(false);
+                  setNewTagInput("");
+                }}
+              >
+                Cancel
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {voiceNotes.length === 0 && (
+        <p className="text-center text-sm text-gray-500 py-4">
+          No voice notes for this date
+        </p>
+      )}
+
+      {voiceNotes.length > 0 && filteredNotes.length === 0 && filterTag && (
+        <p className="text-center text-sm text-gray-500 py-4">
+          No voice notes with tag "{filterTag}"
+        </p>
       )}
     </div>
   );
