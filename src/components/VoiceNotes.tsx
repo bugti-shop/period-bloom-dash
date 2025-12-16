@@ -30,9 +30,15 @@ export const VoiceNotes = ({ selectedDate }: VoiceNotesProps) => {
   const recordingStartTimeRef = useRef<number>(0);
   const currentAudioRef = useRef<HTMLAudioElement | null>(null);
   const recognitionRef = useRef<any>(null);
+  const dateKeyRef = useRef<string>(format(selectedDate, "yyyy-MM-dd"));
   const { toast } = useToast();
 
   const dateKey = format(selectedDate, "yyyy-MM-dd");
+  
+  // Keep dateKeyRef in sync
+  useEffect(() => {
+    dateKeyRef.current = dateKey;
+  }, [dateKey]);
 
   useEffect(() => {
     loadVoiceNotes();
@@ -107,6 +113,8 @@ export const VoiceNotes = ({ selectedDate }: VoiceNotesProps) => {
       mediaRecorder.onstop = async () => {
         const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
         const reader = new FileReader();
+        const savedDateKey = dateKeyRef.current; // Capture current dateKey
+        const savedTranscript = currentTranscript;
         
         reader.onloadend = () => {
           const base64Audio = reader.result as string;
@@ -117,18 +125,27 @@ export const VoiceNotes = ({ selectedDate }: VoiceNotesProps) => {
             data: base64Audio,
             timestamp: new Date(),
             duration,
-            date: dateKey,
-            transcription: currentTranscript || undefined
+            date: savedDateKey,
+            transcription: savedTranscript || undefined
           };
 
           const allNotes = loadFromLocalStorage<VoiceNote[]>("voice-notes") || [];
           allNotes.unshift(newNote);
           saveToLocalStorage("voice-notes", allNotes);
           
-          loadVoiceNotes();
+          // Reload notes for the current view
+          const notes = loadFromLocalStorage<VoiceNote[]>("voice-notes") || [];
+          const notesForDate = notes
+            .filter(note => note.date === dateKeyRef.current)
+            .map(note => ({
+              ...note,
+              timestamp: new Date(note.timestamp)
+            }));
+          setVoiceNotes(notesForDate);
+          
           toast({
             title: "Voice note saved",
-            description: currentTranscript ? "Recording and transcription saved" : `Recorded ${duration} seconds`
+            description: savedTranscript ? "Recording and transcription saved" : `Recorded ${duration} seconds`
           });
         };
         

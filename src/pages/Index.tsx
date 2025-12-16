@@ -10,7 +10,7 @@ import { BottomNav } from "@/components/BottomNav";
 import { Header } from "@/components/Header";
 import { PeriodCalendar } from "@/components/PeriodCalendar";
 import { SymptomInsights } from "@/components/SymptomInsights";
-import { Calendar, Heart, TestTube, FileText, Brain, Sparkles } from "lucide-react";
+import { Calendar, Heart, TestTube, FileText, Brain, Flower2 } from "lucide-react";
 import { schedulePeriodReminder } from "@/lib/notifications";
 import { scheduleFertilityReminders } from "@/lib/fertilityNotifications";
 import { initializeAllNotifications } from "@/lib/notificationInit";
@@ -387,7 +387,7 @@ const Index = () => {
                       className="flex items-center gap-3 p-3 bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl border border-amber-100 hover:shadow-md transition-all"
                     >
                       <div className="w-10 h-10 rounded-full bg-amber-500 flex items-center justify-center">
-                        <Sparkles className="w-5 h-5 text-white" />
+                        <Flower2 className="w-5 h-5 text-white" />
                       </div>
                       <div className="text-left">
                         <p className="text-sm font-semibold text-gray-900">Perimenopause</p>

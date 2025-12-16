@@ -15,8 +15,6 @@ import { NotificationTester } from "@/components/NotificationTester";
 import { exportAllData, importData } from "@/lib/dataExport";
 import { Button } from "@/components/ui/button";
 import { useRef } from "react";
-import { AppleHealthSync } from "@/components/AppleHealthSync";
-import { PhotoStorageMigration } from "@/components/PhotoStorageMigration";
 
 export const SettingsPage = () => {
   const [pregnancyMode, setPregnancyMode] = useState(loadPregnancyMode());
@@ -29,7 +27,7 @@ export const SettingsPage = () => {
   const [showFertilityRemindersDialog, setShowFertilityRemindersDialog] = useState(false);
   const [showSymptomRemindersDialog, setShowSymptomRemindersDialog] = useState(false);
   const [showDataDialog, setShowDataDialog] = useState(false);
-  const [showHealthExportDialog, setShowHealthExportDialog] = useState(false);
+  
   const [history, setHistory] = useState(getPeriodHistory());
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -261,18 +259,6 @@ export const SettingsPage = () => {
               <ChevronRight className="w-4 h-4 text-primary" />
             </button>
             
-            <button
-              onClick={() => setShowHealthExportDialog(true)}
-              className="w-full flex items-center justify-between px-3 py-2.5 border-b border-border hover:bg-muted/30 transition-colors"
-            >
-              <span className="text-foreground text-sm">Health integration & medical export</span>
-              <ChevronRight className="w-4 h-4 text-primary" />
-            </button>
-            
-            {/* Photo Storage Status */}
-            <div className="px-3 py-2.5">
-              <PhotoStorageMigration />
-            </div>
           </div>
 
           {/* Theme Section */}
@@ -480,20 +466,6 @@ export const SettingsPage = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Health Export Dialog */}
-      <Dialog open={showHealthExportDialog} onOpenChange={setShowHealthExportDialog}>
-        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Health Integration & Medical Export</DialogTitle>
-            <DialogDescription>
-              Sync with Apple Health and export medical reports
-            </DialogDescription>
-          </DialogHeader>
-          <div className="py-4">
-            <AppleHealthSync />
-          </div>
-        </DialogContent>
-      </Dialog>
 
       <input
         ref={fileInputRef}
