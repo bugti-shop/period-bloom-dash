@@ -16,7 +16,7 @@ import { getAllSkinLogs, getMostCommonCondition } from "@/lib/skinStorage";
 import { format, parseISO } from "date-fns";
 
 const SkinPage = () => {
-  const goBack = useBackNavigation();
+  const goBack = useBackNavigation("tools");
   useMobileBackButton();
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [compareDialogOpen, setCompareDialogOpen] = useState(false);

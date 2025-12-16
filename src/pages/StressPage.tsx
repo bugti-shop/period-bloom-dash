@@ -10,7 +10,7 @@ import { getAllStressLogs, getAverageStressLevel } from "@/lib/stressStorage";
 import { format, parseISO } from "date-fns";
 
 const StressPage = () => {
-  const goBack = useBackNavigation();
+  const goBack = useBackNavigation("tools");
   useMobileBackButton();
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const allLogs = getAllStressLogs();

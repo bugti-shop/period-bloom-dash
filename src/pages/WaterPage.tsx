@@ -33,7 +33,7 @@ interface PeriodData {
 }
 
 export const WaterPage = () => {
-  const goBack = useBackNavigation();
+  const goBack = useBackNavigation("tools");
   useMobileBackButton();
   const [date, setDate] = useState<Date>(new Date());
   const [glasses, setGlasses] = useState<number>(0);

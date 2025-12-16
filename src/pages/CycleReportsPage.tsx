@@ -15,7 +15,7 @@ import { useMobileBackButton } from '@/hooks/useMobileBackButton';
 import { useBackNavigation } from '@/hooks/useBackNavigation';
 
 const CycleReportsPage = () => {
-  const goBack = useBackNavigation();
+  const goBack = useBackNavigation("tools");
   useMobileBackButton();
   
   const [reports, setReports] = useState<CycleReport[]>([]);

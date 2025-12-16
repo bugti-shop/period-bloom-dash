@@ -19,7 +19,7 @@ import { useMobileBackButton } from '@/hooks/useMobileBackButton';
 import { useBackNavigation } from '@/hooks/useBackNavigation';
 
 const OvulationTestPage = () => {
-  const goBack = useBackNavigation();
+  const goBack = useBackNavigation("tools");
   useMobileBackButton();
   
   const [tests, setTests] = useState<OvulationTest[]>([]);

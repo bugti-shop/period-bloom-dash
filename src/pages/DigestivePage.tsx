@@ -10,7 +10,7 @@ import { getAllDigestiveLogs, getMostCommonSymptom } from "@/lib/digestiveStorag
 import { format, parseISO } from "date-fns";
 
 const DigestivePage = () => {
-  const goBack = useBackNavigation();
+  const goBack = useBackNavigation("tools");
   useMobileBackButton();
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const allLogs = getAllDigestiveLogs();
