@@ -23,7 +23,7 @@ import {
 import { toast } from "sonner";
 
 export const SleepPage = () => {
-  const goBack = useBackNavigation();
+  const goBack = useBackNavigation("tools");
   useMobileBackButton();
   const [date, setDate] = useState<Date>(new Date());
   const [hours, setHours] = useState<number>(7);

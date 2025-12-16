@@ -22,7 +22,7 @@ import {
 import { toast } from "sonner";
 
 export const CervicalMucusPage = () => {
-  const goBack = useBackNavigation();
+  const goBack = useBackNavigation("tools");
   useMobileBackButton();
   const [date, setDate] = useState<Date>(new Date());
   const [type, setType] = useState<"dry" | "sticky" | "creamy" | "watery" | "egg-white">("creamy");

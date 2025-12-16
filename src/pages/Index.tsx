@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { addDays, format, differenceInDays } from "date-fns";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { PeriodForm } from "@/components/PeriodForm";
 import { savePeriodHistory } from "@/lib/periodHistory";
 import { saveToLocalStorage, loadFromLocalStorage } from "@/lib/storage";
@@ -10,7 +10,7 @@ import { BottomNav } from "@/components/BottomNav";
 import { Header } from "@/components/Header";
 import { PeriodCalendar } from "@/components/PeriodCalendar";
 import { SymptomInsights } from "@/components/SymptomInsights";
-import { Calendar, Heart, Grid3x3, List, TestTube, FileText, Brain, Sparkles } from "lucide-react";
+import { Calendar, Heart, TestTube, FileText, Brain, Sparkles } from "lucide-react";
 import { schedulePeriodReminder } from "@/lib/notifications";
 import { scheduleFertilityReminders } from "@/lib/fertilityNotifications";
 import { initializeAllNotifications } from "@/lib/notificationInit";
@@ -27,7 +27,6 @@ import { loadSectionVisibility } from "@/lib/sectionVisibility";
 import floralDecoration from "@/assets/floral-decoration.png";
 import { Paywall } from "@/components/Paywall";
 import { hasStartedTrial, startTrial } from "@/lib/trialStorage";
-import { QuickActionsButton } from "@/components/QuickActionsButton";
 
 interface RegularPeriodData {
   cycleType: 'regular';
@@ -48,13 +47,15 @@ type PeriodData = RegularPeriodData | IrregularPeriodData;
 
 const Index = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [periodData, setPeriodData] = useState<PeriodData | null>(null);
-  const [activeTab, setActiveTab] = useState<"home" | "symptoms" | "settings" | "tools">("home");
+  const [activeTab, setActiveTab] = useState<"home" | "symptoms" | "settings" | "tools">(
+    (location.state as { activeTab?: "home" | "symptoms" | "settings" | "tools" })?.activeTab || "home"
+  );
   const [selectedMonth, setSelectedMonth] = useState<Date | null>(null);
   const [showHistory, setShowHistory] = useState(false);
   const [showCycleInsights, setShowCycleInsights] = useState(false);
   const [trialStarted, setTrialStarted] = useState(hasStartedTrial());
-  const [calendarView, setCalendarView] = useState<'month' | 'list'>('month');
   const pregnancyMode = loadPregnancyMode();
   const visibility = loadSectionVisibility();
 
@@ -199,10 +200,10 @@ const Index = () => {
       
       {/* Render content based on active tab */}
       {activeTab === "home" && (
-        <div className="max-w-7xl mx-auto py-3 px-3 pb-20">
-          <div className="space-y-4">
+        <div className="max-w-7xl mx-auto py-2 px-2 pb-20">
+          <div className="space-y-2">
             {/* Floral Calendar Header */}
-            <div className="relative bg-gradient-to-br from-pink-50 to-purple-50 rounded-2xl overflow-hidden">
+            <div className="relative bg-gradient-to-br from-pink-50 to-purple-50 rounded-xl overflow-hidden">
               <div className="absolute inset-0 opacity-70">
                 <img 
                   src={floralDecoration} 
@@ -211,8 +212,8 @@ const Index = () => {
                 />
               </div>
               
-              <div className="relative px-4 py-4">
-                <div className="text-center mb-2">
+              <div className="relative px-3 py-3">
+                <div className="text-center">
                   {(() => {
                     const today = new Date();
                     const nextPeriodDate = periodData.cycleType === 'regular' 
@@ -227,11 +228,11 @@ const Index = () => {
                     
                     return (
                       <>
-                        <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Next Period</p>
-                        <h1 className="text-2xl font-bold text-gray-900 mb-1">
+                        <p className="text-[10px] text-gray-500 uppercase tracking-wider">Next Period</p>
+                        <h1 className="text-xl font-bold text-gray-900">
                           {daysUntilPeriod} days
                         </h1>
-                        <p className="text-lg text-gray-700">
+                        <p className="text-sm text-gray-700">
                           Next Ovulation ({daysUntilOvulation > 0 ? `${daysUntilOvulation} days left` : 'Today or passed'})
                         </p>
                       </>
@@ -241,126 +242,27 @@ const Index = () => {
               </div>
             </div>
 
-            {/* Period Calendar with View Switchers */}
+            {/* Period Calendar */}
             {visibility.periodCalendar && (
-              <div className="space-y-3">
-                {/* Calendar View Switchers */}
-                <div className="flex items-center justify-between px-2">
-                  <h3 className="text-sm font-semibold text-foreground">Your Calendar</h3>
-                  <div className="flex items-center gap-2 bg-white/80 rounded-lg p-1 shadow-sm border border-gray-200">
-                    <button
-                      onClick={() => setCalendarView('month')}
-                      className={`p-2 rounded-md transition-all ${
-                        calendarView === 'month'
-                          ? 'bg-[hsl(348,83%,47%)] text-white shadow-sm'
-                          : 'text-gray-500 hover:bg-gray-100'
-                      }`}
-                      aria-label="Month view"
-                    >
-                      <Grid3x3 className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={() => setCalendarView('list')}
-                      className={`p-2 rounded-md transition-all ${
-                        calendarView === 'list'
-                          ? 'bg-[hsl(348,83%,47%)] text-white shadow-sm'
-                          : 'text-gray-500 hover:bg-gray-100'
-                      }`}
-                      aria-label="List view"
-                    >
-                      <List className="w-4 h-4" />
-                    </button>
-                  </div>
-                </div>
-
-                {/* Calendar Component */}
-                {calendarView === 'month' ? (
-                  <PeriodCalendar 
-                    periodDates={periodDates}
-                    cycleLength={periodData.cycleType === 'regular' ? periodData.cycleLength : periodData.mean}
-                    lastPeriodDate={
-                      periodData.cycleType === 'regular' 
-                        ? periodData.lastPeriodDate 
-                        : periodData.cycles[periodData.cycles.length - 1].endDate
-                    }
-                    periodDuration={
-                      periodData.cycleType === 'regular' 
-                        ? periodData.periodDuration 
-                        : Math.round(periodData.cycles.reduce((sum, c) => sum + c.periodDuration, 0) / periodData.cycles.length)
-                    }
-                    onMonthChange={handleMonthChange}
-                  />
-                ) : (
-                  <div className="glass-card p-4 rounded-2xl">
-                    <h4 className="text-sm font-semibold text-foreground mb-3">Upcoming Events</h4>
-                    <div className="space-y-2">
-                      {(() => {
-                        const today = new Date();
-                        const nextPeriodDate = periodData.cycleType === 'regular' 
-                          ? addDays(periodData.lastPeriodDate, periodData.cycleLength)
-                          : addDays(periodData.cycles[periodData.cycles.length - 1].endDate, periodData.mean);
-                        const daysUntilPeriod = differenceInDays(nextPeriodDate, today);
-                        
-                        const ovulationDate = periodData.cycleType === 'regular'
-                          ? addDays(periodData.lastPeriodDate, periodData.cycleLength - 14)
-                          : addDays(periodData.cycles[periodData.cycles.length - 1].endDate, periodData.mean - 14);
-                        const daysUntilOvulation = differenceInDays(ovulationDate, today);
-                        
-                        const fertileStart = addDays(ovulationDate, -5);
-                        const daysUntilFertile = differenceInDays(fertileStart, today);
-                        
-                        return (
-                          <>
-                            {daysUntilFertile > 0 && (
-                              <div className="flex items-center gap-3 p-3 bg-[hsl(200,80%,95%)] rounded-lg">
-                                <div className="w-10 h-10 rounded-full bg-[hsl(200,80%,60%)] flex items-center justify-center flex-shrink-0">
-                                  <Heart className="w-5 h-5 text-white" />
-                                </div>
-                                <div className="flex-1">
-                                  <p className="text-sm font-semibold text-gray-900">Fertile Window Starts</p>
-                                  <p className="text-xs text-gray-600">
-                                    {format(fertileStart, 'MMM dd, yyyy')} • {daysUntilFertile} days
-                                  </p>
-                                </div>
-                              </div>
-                            )}
-                            
-                            {daysUntilOvulation > 0 && (
-                              <div className="flex items-center gap-3 p-3 bg-[hsl(330,70%,95%)] rounded-lg">
-                                <div className="w-10 h-10 rounded-full bg-[hsl(330,70%,50%)] flex items-center justify-center flex-shrink-0">
-                                  <Calendar className="w-5 h-5 text-white" />
-                                </div>
-                                <div className="flex-1">
-                                  <p className="text-sm font-semibold text-gray-900">Ovulation Day</p>
-                                  <p className="text-xs text-gray-600">
-                                    {format(ovulationDate, 'MMM dd, yyyy')} • {daysUntilOvulation} days
-                                  </p>
-                                </div>
-                              </div>
-                            )}
-                            
-                            {daysUntilPeriod > 0 && (
-                              <div className="flex items-center gap-3 p-3 bg-[hsl(348,83%,95%)] rounded-lg">
-                                <div className="w-10 h-10 rounded-full bg-[hsl(348,83%,47%)] flex items-center justify-center flex-shrink-0">
-                                  <Calendar className="w-5 h-5 text-white" />
-                                </div>
-                                <div className="flex-1">
-                                  <p className="text-sm font-semibold text-gray-900">Next Period</p>
-                                  <p className="text-xs text-gray-600">
-                                    {format(nextPeriodDate, 'MMM dd, yyyy')} • {daysUntilPeriod} days
-                                  </p>
-                                </div>
-                              </div>
-                            )}
-                          </>
-                        );
-                      })()}
-                    </div>
-                  </div>
-                )}
+              <div className="space-y-2">
+                <h3 className="text-xs font-semibold text-foreground px-1">Your Calendar</h3>
+                <PeriodCalendar 
+                  periodDates={periodDates}
+                  cycleLength={periodData.cycleType === 'regular' ? periodData.cycleLength : periodData.mean}
+                  lastPeriodDate={
+                    periodData.cycleType === 'regular' 
+                      ? periodData.lastPeriodDate 
+                      : periodData.cycles[periodData.cycles.length - 1].endDate
+                  }
+                  periodDuration={
+                    periodData.cycleType === 'regular' 
+                      ? periodData.periodDuration 
+                      : Math.round(periodData.cycles.reduce((sum, c) => sum + c.periodDuration, 0) / periodData.cycles.length)
+                  }
+                  onMonthChange={handleMonthChange}
+                />
               </div>
             )}
-
 
             {/* Confidence Score for Irregular Cycles */}
             {periodData.cycleType === 'irregular' && (
@@ -515,8 +417,6 @@ const Index = () => {
         <ToolsPage />
       )}
       
-      {/* Quick Actions FAB - only show on home tab */}
-      {activeTab === "home" && <QuickActionsButton />}
       
       {/* Bottom Navigation */}
       <BottomNav 

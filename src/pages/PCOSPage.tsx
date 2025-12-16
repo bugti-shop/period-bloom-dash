@@ -32,7 +32,7 @@ import { useMobileBackButton } from '@/hooks/useMobileBackButton';
 import { useBackNavigation } from '@/hooks/useBackNavigation';
 
 const PCOSPage = () => {
-  const goBack = useBackNavigation();
+  const goBack = useBackNavigation("tools");
   useMobileBackButton();
   
   const [data, setData] = useState(loadPCOSData());

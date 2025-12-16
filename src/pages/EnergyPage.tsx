@@ -10,7 +10,7 @@ import { getAllEnergyLogs, getAverageEnergyByTime } from "@/lib/energyStorage";
 import { format, parseISO } from "date-fns";
 
 const EnergyPage = () => {
-  const goBack = useBackNavigation();
+  const goBack = useBackNavigation("tools");
   useMobileBackButton();
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const allLogs = getAllEnergyLogs();
