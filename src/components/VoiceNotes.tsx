@@ -97,14 +97,16 @@ export const VoiceNotes = ({ selectedDate }: VoiceNotesProps) => {
     }
   };
 
-  const loadVoiceNotes = () => {
+  const loadVoiceNotes = (forceDateKey?: string) => {
+    const targetDateKey = forceDateKey || dateKeyRef.current;
     const notes = loadFromLocalStorage<VoiceNote[]>("voice-notes") || [];
     const notesForDate = notes
-      .filter(note => note.date === dateKey)
+      .filter(note => note.date === targetDateKey)
       .map(note => ({
         ...note,
         timestamp: new Date(note.timestamp)
       }));
+    console.log('Loading voice notes for date:', targetDateKey, 'Found:', notesForDate.length);
     setVoiceNotes(notesForDate);
   };
 
@@ -166,6 +168,8 @@ export const VoiceNotes = ({ selectedDate }: VoiceNotesProps) => {
         const savedDateKey = dateKeyRef.current;
         const savedTranscript = currentTranscript;
         
+        console.log('Recording stopped, saving to date:', savedDateKey);
+        
         reader.onloadend = () => {
           const base64Audio = reader.result as string;
           const duration = Math.floor((Date.now() - recordingStartTimeRef.current) / 1000);
@@ -181,18 +185,19 @@ export const VoiceNotes = ({ selectedDate }: VoiceNotesProps) => {
             tags: []
           };
 
+          console.log('Created new note:', { id: newNote.id, date: newNote.date, duration: newNote.duration });
+
           const allNotes = loadFromLocalStorage<VoiceNote[]>("voice-notes") || [];
           allNotes.unshift(newNote);
           saveToLocalStorage("voice-notes", allNotes);
           
-          const notes = loadFromLocalStorage<VoiceNote[]>("voice-notes") || [];
-          const notesForDate = notes
-            .filter(note => note.date === dateKeyRef.current)
-            .map(note => ({
-              ...note,
-              timestamp: new Date(note.timestamp)
-            }));
-          setVoiceNotes(notesForDate);
+          console.log('Saved to localStorage, total notes:', allNotes.length);
+          
+          // Directly update state with the new note instead of reloading
+          setVoiceNotes(prev => {
+            const filtered = prev.filter(n => n.id !== newNote.id);
+            return [newNote, ...filtered];
+          });
           
           toast({
             title: "Voice note saved",
