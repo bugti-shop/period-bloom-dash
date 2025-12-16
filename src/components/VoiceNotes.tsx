@@ -315,7 +315,18 @@ export const VoiceNotes = ({ selectedDate }: VoiceNotesProps) => {
       return note;
     });
     saveToLocalStorage("voice-notes", updatedNotes);
-    loadVoiceNotes();
+    
+    // Update state directly instead of reloading
+    setVoiceNotes(prev => prev.map(note => {
+      if (note.id === noteId) {
+        const currentTags = note.tags || [];
+        const newTags = currentTags.includes(tag)
+          ? currentTags.filter(t => t !== tag)
+          : [...currentTags, tag];
+        return { ...note, tags: newTags };
+      }
+      return note;
+    }));
   };
 
   const deleteNote = (noteId: string) => {
@@ -345,12 +356,18 @@ export const VoiceNotes = ({ selectedDate }: VoiceNotesProps) => {
   };
 
   const saveNoteName = (noteId: string) => {
+    const newName = editName.trim() || undefined;
     const allNotes = loadFromLocalStorage<VoiceNote[]>("voice-notes") || [];
     const updatedNotes = allNotes.map(note => 
-      note.id === noteId ? { ...note, name: editName.trim() || undefined } : note
+      note.id === noteId ? { ...note, name: newName } : note
     );
     saveToLocalStorage("voice-notes", updatedNotes);
-    loadVoiceNotes();
+    
+    // Update state directly instead of reloading
+    setVoiceNotes(prev => prev.map(note => 
+      note.id === noteId ? { ...note, name: newName } : note
+    ));
+    
     setEditingId(null);
     setEditName("");
     toast({ title: "Voice note renamed" });
