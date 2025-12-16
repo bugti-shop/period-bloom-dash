@@ -1,6 +1,6 @@
-import { format, addDays, isSameDay, startOfMonth, endOfMonth, eachDayOfInterval, getDay, addMonths } from "date-fns";
+import { format, addDays, isSameDay, startOfMonth, endOfMonth, eachDayOfInterval, getDay, addMonths, differenceInMonths } from "date-fns";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { getSymptomDates } from "@/lib/symptomLog";
 
 interface PeriodCalendarProps {
@@ -25,7 +25,15 @@ export const PeriodCalendar = ({
   symptomDates: propSymptomDates,
 }: PeriodCalendarProps) => {
   const today = new Date();
-  const [currentMonthOffset, setCurrentMonthOffset] = useState(0);
+  
+  // Calculate initial offset to show current month by default
+  const initialOffset = useMemo(() => {
+    const lastPeriodMonth = startOfMonth(lastPeriodDate);
+    const currentMonth = startOfMonth(today);
+    return Math.max(0, differenceInMonths(currentMonth, lastPeriodMonth));
+  }, [lastPeriodDate]);
+  
+  const [currentMonthOffset, setCurrentMonthOffset] = useState(initialOffset);
   
   // Calculate all dates for 12 months (same as CalendarPage)
   const calculateAllDates = () => {
