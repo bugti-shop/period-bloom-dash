@@ -429,62 +429,72 @@ const Index = () => {
             </button>
 
             {/* Health Features Section */}
-            <div className="space-y-2">
-              <h3 className="text-sm font-semibold text-foreground px-1">Health Features</h3>
-              <div className="grid grid-cols-2 gap-3">
-                <button
-                  onClick={() => navigate('/ovulation-test')}
-                  className="flex items-center gap-3 p-3 bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl border border-purple-100 hover:shadow-md transition-all"
-                >
-                  <div className="w-10 h-10 rounded-full bg-purple-500 flex items-center justify-center">
-                    <TestTube className="w-5 h-5 text-white" />
-                  </div>
-                  <div className="text-left">
-                    <p className="text-sm font-semibold text-gray-900">Ovulation Test</p>
-                    <p className="text-[10px] text-gray-500">Track LH tests</p>
-                  </div>
-                </button>
-                
-                <button
-                  onClick={() => navigate('/cycle-reports')}
-                  className="flex items-center gap-3 p-3 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl border border-blue-100 hover:shadow-md transition-all"
-                >
-                  <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center">
-                    <FileText className="w-5 h-5 text-white" />
-                  </div>
-                  <div className="text-left">
-                    <p className="text-sm font-semibold text-gray-900">Cycle Reports</p>
-                    <p className="text-[10px] text-gray-500">View summaries</p>
-                  </div>
-                </button>
-                
-                <button
-                  onClick={() => navigate('/pcos')}
-                  className="flex items-center gap-3 p-3 bg-gradient-to-br from-teal-50 to-emerald-50 rounded-xl border border-teal-100 hover:shadow-md transition-all"
-                >
-                  <div className="w-10 h-10 rounded-full bg-teal-500 flex items-center justify-center">
-                    <Brain className="w-5 h-5 text-white" />
-                  </div>
-                  <div className="text-left">
-                    <p className="text-sm font-semibold text-gray-900">PCOS Mode</p>
-                    <p className="text-[10px] text-gray-500">Track symptoms</p>
-                  </div>
-                </button>
-                
-                <button
-                  onClick={() => navigate('/perimenopause')}
-                  className="flex items-center gap-3 p-3 bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl border border-amber-100 hover:shadow-md transition-all"
-                >
-                  <div className="w-10 h-10 rounded-full bg-amber-500 flex items-center justify-center">
-                    <Sparkles className="w-5 h-5 text-white" />
-                  </div>
-                  <div className="text-left">
-                    <p className="text-sm font-semibold text-gray-900">Perimenopause</p>
-                    <p className="text-[10px] text-gray-500">Track changes</p>
-                  </div>
-                </button>
+            {(visibility.ovulationTest || visibility.cycleReports || visibility.pcosMode || visibility.perimenopauseMode) && (
+              <div className="space-y-2">
+                <h3 className="text-sm font-semibold text-foreground px-1">Health Features</h3>
+                <div className="grid grid-cols-2 gap-3">
+                  {visibility.ovulationTest && (
+                    <button
+                      onClick={() => navigate('/ovulation-test')}
+                      className="flex items-center gap-3 p-3 bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl border border-purple-100 hover:shadow-md transition-all"
+                    >
+                      <div className="w-10 h-10 rounded-full bg-purple-500 flex items-center justify-center">
+                        <TestTube className="w-5 h-5 text-white" />
+                      </div>
+                      <div className="text-left">
+                        <p className="text-sm font-semibold text-gray-900">Ovulation Test</p>
+                        <p className="text-[10px] text-gray-500">Track LH tests</p>
+                      </div>
+                    </button>
+                  )}
+                  
+                  {visibility.cycleReports && (
+                    <button
+                      onClick={() => navigate('/cycle-reports')}
+                      className="flex items-center gap-3 p-3 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl border border-blue-100 hover:shadow-md transition-all"
+                    >
+                      <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center">
+                        <FileText className="w-5 h-5 text-white" />
+                      </div>
+                      <div className="text-left">
+                        <p className="text-sm font-semibold text-gray-900">Cycle Reports</p>
+                        <p className="text-[10px] text-gray-500">View summaries</p>
+                      </div>
+                    </button>
+                  )}
+                  
+                  {visibility.pcosMode && (
+                    <button
+                      onClick={() => navigate('/pcos')}
+                      className="flex items-center gap-3 p-3 bg-gradient-to-br from-teal-50 to-emerald-50 rounded-xl border border-teal-100 hover:shadow-md transition-all"
+                    >
+                      <div className="w-10 h-10 rounded-full bg-teal-500 flex items-center justify-center">
+                        <Brain className="w-5 h-5 text-white" />
+                      </div>
+                      <div className="text-left">
+                        <p className="text-sm font-semibold text-gray-900">PCOS Mode</p>
+                        <p className="text-[10px] text-gray-500">Track symptoms</p>
+                      </div>
+                    </button>
+                  )}
+                  
+                  {visibility.perimenopauseMode && (
+                    <button
+                      onClick={() => navigate('/perimenopause')}
+                      className="flex items-center gap-3 p-3 bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl border border-amber-100 hover:shadow-md transition-all"
+                    >
+                      <div className="w-10 h-10 rounded-full bg-amber-500 flex items-center justify-center">
+                        <Sparkles className="w-5 h-5 text-white" />
+                      </div>
+                      <div className="text-left">
+                        <p className="text-sm font-semibold text-gray-900">Perimenopause</p>
+                        <p className="text-[10px] text-gray-500">Track changes</p>
+                      </div>
+                    </button>
+                  )}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Sticky Notes Section */}
             {visibility.periodStickyNotes && <StickyNotes currentWeek={undefined} />}
