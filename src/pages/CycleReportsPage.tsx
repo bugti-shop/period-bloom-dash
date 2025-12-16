@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, FileText, Calendar, TrendingUp, RefreshCw, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -13,9 +12,10 @@ import {
   CycleReport 
 } from '@/lib/cycleReportStorage';
 import { useMobileBackButton } from '@/hooks/useMobileBackButton';
+import { useBackNavigation } from '@/hooks/useBackNavigation';
 
 const CycleReportsPage = () => {
-  const navigate = useNavigate();
+  const goBack = useBackNavigation();
   useMobileBackButton();
   
   const [reports, setReports] = useState<CycleReport[]>([]);
@@ -70,7 +70,7 @@ const CycleReportsPage = () => {
           <Button 
             variant="ghost" 
             size="icon" 
-            onClick={() => navigate(-1)}
+            onClick={goBack}
             className="text-white hover:bg-white/20"
           >
             <ArrowLeft className="h-5 w-5" />

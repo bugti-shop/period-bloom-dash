@@ -27,6 +27,7 @@ import { loadSectionVisibility } from "@/lib/sectionVisibility";
 import floralDecoration from "@/assets/floral-decoration.png";
 import { Paywall } from "@/components/Paywall";
 import { hasStartedTrial, startTrial } from "@/lib/trialStorage";
+import { QuickActionsButton } from "@/components/QuickActionsButton";
 
 interface RegularPeriodData {
   cycleType: 'regular';
@@ -513,6 +514,9 @@ const Index = () => {
       {activeTab === "tools" && (
         <ToolsPage />
       )}
+      
+      {/* Quick Actions FAB - only show on home tab */}
+      {activeTab === "home" && <QuickActionsButton />}
       
       {/* Bottom Navigation */}
       <BottomNav 

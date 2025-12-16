@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Activity, Pill, TrendingUp, Plus, Scale } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -30,9 +29,10 @@ import {
   CycleIrregularityEntry
 } from '@/lib/specialModeStorage';
 import { useMobileBackButton } from '@/hooks/useMobileBackButton';
+import { useBackNavigation } from '@/hooks/useBackNavigation';
 
 const PCOSPage = () => {
-  const navigate = useNavigate();
+  const goBack = useBackNavigation();
   useMobileBackButton();
   
   const [data, setData] = useState(loadPCOSData());
@@ -195,7 +195,7 @@ const PCOSPage = () => {
           <Button 
             variant="ghost" 
             size="icon" 
-            onClick={() => navigate(-1)}
+            onClick={goBack}
             className="text-white hover:bg-white/20"
           >
             <ArrowLeft className="h-5 w-5" />
