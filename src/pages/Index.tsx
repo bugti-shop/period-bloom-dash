@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { addDays, format, differenceInDays } from "date-fns";
+import { useNavigate } from "react-router-dom";
 import { PeriodForm } from "@/components/PeriodForm";
 import { savePeriodHistory } from "@/lib/periodHistory";
 import { saveToLocalStorage, loadFromLocalStorage } from "@/lib/storage";
@@ -9,7 +10,7 @@ import { BottomNav } from "@/components/BottomNav";
 import { Header } from "@/components/Header";
 import { PeriodCalendar } from "@/components/PeriodCalendar";
 import { SymptomInsights } from "@/components/SymptomInsights";
-import { Calendar, Heart, Grid3x3, List } from "lucide-react";
+import { Calendar, Heart, Grid3x3, List, TestTube, FileText, Brain, Sparkles } from "lucide-react";
 import { schedulePeriodReminder } from "@/lib/notifications";
 import { scheduleFertilityReminders } from "@/lib/fertilityNotifications";
 import { initializeAllNotifications } from "@/lib/notificationInit";
@@ -45,6 +46,7 @@ interface IrregularPeriodData {
 type PeriodData = RegularPeriodData | IrregularPeriodData;
 
 const Index = () => {
+  const navigate = useNavigate();
   const [periodData, setPeriodData] = useState<PeriodData | null>(null);
   const [activeTab, setActiveTab] = useState<"home" | "symptoms" | "settings" | "tools">("home");
   const [selectedMonth, setSelectedMonth] = useState<Date | null>(null);
@@ -425,6 +427,64 @@ const Index = () => {
             >
               View Cycle Insights & Trends
             </button>
+
+            {/* Health Features Section */}
+            <div className="space-y-2">
+              <h3 className="text-sm font-semibold text-foreground px-1">Health Features</h3>
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  onClick={() => navigate('/ovulation-test')}
+                  className="flex items-center gap-3 p-3 bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl border border-purple-100 hover:shadow-md transition-all"
+                >
+                  <div className="w-10 h-10 rounded-full bg-purple-500 flex items-center justify-center">
+                    <TestTube className="w-5 h-5 text-white" />
+                  </div>
+                  <div className="text-left">
+                    <p className="text-sm font-semibold text-gray-900">Ovulation Test</p>
+                    <p className="text-[10px] text-gray-500">Track LH tests</p>
+                  </div>
+                </button>
+                
+                <button
+                  onClick={() => navigate('/cycle-reports')}
+                  className="flex items-center gap-3 p-3 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl border border-blue-100 hover:shadow-md transition-all"
+                >
+                  <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center">
+                    <FileText className="w-5 h-5 text-white" />
+                  </div>
+                  <div className="text-left">
+                    <p className="text-sm font-semibold text-gray-900">Cycle Reports</p>
+                    <p className="text-[10px] text-gray-500">View summaries</p>
+                  </div>
+                </button>
+                
+                <button
+                  onClick={() => navigate('/pcos')}
+                  className="flex items-center gap-3 p-3 bg-gradient-to-br from-teal-50 to-emerald-50 rounded-xl border border-teal-100 hover:shadow-md transition-all"
+                >
+                  <div className="w-10 h-10 rounded-full bg-teal-500 flex items-center justify-center">
+                    <Brain className="w-5 h-5 text-white" />
+                  </div>
+                  <div className="text-left">
+                    <p className="text-sm font-semibold text-gray-900">PCOS Mode</p>
+                    <p className="text-[10px] text-gray-500">Track symptoms</p>
+                  </div>
+                </button>
+                
+                <button
+                  onClick={() => navigate('/perimenopause')}
+                  className="flex items-center gap-3 p-3 bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl border border-amber-100 hover:shadow-md transition-all"
+                >
+                  <div className="w-10 h-10 rounded-full bg-amber-500 flex items-center justify-center">
+                    <Sparkles className="w-5 h-5 text-white" />
+                  </div>
+                  <div className="text-left">
+                    <p className="text-sm font-semibold text-gray-900">Perimenopause</p>
+                    <p className="text-[10px] text-gray-500">Track changes</p>
+                  </div>
+                </button>
+              </div>
+            </div>
 
             {/* Sticky Notes Section */}
             {visibility.periodStickyNotes && <StickyNotes currentWeek={undefined} />}
