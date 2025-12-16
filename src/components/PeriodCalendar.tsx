@@ -115,48 +115,48 @@ export const PeriodCalendar = ({
   };
 
   return (
-    <div className="glass-card p-1 rounded-xl">
-      <div className="flex items-center justify-between mb-1 px-0.5">
+    <div className="glass-card p-1.5 rounded-2xl">
+      <div className="flex items-center justify-between mb-1.5 px-1">
         <button
           onClick={handlePrevMonth}
-          className="p-0.5 hover:bg-gray-100 rounded-full transition-colors"
+          className="p-1 hover:bg-gray-100 rounded-full transition-colors"
           aria-label="Previous month"
         >
-          <ChevronLeft className="w-3.5 h-3.5 text-foreground" />
+          <ChevronLeft className="w-4 h-4 text-foreground" />
         </button>
         
         <div className="text-center">
-          <h3 className="text-xs font-semibold text-foreground">
+          <h3 className="text-sm font-semibold text-foreground">
             {format(displayMonth, "MMMM yyyy")}
           </h3>
-          <p className="text-[8px] text-muted-foreground">
+          <p className="text-[10px] text-muted-foreground">
             {getCyclePhase(displayMonth) && `${getCyclePhase(displayMonth)?.charAt(0).toUpperCase()}${getCyclePhase(displayMonth)?.slice(1)} Phase`}
           </p>
         </div>
         
         <button
           onClick={handleNextMonth}
-          className="p-0.5 hover:bg-gray-100 rounded-full transition-colors"
+          className="p-1 hover:bg-gray-100 rounded-full transition-colors"
           aria-label="Next month"
         >
-          <ChevronRight className="w-3.5 h-3.5 text-foreground" />
+          <ChevronRight className="w-4 h-4 text-foreground" />
         </button>
       </div>
 
-      <div className="grid grid-cols-7 gap-px mb-0.5">
+      <div className="grid grid-cols-7 gap-0.5 mb-1">
         {weekDays.map((day) => (
           <div
             key={day}
-            className="text-center text-[8px] font-semibold text-muted-foreground"
+            className="text-center text-[9px] font-semibold text-muted-foreground py-0.5"
           >
-            {day.slice(0, 2)}
+            {day}
           </div>
         ))}
       </div>
 
-      <div className="grid grid-cols-7 gap-px">
+      <div className="grid grid-cols-7 gap-0.5">
         {Array.from({ length: startPadding }).map((_, index) => (
-          <div key={`empty-${index}`} className="h-6" />
+          <div key={`empty-${index}`} />
         ))}
         
         {daysInMonth.map((day) => {
@@ -187,10 +187,10 @@ export const PeriodCalendar = ({
             else bgClass = "bg-[hsl(348,83%,75%)] text-white";
           } else if (isOvulation) {
             bgClass = "bg-[hsl(330,70%,50%)] text-white";
-            borderClass = "ring-1 ring-[hsl(330,70%,70%)]";
+            borderClass = "ring-2 ring-[hsl(330,70%,70%)]";
           } else if (isHighFertility) {
             bgClass = "bg-[hsl(200,70%,45%)] text-white";
-            borderClass = "ring-1 ring-[hsl(200,70%,60%)]";
+            borderClass = "ring-2 ring-[hsl(200,70%,60%)]";
           } else if (isFertile) {
             const fertileIndex = allFertileDates.filter(fDate => 
               isSameDay(fDate, day) || 
@@ -210,13 +210,13 @@ export const PeriodCalendar = ({
               key={day.toString()}
               onClick={() => onDateSelect?.(day)}
               className={`
-                h-6 w-full flex items-center justify-center rounded text-[9px] font-medium transition-all
+                aspect-square flex items-center justify-center rounded-md text-[10px] font-medium transition-all
                 ${bgClass}
                 ${borderClass}
-                ${isToday && !isPeriod && !isOvulation && !isFertile && !isSymptom ? "ring-1 ring-primary" : ""}
-                ${isSelected ? "ring-1 ring-pink-500 ring-offset-1" : ""}
+                ${isToday && !isPeriod && !isOvulation && !isFertile && !isSymptom ? "ring-2 ring-primary" : ""}
+                ${isSelected ? "ring-2 ring-pink-500 ring-offset-1" : ""}
                 ${(isPeriod || isOvulation || isFertile || isSymptom) ? "shadow-sm" : ""}
-                ${onDateSelect ? "hover:scale-105 cursor-pointer" : ""}
+                ${onDateSelect ? "hover:scale-110 cursor-pointer" : ""}
               `}
             >
               {format(day, "d")}
@@ -225,22 +225,26 @@ export const PeriodCalendar = ({
         })}
       </div>
 
-      <div className="mt-1 flex gap-1.5 justify-center flex-wrap">
-        <div className="flex items-center gap-0.5">
-          <div className="w-1.5 h-1.5 rounded-sm bg-[hsl(348,83%,45%)]" />
-          <span className="text-[7px] text-foreground">Period</span>
+      <div className="mt-1.5 flex gap-2 justify-center flex-wrap">
+        <div className="flex items-center gap-1">
+          <div className="w-2 h-2 rounded bg-[hsl(348,83%,45%)]" />
+          <span className="text-[8px] text-foreground">Period</span>
         </div>
-        <div className="flex items-center gap-0.5">
-          <div className="w-1.5 h-1.5 rounded-sm bg-[hsl(330,70%,50%)]" />
-          <span className="text-[7px] text-foreground">Ovulation</span>
+        <div className="flex items-center gap-1">
+          <div className="w-2 h-2 rounded bg-[hsl(330,70%,50%)] ring-2 ring-[hsl(330,70%,70%)]" />
+          <span className="text-[8px] text-foreground">Ovulation</span>
         </div>
-        <div className="flex items-center gap-0.5">
-          <div className="w-1.5 h-1.5 rounded-sm bg-[hsl(200,70%,45%)]" />
-          <span className="text-[7px] text-foreground">High Fertility</span>
+        <div className="flex items-center gap-1">
+          <div className="w-2 h-2 rounded bg-[hsl(200,70%,45%)] ring-2 ring-[hsl(200,70%,60%)]" />
+          <span className="text-[8px] text-foreground">High Fertility</span>
         </div>
-        <div className="flex items-center gap-0.5">
-          <div className="w-1.5 h-1.5 rounded-sm bg-[hsl(200,80%,60%)]" />
-          <span className="text-[7px] text-foreground">Fertile</span>
+        <div className="flex items-center gap-1">
+          <div className="w-2 h-2 rounded bg-[hsl(200,80%,60%)]" />
+          <span className="text-[8px] text-foreground">Fertile</span>
+        </div>
+        <div className="flex items-center gap-1">
+          <div className="w-2 h-2 rounded bg-gray-400" />
+          <span className="text-[8px] text-foreground">Symptoms</span>
         </div>
       </div>
     </div>
