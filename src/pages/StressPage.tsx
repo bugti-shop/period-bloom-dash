@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { ArrowLeft } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 import { useMobileBackButton } from "@/hooks/useMobileBackButton";
+import { useBackNavigation } from "@/hooks/useBackNavigation";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { StressTracker } from "@/components/StressTracker";
@@ -10,7 +10,7 @@ import { getAllStressLogs, getAverageStressLevel } from "@/lib/stressStorage";
 import { format, parseISO } from "date-fns";
 
 const StressPage = () => {
-  const navigate = useNavigate();
+  const goBack = useBackNavigation();
   useMobileBackButton();
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const allLogs = getAllStressLogs();
@@ -24,7 +24,7 @@ const StressPage = () => {
         <Button
           variant="ghost"
           size="icon"
-          onClick={() => navigate(-1)}
+          onClick={goBack}
           className="text-primary-foreground hover:bg-primary-foreground/20"
         >
           <ArrowLeft className="h-5 w-5" />

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useMobileBackButton } from "@/hooks/useMobileBackButton";
+import { useBackNavigation } from "@/hooks/useBackNavigation";
 import { ArrowLeft } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,7 +22,7 @@ import {
 import { toast } from "sonner";
 
 export const ExercisePage = () => {
-  const navigate = useNavigate();
+  const goBack = useBackNavigation();
   useMobileBackButton();
   const [date, setDate] = useState<Date>(new Date());
   const [type, setType] = useState<string>("");
@@ -58,7 +58,7 @@ export const ExercisePage = () => {
         <Button
           variant="ghost"
           size="icon"
-          onClick={() => navigate(-1)}
+          onClick={goBack}
           className="text-primary-foreground hover:bg-primary-foreground/20"
         >
           <ArrowLeft className="h-5 w-5" />

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Flame, Moon, Brain, Heart, Plus, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -25,9 +24,10 @@ import {
   MoodChangeEntry
 } from '@/lib/specialModeStorage';
 import { useMobileBackButton } from '@/hooks/useMobileBackButton';
+import { useBackNavigation } from '@/hooks/useBackNavigation';
 
 const PerimenopausePage = () => {
-  const navigate = useNavigate();
+  const goBack = useBackNavigation();
   useMobileBackButton();
   
   const [data, setData] = useState(loadPerimenopauseData());
@@ -145,7 +145,7 @@ const PerimenopausePage = () => {
           <Button 
             variant="ghost" 
             size="icon" 
-            onClick={() => navigate(-1)}
+            onClick={goBack}
             className="text-white hover:bg-white/20"
           >
             <ArrowLeft className="h-5 w-5" />
