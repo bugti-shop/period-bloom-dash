@@ -49,11 +49,16 @@ const OvulationTestPage = () => {
       return;
     }
 
+    const validResults: OvulationTest['result'][] = ['positive', 'negative', 'faint', 'peak'];
+    const result = validResults.includes(newTest.result as OvulationTest['result']) 
+      ? newTest.result as OvulationTest['result'] 
+      : 'negative';
+
     const test: OvulationTest = {
       id: `ovtest-${Date.now()}`,
       date: newTest.date!,
       time: newTest.time || format(new Date(), 'HH:mm'),
-      result: newTest.result as OvulationTest['result'],
+      result,
       brand: newTest.brand,
       notes: newTest.notes
     };
@@ -186,7 +191,7 @@ const OvulationTestPage = () => {
                 <label className="text-sm font-medium">Result</label>
                 <Select
                   value={newTest.result}
-                  onValueChange={(value) => setNewTest({ ...newTest, result: value })}
+                  onValueChange={(value: string) => setNewTest({ ...newTest, result: value as 'positive' | 'negative' | 'faint' | 'peak' })}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select result" />
