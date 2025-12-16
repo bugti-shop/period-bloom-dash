@@ -1,8 +1,8 @@
 // Cycle Report Summaries - Auto-generated monthly cycle summaries
 import { saveToLocalStorage, loadFromLocalStorage } from './storage';
-import { loadPeriodHistory, PeriodEntry } from './periodHistory';
-import { loadSymptomLog, SymptomEntry } from './symptomLog';
-import { loadMoodEntries, MoodEntry } from './moodLog';
+import { getPeriodHistory, PeriodHistoryEntry } from './periodHistory';
+import { getSymptomLogs, SymptomLog } from './symptomLog';
+import { getAllMoodLogs, MoodLog } from './moodLog';
 import { loadOvulationTests, OvulationTest } from './ovulationTestStorage';
 import { format, differenceInDays, startOfMonth, endOfMonth, parseISO } from 'date-fns';
 
@@ -45,21 +45,21 @@ export const generateCycleReport = (month: string): CycleReport => {
   const monthEnd = endOfMonth(monthStart);
   
   // Get period data for this month
-  const periodHistory = loadPeriodHistory();
+  const periodHistory = getPeriodHistory();
   const periodsInMonth = periodHistory.filter(p => {
-    const periodDate = parseISO(p.startDate);
+    const periodDate = new Date(p.lastPeriodDate);
     return periodDate >= monthStart && periodDate <= monthEnd;
   });
   
   // Get symptoms for this month
-  const symptoms = loadSymptomLog();
+  const symptoms = getSymptomLogs();
   const symptomsInMonth = symptoms.filter(s => {
     const symptomDate = parseISO(s.date);
     return symptomDate >= monthStart && symptomDate <= monthEnd;
   });
   
   // Get moods for this month
-  const moods = loadMoodEntries();
+  const moods = getAllMoodLogs();
   const moodsInMonth = moods.filter(m => {
     const moodDate = parseISO(m.date);
     return moodDate >= monthStart && moodDate <= monthEnd;
@@ -80,7 +80,7 @@ export const generateCycleReport = (month: string): CycleReport => {
         symptomCounts[symptom] = { count: 0, totalIntensity: 0 };
       }
       symptomCounts[symptom].count++;
-      symptomCounts[symptom].totalIntensity += s.intensity || 5;
+      symptomCounts[symptom].totalIntensity += 5; // Default intensity
     });
   });
   
@@ -113,15 +113,15 @@ export const generateCycleReport = (month: string): CycleReport => {
   
   // Calculate cycle metrics
   const latestPeriod = periodsInMonth[0];
-  const previousPeriods = periodHistory.filter(p => parseISO(p.startDate) < monthStart);
+  const previousPeriods = periodHistory.filter(p => new Date(p.lastPeriodDate) < monthStart);
   const previousPeriod = previousPeriods[0];
   
   let cycleLength: number | null = null;
   if (latestPeriod && previousPeriod) {
-    cycleLength = differenceInDays(parseISO(latestPeriod.startDate), parseISO(previousPeriod.startDate));
+    cycleLength = differenceInDays(new Date(latestPeriod.lastPeriodDate), new Date(previousPeriod.lastPeriodDate));
   }
   
-  const periodLength = latestPeriod?.duration || null;
+  const periodLength = latestPeriod?.periodDuration || null;
   
   // Generate insights
   const insights: string[] = [];
@@ -156,7 +156,7 @@ export const generateCycleReport = (month: string): CycleReport => {
     generatedAt: new Date().toISOString(),
     cycleLength,
     periodLength,
-    periodStartDate: latestPeriod?.startDate || null,
+    periodStartDate: latestPeriod ? format(new Date(latestPeriod.lastPeriodDate), 'yyyy-MM-dd') : null,
     ovulationDay: cycleLength ? Math.round(cycleLength / 2) : null,
     symptomSummary,
     moodSummary,

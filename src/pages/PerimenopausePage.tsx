@@ -76,11 +76,12 @@ const PerimenopausePage = () => {
   };
 
   const handleSaveHotFlash = () => {
+    const severity = Math.min(5, Math.max(1, newHotFlash.severity || 3)) as 1 | 2 | 3 | 4 | 5;
     const entry: HotFlashEntry = {
       id: `hf-${Date.now()}`,
       date: newHotFlash.date!,
       time: newHotFlash.time!,
-      severity: newHotFlash.severity as 1 | 2 | 3 | 4 | 5,
+      severity,
       duration: newHotFlash.duration!,
       triggers: []
     };
@@ -91,10 +92,11 @@ const PerimenopausePage = () => {
   };
 
   const handleSaveNightSweat = () => {
+    const severity = Math.min(5, Math.max(1, newNightSweat.severity || 3)) as 1 | 2 | 3 | 4 | 5;
     const entry: NightSweatEntry = {
       id: `ns-${Date.now()}`,
       date: newNightSweat.date!,
-      severity: newNightSweat.severity as 1 | 2 | 3 | 4 | 5,
+      severity,
       wokenUp: newNightSweat.wokenUp!
     };
     addNightSweat(entry);
@@ -104,10 +106,14 @@ const PerimenopausePage = () => {
   };
 
   const handleSaveSleepIssue = () => {
+    const validTypes: SleepIssueEntry['type'][] = ['insomnia', 'waking', 'restless', 'other'];
+    const type = validTypes.includes(newSleepIssue.type as SleepIssueEntry['type']) 
+      ? newSleepIssue.type as SleepIssueEntry['type'] 
+      : 'other';
     const entry: SleepIssueEntry = {
       id: `sl-${Date.now()}`,
       date: newSleepIssue.date!,
-      type: newSleepIssue.type as SleepIssueEntry['type'],
+      type,
       hoursSlept: newSleepIssue.hoursSlept!
     };
     addSleepIssue(entry);
@@ -117,12 +123,14 @@ const PerimenopausePage = () => {
   };
 
   const handleSaveMood = () => {
+    const anxiety = Math.min(5, Math.max(1, newMood.anxiety || 3)) as 1 | 2 | 3 | 4 | 5;
+    const irritability = Math.min(5, Math.max(1, newMood.irritability || 3)) as 1 | 2 | 3 | 4 | 5;
     const entry: MoodChangeEntry = {
       id: `mc-${Date.now()}`,
       date: newMood.date!,
       mood: newMood.mood!,
-      anxiety: newMood.anxiety as 1 | 2 | 3 | 4 | 5,
-      irritability: newMood.irritability as 1 | 2 | 3 | 4 | 5
+      anxiety,
+      irritability
     };
     addMoodChange(entry);
     setData(loadPerimenopauseData());
@@ -238,7 +246,7 @@ const PerimenopausePage = () => {
                     <label className="text-sm">Severity: {newHotFlash.severity}/5</label>
                     <Slider
                       value={[newHotFlash.severity || 3]}
-                      onValueChange={([v]) => setNewHotFlash({...newHotFlash, severity: v})}
+                      onValueChange={([v]) => setNewHotFlash({...newHotFlash, severity: Math.min(5, Math.max(1, v)) as 1 | 2 | 3 | 4 | 5})}
                       min={1}
                       max={5}
                       step={1}
@@ -296,7 +304,7 @@ const PerimenopausePage = () => {
                     <label className="text-sm">Severity: {newNightSweat.severity}/5</label>
                     <Slider
                       value={[newNightSweat.severity || 3]}
-                      onValueChange={([v]) => setNewNightSweat({...newNightSweat, severity: v})}
+                      onValueChange={([v]) => setNewNightSweat({...newNightSweat, severity: Math.min(5, Math.max(1, v)) as 1 | 2 | 3 | 4 | 5})}
                       min={1}
                       max={5}
                       step={1}
@@ -353,7 +361,7 @@ const PerimenopausePage = () => {
                     <label className="text-sm">Type</label>
                     <Select
                       value={newSleepIssue.type}
-                      onValueChange={(v) => setNewSleepIssue({...newSleepIssue, type: v})}
+                      onValueChange={(v: string) => setNewSleepIssue({...newSleepIssue, type: v as 'insomnia' | 'waking' | 'restless' | 'other'})}
                     >
                       <SelectTrigger>
                         <SelectValue />
@@ -434,7 +442,7 @@ const PerimenopausePage = () => {
                     <label className="text-sm">Anxiety Level: {newMood.anxiety}/5</label>
                     <Slider
                       value={[newMood.anxiety || 3]}
-                      onValueChange={([v]) => setNewMood({...newMood, anxiety: v})}
+                      onValueChange={([v]) => setNewMood({...newMood, anxiety: Math.min(5, Math.max(1, v)) as 1 | 2 | 3 | 4 | 5})}
                       min={1}
                       max={5}
                       step={1}
@@ -444,7 +452,7 @@ const PerimenopausePage = () => {
                     <label className="text-sm">Irritability: {newMood.irritability}/5</label>
                     <Slider
                       value={[newMood.irritability || 3]}
-                      onValueChange={([v]) => setNewMood({...newMood, irritability: v})}
+                      onValueChange={([v]) => setNewMood({...newMood, irritability: Math.min(5, Math.max(1, v)) as 1 | 2 | 3 | 4 | 5})}
                       min={1}
                       max={5}
                       step={1}

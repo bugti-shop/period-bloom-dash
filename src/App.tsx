@@ -28,6 +28,10 @@ import DigestivePage from "./pages/DigestivePage";
 import EnergyPage from "./pages/EnergyPage";
 import SkinPage from "./pages/SkinPage";
 import HealthDashboard from "./pages/HealthDashboard";
+import OvulationTestPage from "./pages/OvulationTestPage";
+import CycleReportsPage from "./pages/CycleReportsPage";
+import PerimenopausePage from "./pages/PerimenopausePage";
+import PCOSPage from "./pages/PCOSPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -92,6 +96,10 @@ const App = () => (
           <Route path="/energy" element={<EnergyPage />} />
           <Route path="/skin" element={<SkinPage />} />
           <Route path="/health-dashboard" element={<HealthDashboard />} />
+          <Route path="/ovulation-test" element={<OvulationTestPage />} />
+          <Route path="/cycle-reports" element={<CycleReportsPage />} />
+          <Route path="/perimenopause" element={<PerimenopausePage />} />
+          <Route path="/pcos" element={<PCOSPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

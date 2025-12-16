@@ -90,11 +90,17 @@ const PCOSPage = () => {
   };
 
   const handleSaveSymptom = () => {
+    const validTypes: PCOSSymptom['type'][] = ['hirsutism', 'acne', 'hairLoss', 'weightGain', 'fatigue', 'moodSwings', 'other'];
+    const type = validTypes.includes(newSymptom.type as PCOSSymptom['type']) 
+      ? newSymptom.type as PCOSSymptom['type'] 
+      : 'other';
+    const severity = Math.min(5, Math.max(1, newSymptom.severity || 3)) as 1 | 2 | 3 | 4 | 5;
+    
     const entry: PCOSSymptom = {
       id: `pcos-sym-${Date.now()}`,
       date: newSymptom.date!,
-      type: newSymptom.type as PCOSSymptom['type'],
-      severity: newSymptom.severity as 1 | 2 | 3 | 4 | 5,
+      type,
+      severity,
       notes: newSymptom.notes
     };
     addPCOSSymptom(entry);
@@ -108,13 +114,18 @@ const PCOSPage = () => {
       toast.error('Please enter medication name');
       return;
     }
+    const validMedTypes: PCOSMedication['type'][] = ['metformin', 'birthControl', 'spironolactone', 'clomid', 'letrozole', 'other'];
+    const medType = validMedTypes.includes(newMedication.type as PCOSMedication['type']) 
+      ? newMedication.type as PCOSMedication['type'] 
+      : 'other';
+    
     const entry: PCOSMedication = {
       id: `pcos-med-${Date.now()}`,
       name: newMedication.name!,
       dosage: newMedication.dosage!,
       frequency: newMedication.frequency!,
       startDate: newMedication.startDate!,
-      type: newMedication.type as PCOSMedication['type']
+      type: medType
     };
     addPCOSMedication(entry);
     setData(loadPCOSData());
@@ -127,11 +138,16 @@ const PCOSPage = () => {
       toast.error('Please enter a valid weight');
       return;
     }
+    const validUnits: WeightEntry['unit'][] = ['kg', 'lbs'];
+    const unit = validUnits.includes(newWeight.unit as WeightEntry['unit']) 
+      ? newWeight.unit as WeightEntry['unit'] 
+      : 'kg';
+    
     const entry: WeightEntry = {
       id: `pcos-wt-${Date.now()}`,
       date: newWeight.date!,
       weight: newWeight.weight!,
-      unit: newWeight.unit as 'kg' | 'lbs'
+      unit
     };
     addPCOSWeightEntry(entry);
     setData(loadPCOSData());
@@ -140,12 +156,17 @@ const PCOSPage = () => {
   };
 
   const handleSaveCycle = () => {
+    const validFlows: CycleIrregularityEntry['flow'][] = ['light', 'medium', 'heavy'];
+    const flow = validFlows.includes(newCycle.flow as CycleIrregularityEntry['flow']) 
+      ? newCycle.flow as CycleIrregularityEntry['flow'] 
+      : 'medium';
+    
     const entry: CycleIrregularityEntry = {
       id: `pcos-cyc-${Date.now()}`,
       date: newCycle.date!,
       cycleLength: newCycle.cycleLength!,
       periodLength: newCycle.periodLength!,
-      flow: newCycle.flow as 'light' | 'medium' | 'heavy',
+      flow,
       notes: newCycle.notes
     };
     addCycleIrregularityEntry(entry);
@@ -280,7 +301,7 @@ const PCOSPage = () => {
                     <label className="text-sm">Symptom Type</label>
                     <Select
                       value={newSymptom.type}
-                      onValueChange={(v) => setNewSymptom({...newSymptom, type: v})}
+                      onValueChange={(v: string) => setNewSymptom({...newSymptom, type: v as 'hirsutism' | 'acne' | 'hairLoss' | 'weightGain' | 'fatigue' | 'moodSwings' | 'other'})}
                     >
                       <SelectTrigger>
                         <SelectValue />
@@ -300,7 +321,7 @@ const PCOSPage = () => {
                     <label className="text-sm">Severity: {newSymptom.severity}/5</label>
                     <Slider
                       value={[newSymptom.severity || 3]}
-                      onValueChange={([v]) => setNewSymptom({...newSymptom, severity: v})}
+                      onValueChange={([v]) => setNewSymptom({...newSymptom, severity: Math.min(5, Math.max(1, v)) as 1 | 2 | 3 | 4 | 5})}
                       min={1}
                       max={5}
                       step={1}
@@ -362,7 +383,7 @@ const PCOSPage = () => {
                     <label className="text-sm">Type</label>
                     <Select
                       value={newMedication.type}
-                      onValueChange={(v) => setNewMedication({...newMedication, type: v})}
+                      onValueChange={(v: string) => setNewMedication({...newMedication, type: v as 'metformin' | 'birthControl' | 'spironolactone' | 'clomid' | 'letrozole' | 'other'})}
                     >
                       <SelectTrigger>
                         <SelectValue />
@@ -458,7 +479,7 @@ const PCOSPage = () => {
                       />
                       <Select
                         value={newWeight.unit}
-                        onValueChange={(v) => setNewWeight({...newWeight, unit: v})}
+                        onValueChange={(v: string) => setNewWeight({...newWeight, unit: v as 'kg' | 'lbs'})}
                       >
                         <SelectTrigger className="w-24">
                           <SelectValue />
@@ -532,7 +553,7 @@ const PCOSPage = () => {
                     <label className="text-sm">Flow</label>
                     <Select
                       value={newCycle.flow}
-                      onValueChange={(v) => setNewCycle({...newCycle, flow: v})}
+                      onValueChange={(v: string) => setNewCycle({...newCycle, flow: v as 'light' | 'medium' | 'heavy'})}
                     >
                       <SelectTrigger>
                         <SelectValue />
