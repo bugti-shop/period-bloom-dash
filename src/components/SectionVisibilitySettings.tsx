@@ -22,6 +22,13 @@ export const SectionVisibilitySettings = () => {
     { key: "periodStickyNotes", label: "Sticky Notes" },
   ];
 
+  const healthFeaturesSections: { key: keyof SectionVisibility; label: string }[] = [
+    { key: "ovulationTest", label: "Ovulation Test" },
+    { key: "cycleReports", label: "Cycle Reports" },
+    { key: "pcosMode", label: "PCOS Mode" },
+    { key: "perimenopauseMode", label: "Perimenopause Mode" },
+  ];
+
   const pregnancySections: { key: keyof SectionVisibility; label: string }[] = [
     { key: "pregnancyProgress", label: "Pregnancy Progress" },
     { key: "bumpGallery", label: "Bump Photo Gallery" },
@@ -64,6 +71,28 @@ export const SectionVisibilitySettings = () => {
       <div className="glass-card rounded-xl p-4 space-y-3">
         <h4 className="font-semibold text-sm text-muted-foreground mb-2">Period Mode Home</h4>
         {periodSections.map(({ key, label }) => (
+          <div key={key} className="flex items-center justify-between py-2">
+            <Label htmlFor={`section-${key}`} className="flex items-center gap-2">
+              {visibility[key] ? (
+                <Eye className="w-4 h-4 text-green-600" />
+              ) : (
+                <EyeOff className="w-4 h-4 text-gray-400" />
+              )}
+              {label}
+            </Label>
+            <Switch
+              id={`section-${key}`}
+              checked={visibility[key]}
+              onCheckedChange={() => handleToggle(key)}
+            />
+          </div>
+        ))}
+      </div>
+
+      {/* Health Features Sections */}
+      <div className="glass-card rounded-xl p-4 space-y-3">
+        <h4 className="font-semibold text-sm text-muted-foreground mb-2">Health Features</h4>
+        {healthFeaturesSections.map(({ key, label }) => (
           <div key={key} className="flex items-center justify-between py-2">
             <Label htmlFor={`section-${key}`} className="flex items-center gap-2">
               {visibility[key] ? (

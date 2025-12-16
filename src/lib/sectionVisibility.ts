@@ -7,6 +7,12 @@ export interface SectionVisibility {
   periodInsights: boolean;
   periodStickyNotes: boolean;
   
+  // Period Mode Health Features
+  ovulationTest: boolean;
+  cycleReports: boolean;
+  pcosMode: boolean;
+  perimenopauseMode: boolean;
+  
   // Pregnancy Mode Home Sections
   pregnancyProgress: boolean;
   bumpGallery: boolean;
@@ -40,6 +46,12 @@ const DEFAULT_VISIBILITY: SectionVisibility = {
   periodInfoCards: true,
   periodInsights: true,
   periodStickyNotes: true,
+  
+  // Period Mode Health Features
+  ovulationTest: true,
+  cycleReports: true,
+  pcosMode: true,
+  perimenopauseMode: true,
   
   // Pregnancy Mode Home Sections
   pregnancyProgress: true,
