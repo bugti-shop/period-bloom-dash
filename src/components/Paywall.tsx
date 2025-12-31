@@ -114,7 +114,7 @@ export const Paywall = ({ onStartTrial }: PaywallProps) => {
           >
             <div className="text-center">
               <div className="text-base font-semibold text-foreground mb-1">Monthly</div>
-              <div className="text-sm text-muted-foreground">$0.00/mo</div>
+              <div className="text-sm text-muted-foreground">$2.99/mo</div>
             </div>
           </button>
 
@@ -128,12 +128,12 @@ export const Paywall = ({ onStartTrial }: PaywallProps) => {
             style={selectedPlan === "yearly" ? { borderColor: '#ee5ea6' } : {}}
           >
             <div className="absolute -top-3 left-1/2 -translate-x-1/2 text-white px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap" style={{ backgroundColor: '#ee5ea6' }}>
-              3 DAYS FREE
+              BEST VALUE
             </div>
             <div className="text-center">
               <div className="text-base font-semibold text-foreground mb-1">Yearly</div>
-              <div className="text-sm text-muted-foreground">$0.00/mo</div>
-              <div className="text-xs text-muted-foreground mt-0.5">Billed $0.00 annually</div>
+              <div className="text-sm text-muted-foreground">$1.99/yr</div>
+              <div className="text-xs text-muted-foreground mt-0.5">Save 94%</div>
             </div>
           </button>
         </div>
