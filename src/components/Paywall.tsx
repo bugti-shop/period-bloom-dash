@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
-import { Lock, Bell, Crown, KeyRound } from "lucide-react";
+import { Lock, Bell, Crown, KeyRound, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
+import { useRevenueCat } from "@/hooks/useRevenueCat";
+import { Capacitor } from "@capacitor/core";
 
 interface PaywallProps {
   onStartTrial: () => void;
@@ -17,10 +19,61 @@ export const Paywall = ({ onStartTrial }: PaywallProps) => {
   const [showAdminInput, setShowAdminInput] = useState(false);
   const [adminCode, setAdminCode] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
+  const [isPurchasing, setIsPurchasing] = useState(false);
 
-  const monthlyPrice = 2.99;
-  const yearlyPrice = 1.99;
-  const yearlyTotal = (yearlyPrice * 12).toFixed(2);
+  const {
+    isLoading,
+    isPro,
+    offerings,
+    purchaseMonthly,
+    purchaseYearly,
+    restore,
+  } = useRevenueCat();
+
+  // Default prices (used when RevenueCat offerings aren't loaded)
+  const defaultMonthlyPrice = "$2.99";
+  const defaultYearlyPrice = "$1.99";
+  const defaultYearlyTotal = "$23.88";
+
+  // Get actual prices from RevenueCat if available
+  const getMonthlyPrice = () => {
+    if (offerings?.packages) {
+      const monthlyPkg = offerings.packages.find(
+        pkg => pkg.identifier === '$rc_monthly' || pkg.product.identifier === 'lufi_mo'
+      );
+      if (monthlyPkg) {
+        return monthlyPkg.product.priceString;
+      }
+    }
+    return defaultMonthlyPrice;
+  };
+
+  const getYearlyPrice = () => {
+    if (offerings?.packages) {
+      const yearlyPkg = offerings.packages.find(
+        pkg => pkg.identifier === '$rc_annual' || pkg.product.identifier === 'lufi_yr'
+      );
+      if (yearlyPkg) {
+        // Calculate monthly equivalent
+        const yearlyTotal = yearlyPkg.product.price;
+        const monthlyEquivalent = (yearlyTotal / 12).toFixed(2);
+        return `${yearlyPkg.product.currencyCode === 'USD' ? '$' : ''}${monthlyEquivalent}`;
+      }
+    }
+    return defaultYearlyPrice;
+  };
+
+  const getYearlyTotal = () => {
+    if (offerings?.packages) {
+      const yearlyPkg = offerings.packages.find(
+        pkg => pkg.identifier === '$rc_annual' || pkg.product.identifier === 'lufi_yr'
+      );
+      if (yearlyPkg) {
+        return yearlyPkg.product.priceString;
+      }
+    }
+    return defaultYearlyTotal;
+  };
 
   // Check for remembered admin access on mount
   useEffect(() => {
@@ -30,6 +83,13 @@ export const Paywall = ({ onStartTrial }: PaywallProps) => {
       onStartTrial();
     }
   }, [onStartTrial]);
+
+  // If user already has Pro access via RevenueCat
+  useEffect(() => {
+    if (isPro && !isLoading) {
+      onStartTrial();
+    }
+  }, [isPro, isLoading, onStartTrial]);
 
   const handleAdminAccess = () => {
     if (adminCode.toUpperCase() === ADMIN_CODE) {
@@ -41,6 +101,61 @@ export const Paywall = ({ onStartTrial }: PaywallProps) => {
     } else {
       toast.error("Invalid admin code");
       setAdminCode("");
+    }
+  };
+
+  const handlePurchase = async () => {
+    setIsPurchasing(true);
+    
+    try {
+      // Check if we're on native platform
+      if (!Capacitor.isNativePlatform()) {
+        // Web mode - just start trial for testing
+        toast.info("Running in web mode - starting trial for testing");
+        onStartTrial();
+        return;
+      }
+
+      const result = selectedPlan === "monthly" 
+        ? await purchaseMonthly() 
+        : await purchaseYearly();
+      
+      if (result.success) {
+        toast.success("Purchase successful! Welcome to Lufi Pro!");
+        onStartTrial();
+      } else if (result.error) {
+        if (result.error !== 'Purchase cancelled') {
+          toast.error(result.error);
+        }
+      }
+    } catch (error: any) {
+      toast.error(error.message || "Purchase failed");
+    } finally {
+      setIsPurchasing(false);
+    }
+  };
+
+  const handleRestore = async () => {
+    setIsPurchasing(true);
+    
+    try {
+      if (!Capacitor.isNativePlatform()) {
+        toast.info("Restore not available in web mode");
+        return;
+      }
+
+      const result = await restore();
+      
+      if (result.success) {
+        toast.success("Purchases restored successfully!");
+        onStartTrial();
+      } else {
+        toast.info("No previous purchases found");
+      }
+    } catch (error: any) {
+      toast.error(error.message || "Restore failed");
+    } finally {
+      setIsPurchasing(false);
     }
   };
 
@@ -66,7 +181,7 @@ export const Paywall = ({ onStartTrial }: PaywallProps) => {
             <div className="flex gap-3 relative">
               {/* Icon Column with Connector Line */}
               <div className="relative flex flex-col items-center" style={{ width: '40px' }}>
-                {/* Vertical Connector Line - Absolutely Positioned Behind Icons */}
+                {/* Vertical Connector Line */}
                 <div 
                   className="absolute left-1/2 -translate-x-1/2 pointer-events-none"
                   style={{
@@ -149,7 +264,7 @@ export const Paywall = ({ onStartTrial }: PaywallProps) => {
           >
             <div className="text-center">
               <div className="text-base font-semibold text-foreground mb-1">Monthly</div>
-              <div className="text-sm text-muted-foreground">${monthlyPrice}/mo</div>
+              <div className="text-sm text-muted-foreground">{getMonthlyPrice()}/mo</div>
             </div>
           </button>
 
@@ -167,7 +282,7 @@ export const Paywall = ({ onStartTrial }: PaywallProps) => {
             </div>
             <div className="text-center">
               <div className="text-base font-semibold text-foreground mb-1">Yearly</div>
-              <div className="text-sm text-muted-foreground">${yearlyPrice}/mo</div>
+              <div className="text-sm text-muted-foreground">{getYearlyPrice()}/mo</div>
             </div>
           </button>
         </div>
@@ -176,7 +291,7 @@ export const Paywall = ({ onStartTrial }: PaywallProps) => {
         {selectedPlan === "yearly" && (
           <div className="text-center py-2">
             <p className="text-sm font-medium text-foreground">
-              Total: <span className="text-primary font-bold">${yearlyTotal}/year</span>
+              Total: <span className="text-primary font-bold">{getYearlyTotal()}/year</span>
             </p>
             <p className="text-xs text-muted-foreground">Billed annually</p>
           </div>
@@ -184,12 +299,29 @@ export const Paywall = ({ onStartTrial }: PaywallProps) => {
 
         {/* CTA Button */}
         <Button
-          onClick={onStartTrial}
+          onClick={handlePurchase}
+          disabled={isPurchasing || isLoading}
           className="w-full py-7 text-lg font-semibold rounded-2xl"
           size="lg"
         >
-          Start My 3-Day Free Trial
+          {isPurchasing ? (
+            <span className="flex items-center gap-2">
+              <RefreshCw className="w-5 h-5 animate-spin" />
+              Processing...
+            </span>
+          ) : (
+            "Start My 3-Day Free Trial"
+          )}
         </Button>
+
+        {/* Restore Purchases */}
+        <button
+          onClick={handleRestore}
+          disabled={isPurchasing}
+          className="w-full text-sm text-muted-foreground hover:text-foreground transition-colors py-2"
+        >
+          Restore Purchases
+        </button>
 
         {/* Admin Access */}
         <div className="pt-2">
