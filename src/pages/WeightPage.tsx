@@ -1,20 +1,17 @@
 import { useState } from "react";
-import { useMobileBackButton } from "@/hooks/useMobileBackButton";
-import { useBackNavigation } from "@/hooks/useBackNavigation";
+import { Scale, Plus, Trash2, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, Plus, Trash2, TrendingUp, Scale } from "lucide-react";
+import { ToolHeader } from "@/components/ToolHeader";
 import { saveWeightEntry, getWeightEntries, deleteWeightEntry, getWeightUnitPreference, saveWeightUnitPreference, analyzeWeightTrends } from "@/lib/weightStorage";
 import { loadFromLocalStorage } from "@/lib/storage";
 import { format } from "date-fns";
 
 export default function WeightPage() {
-  const goBack = useBackNavigation("tools");
-  useMobileBackButton();
   const { toast } = useToast();
   const [unit, setUnit] = useState<"kg" | "lbs">(getWeightUnitPreference());
   const [weight, setWeight] = useState("");
@@ -67,19 +64,13 @@ export default function WeightPage() {
 
   return (
     <div className="min-h-screen bg-background pb-20">
+      <ToolHeader 
+        title="Weight Tracker" 
+        subtitle="Track your weight changes"
+        icon={Scale}
+      />
       
       <div className="container mx-auto px-4 py-6 max-w-2xl">
-        <Button
-          variant="ghost"
-          onClick={goBack}
-          className="mb-4"
-        >
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Back
-        </Button>
-
-        <h1 className="text-2xl font-bold mb-6">Weight Tracker</h1>
-
         {trends && (
           <Card className="p-6 mb-6">
             <div className="flex items-center gap-2 mb-4">

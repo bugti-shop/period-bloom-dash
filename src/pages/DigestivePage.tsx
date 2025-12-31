@@ -1,17 +1,13 @@
 import { useState } from "react";
-import { ArrowLeft } from "lucide-react";
-import { useMobileBackButton } from "@/hooks/useMobileBackButton";
-import { useBackNavigation } from "@/hooks/useBackNavigation";
-import { Button } from "@/components/ui/button";
+import { Utensils } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { DigestiveTracker } from "@/components/DigestiveTracker";
 import { Card } from "@/components/ui/card";
+import { ToolHeader } from "@/components/ToolHeader";
 import { getAllDigestiveLogs, getMostCommonSymptom } from "@/lib/digestiveStorage";
 import { format, parseISO } from "date-fns";
 
 const DigestivePage = () => {
-  const goBack = useBackNavigation("tools");
-  useMobileBackButton();
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const allLogs = getAllDigestiveLogs();
   const mostCommonSymptom = getMostCommonSymptom();
@@ -20,17 +16,11 @@ const DigestivePage = () => {
 
   return (
     <div className="min-h-screen bg-background pb-20">
-      <div className="bg-primary text-primary-foreground p-4 sticky top-0 z-10">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={goBack}
-          className="text-primary-foreground hover:bg-primary-foreground/20"
-        >
-          <ArrowLeft className="h-5 w-5" />
-        </Button>
-        <h1 className="text-xl font-bold mt-2">Digestive Health Tracker</h1>
-      </div>
+      <ToolHeader 
+        title="Digestive Health Tracker" 
+        subtitle="Track your GI health"
+        icon={Utensils}
+      />
 
       <div className="p-4 space-y-4">
         <Card className="p-4">

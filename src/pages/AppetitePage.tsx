@@ -1,28 +1,16 @@
-import { ArrowLeft } from "lucide-react";
 import { AppetiteTracker } from "@/components/AppetiteTracker";
-import { useMobileBackButton } from "@/hooks/useMobileBackButton";
-import { useBackNavigation } from "@/hooks/useBackNavigation";
+import { ToolHeader } from "@/components/ToolHeader";
+import { UtensilsCrossed } from "lucide-react";
 
 export const AppetitePage = () => {
-  const goBack = useBackNavigation("tools");
-  useMobileBackButton();
-
   return (
     <div className="min-h-screen bg-background pb-20">
+      <ToolHeader 
+        title="Appetite Tracker" 
+        subtitle="Log your appetite and cravings"
+        icon={UtensilsCrossed}
+      />
       <div className="max-w-7xl mx-auto px-4 py-6">
-        <header className="flex items-center gap-3 mb-6">
-          <button
-            onClick={goBack}
-            className="p-2 hover:bg-muted rounded-full transition-colors"
-          >
-            <ArrowLeft className="w-5 h-5" />
-          </button>
-          <div>
-            <h2 className="text-3xl font-bold text-foreground">Appetite Tracker</h2>
-            <p className="text-muted-foreground">Log your appetite and cravings</p>
-          </div>
-        </header>
-
         <AppetiteTracker />
       </div>
     </div>

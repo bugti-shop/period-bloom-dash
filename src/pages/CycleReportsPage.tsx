@@ -1,22 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, FileText, Calendar, TrendingUp, RefreshCw, Download } from 'lucide-react';
+import { FileText, Calendar, TrendingUp, RefreshCw, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
 import { format, subMonths, parseISO } from 'date-fns';
+import { ToolHeader } from '@/components/ToolHeader';
 import { 
   generateCycleReport, 
   loadCycleReports, 
   getCycleReportForMonth,
   CycleReport 
 } from '@/lib/cycleReportStorage';
-import { useMobileBackButton } from '@/hooks/useMobileBackButton';
-import { useBackNavigation } from '@/hooks/useBackNavigation';
 
 const CycleReportsPage = () => {
-  const goBack = useBackNavigation("tools");
-  useMobileBackButton();
   
   const [reports, setReports] = useState<CycleReport[]>([]);
   const [selectedMonth, setSelectedMonth] = useState(format(new Date(), 'yyyy-MM'));
@@ -65,22 +62,11 @@ const CycleReportsPage = () => {
 
   return (
     <div className="min-h-screen bg-background pb-20">
-      <div className="bg-gradient-to-r from-blue-500 to-purple-500 text-white p-4">
-        <div className="flex items-center gap-3">
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            onClick={goBack}
-            className="text-white hover:bg-white/20"
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <div>
-            <h1 className="text-lg font-semibold">Cycle Reports</h1>
-            <p className="text-xs opacity-90">Monthly summaries & insights</p>
-          </div>
-        </div>
-      </div>
+      <ToolHeader 
+        title="Cycle Reports" 
+        subtitle="Monthly summaries & insights"
+        icon={FileText}
+      />
 
       <div className="p-4 space-y-4">
         {/* Month Selector */}

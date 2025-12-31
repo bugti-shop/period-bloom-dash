@@ -1,19 +1,16 @@
 import { useState } from "react";
-import { useMobileBackButton } from "@/hooks/useMobileBackButton";
-import { useBackNavigation } from "@/hooks/useBackNavigation";
+import { Pill, Check, X, Flame, Bell, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, Check, X, Flame, Bell, Calendar } from "lucide-react";
+import { ToolHeader } from "@/components/ToolHeader";
 import { getPillReminder, savePillReminder, logPillTaken, logPillMissed, getPillLogs, checkMissedPills } from "@/lib/birthControlStorage";
 import { format } from "date-fns";
 
 export default function BirthControlPage() {
-  const goBack = useBackNavigation("tools");
-  useMobileBackButton();
   const { toast } = useToast();
   const [reminder, setReminder] = useState(getPillReminder());
   const [logs] = useState(getPillLogs());
@@ -67,19 +64,13 @@ export default function BirthControlPage() {
 
   return (
     <div className="min-h-screen bg-background pb-20">
+      <ToolHeader 
+        title="Birth Control Reminder" 
+        subtitle="Track your pill intake"
+        icon={Pill}
+      />
       
       <div className="container mx-auto px-4 py-6 max-w-2xl">
-        <Button
-          variant="ghost"
-          onClick={goBack}
-          className="mb-4"
-        >
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Back
-        </Button>
-
-        <h1 className="text-2xl font-bold mb-6">Birth Control Reminder</h1>
-
         <Card className="p-6 mb-6">
           <div className="flex items-center justify-center mb-6">
             <div className="text-center">

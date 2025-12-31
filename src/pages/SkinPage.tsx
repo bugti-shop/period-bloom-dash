@@ -1,11 +1,10 @@
 import { useState } from "react";
-import { ArrowLeft, ImageIcon } from "lucide-react";
-import { useMobileBackButton } from "@/hooks/useMobileBackButton";
-import { useBackNavigation } from "@/hooks/useBackNavigation";
+import { Sparkles, ImageIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { SkinTracker } from "@/components/SkinTracker";
 import { Card } from "@/components/ui/card";
+import { ToolHeader } from "@/components/ToolHeader";
 import {
   Dialog,
   DialogContent,
@@ -16,8 +15,6 @@ import { getAllSkinLogs, getMostCommonCondition } from "@/lib/skinStorage";
 import { format, parseISO } from "date-fns";
 
 const SkinPage = () => {
-  const goBack = useBackNavigation("tools");
-  useMobileBackButton();
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [compareDialogOpen, setCompareDialogOpen] = useState(false);
   const [selectedPhoto1, setSelectedPhoto1] = useState<string | null>(null);
@@ -39,17 +36,11 @@ const SkinPage = () => {
 
   return (
     <div className="min-h-screen bg-background pb-20">
-      <div className="bg-primary text-primary-foreground p-4 sticky top-0 z-10">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={goBack}
-          className="text-primary-foreground hover:bg-primary-foreground/20"
-        >
-          <ArrowLeft className="h-5 w-5" />
-        </Button>
-        <h1 className="text-xl font-bold mt-2">Skin Condition Tracker</h1>
-      </div>
+      <ToolHeader 
+        title="Skin Condition Tracker" 
+        subtitle="Track your skin health"
+        icon={Sparkles}
+      />
 
       <div className="p-4 space-y-4">
         <Card className="p-4">

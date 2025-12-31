@@ -1,9 +1,5 @@
 import { useState, useEffect } from "react";
-import { Header } from "@/components/Header";
-import { BottomNav } from "@/components/BottomNav";
-import { useMobileBackButton } from "@/hooks/useMobileBackButton";
-import { useBackNavigation } from "@/hooks/useBackNavigation";
-import { ArrowLeft } from "lucide-react";
+import { Droplets, CalendarIcon, Trash2, Settings } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,8 +8,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { format, differenceInDays, addDays } from "date-fns";
-import { CalendarIcon, Droplets, Trash2, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { ToolHeader } from "@/components/ToolHeader";
 import {
   loadWaterEntries,
   saveWaterEntry,
@@ -33,8 +29,6 @@ interface PeriodData {
 }
 
 export const WaterPage = () => {
-  const goBack = useBackNavigation("tools");
-  useMobileBackButton();
   const [date, setDate] = useState<Date>(new Date());
   const [glasses, setGlasses] = useState<number>(0);
   const [goal, setGoal] = useState<number>(8);
@@ -68,12 +62,12 @@ export const WaterPage = () => {
   const calculateCyclePhase = (currentDate: Date, data: PeriodData): string => {
     const daysSinceLastPeriod = differenceInDays(currentDate, data.lastPeriodDate);
     const cycleDay = ((daysSinceLastPeriod % data.cycleLength) + data.cycleLength) % data.cycleLength;
-
+    
     if (cycleDay < data.periodDuration) {
-      return "menstruation";
+      return "menstrual";
     } else if (cycleDay < 14) {
       return "follicular";
-    } else if (cycleDay >= 14 && cycleDay < 16) {
+    } else if (cycleDay < 17) {
       return "ovulation";
     } else {
       return "luteal";
@@ -101,17 +95,11 @@ export const WaterPage = () => {
 
   return (
     <div className="min-h-screen bg-background pb-20">
-      <div className="bg-primary text-primary-foreground p-4 sticky top-0 z-10">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={goBack}
-          className="text-primary-foreground hover:bg-primary-foreground/20"
-        >
-          <ArrowLeft className="h-5 w-5" />
-        </Button>
-        <h1 className="text-xl font-bold mt-2">Water Intake Tracker</h1>
-      </div>
+      <ToolHeader 
+        title="Water Intake Tracker" 
+        subtitle="Track your hydration"
+        icon={Droplets}
+      />
 
       <div className="max-w-4xl mx-auto px-4 py-6 space-y-6">
         <div className="flex items-center justify-end">
