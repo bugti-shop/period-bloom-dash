@@ -1,7 +1,5 @@
 import { useState } from "react";
-import { useMobileBackButton } from "@/hooks/useMobileBackButton";
-import { useBackNavigation } from "@/hooks/useBackNavigation";
-import { ArrowLeft } from "lucide-react";
+import { Moon, CalendarIcon, Trash2 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,8 +9,8 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { format } from "date-fns";
-import { CalendarIcon, Moon, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { ToolHeader } from "@/components/ToolHeader";
 import {
   loadSleepEntries,
   saveSleepEntry,
@@ -23,8 +21,6 @@ import {
 import { toast } from "sonner";
 
 export const SleepPage = () => {
-  const goBack = useBackNavigation("tools");
-  useMobileBackButton();
   const [date, setDate] = useState<Date>(new Date());
   const [hours, setHours] = useState<number>(7);
   const [quality, setQuality] = useState<"poor" | "fair" | "good" | "excellent">("good");
@@ -51,17 +47,11 @@ export const SleepPage = () => {
 
   return (
     <div className="min-h-screen bg-background pb-20">
-      <div className="bg-primary text-primary-foreground p-4 sticky top-0 z-10">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={goBack}
-          className="text-primary-foreground hover:bg-primary-foreground/20"
-        >
-          <ArrowLeft className="h-5 w-5" />
-        </Button>
-        <h1 className="text-xl font-bold mt-2">Sleep Quality Tracker</h1>
-      </div>
+      <ToolHeader 
+        title="Sleep Quality Tracker" 
+        subtitle="Monitor your sleep patterns"
+        icon={Moon}
+      />
 
       <div className="max-w-4xl mx-auto px-4 py-6 space-y-6">
 
