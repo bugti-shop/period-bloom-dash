@@ -1,13 +1,33 @@
 import { useState } from "react";
-import { Lock, Bell, Crown } from "lucide-react";
+import { Lock, Bell, Crown, KeyRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 
 interface PaywallProps {
   onStartTrial: () => void;
 }
 
+const ADMIN_CODE = "BUGTI";
+
 export const Paywall = ({ onStartTrial }: PaywallProps) => {
   const [selectedPlan, setSelectedPlan] = useState<"monthly" | "yearly">("yearly");
+  const [showAdminInput, setShowAdminInput] = useState(false);
+  const [adminCode, setAdminCode] = useState("");
+
+  const monthlyPrice = 2.99;
+  const yearlyPrice = 1.99;
+  const yearlyTotal = (yearlyPrice * 12).toFixed(2);
+
+  const handleAdminAccess = () => {
+    if (adminCode.toUpperCase() === ADMIN_CODE) {
+      toast.success("Admin access granted!");
+      onStartTrial();
+    } else {
+      toast.error("Invalid admin code");
+      setAdminCode("");
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6">
@@ -114,7 +134,7 @@ export const Paywall = ({ onStartTrial }: PaywallProps) => {
           >
             <div className="text-center">
               <div className="text-base font-semibold text-foreground mb-1">Monthly</div>
-              <div className="text-sm text-muted-foreground">$2.99/mo</div>
+              <div className="text-sm text-muted-foreground">${monthlyPrice}/mo</div>
             </div>
           </button>
 
@@ -132,10 +152,20 @@ export const Paywall = ({ onStartTrial }: PaywallProps) => {
             </div>
             <div className="text-center">
               <div className="text-base font-semibold text-foreground mb-1">Yearly</div>
-              <div className="text-sm text-muted-foreground">$1.99/yr</div>
+              <div className="text-sm text-muted-foreground">${yearlyPrice}/mo</div>
             </div>
           </button>
         </div>
+
+        {/* Yearly Total - Only show when yearly is selected */}
+        {selectedPlan === "yearly" && (
+          <div className="text-center py-2">
+            <p className="text-sm font-medium text-foreground">
+              Total: <span className="text-primary font-bold">${yearlyTotal}/year</span>
+            </p>
+            <p className="text-xs text-muted-foreground">Billed annually</p>
+          </div>
+        )}
 
         {/* CTA Button */}
         <Button
@@ -145,6 +175,37 @@ export const Paywall = ({ onStartTrial }: PaywallProps) => {
         >
           Start My 3-Day Free Trial
         </Button>
+
+        {/* Admin Access */}
+        <div className="pt-2">
+          {!showAdminInput ? (
+            <button
+              onClick={() => setShowAdminInput(true)}
+              className="w-full flex items-center justify-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-colors py-2"
+            >
+              <KeyRound className="w-3 h-3" />
+              Admin Access
+            </button>
+          ) : (
+            <div className="flex gap-2">
+              <Input
+                type="password"
+                placeholder="Enter admin code"
+                value={adminCode}
+                onChange={(e) => setAdminCode(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleAdminAccess()}
+                className="flex-1 text-sm"
+              />
+              <Button
+                onClick={handleAdminAccess}
+                variant="outline"
+                size="sm"
+              >
+                Submit
+              </Button>
+            </div>
+          )}
+        </div>
 
         {/* Terms */}
         <p className="text-xs text-center text-muted-foreground px-4">
