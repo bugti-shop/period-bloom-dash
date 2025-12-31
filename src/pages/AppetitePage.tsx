@@ -1,10 +1,10 @@
 import { ArrowLeft } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 import { AppetiteTracker } from "@/components/AppetiteTracker";
 import { useMobileBackButton } from "@/hooks/useMobileBackButton";
+import { useBackNavigation } from "@/hooks/useBackNavigation";
 
 export const AppetitePage = () => {
-  const navigate = useNavigate();
+  const goBack = useBackNavigation("tools");
   useMobileBackButton();
 
   return (
@@ -12,8 +12,8 @@ export const AppetitePage = () => {
       <div className="max-w-7xl mx-auto px-4 py-6">
         <header className="flex items-center gap-3 mb-6">
           <button
-            onClick={() => navigate(-1)}
-            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+            onClick={goBack}
+            className="p-2 hover:bg-muted rounded-full transition-colors"
           >
             <ArrowLeft className="w-5 h-5" />
           </button>

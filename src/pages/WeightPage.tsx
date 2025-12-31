@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useMobileBackButton } from "@/hooks/useMobileBackButton";
+import { useBackNavigation } from "@/hooks/useBackNavigation";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -7,13 +8,12 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Plus, Trash2, TrendingUp, Scale } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 import { saveWeightEntry, getWeightEntries, deleteWeightEntry, getWeightUnitPreference, saveWeightUnitPreference, analyzeWeightTrends } from "@/lib/weightStorage";
 import { loadFromLocalStorage } from "@/lib/storage";
 import { format } from "date-fns";
 
 export default function WeightPage() {
-  const navigate = useNavigate();
+  const goBack = useBackNavigation("tools");
   useMobileBackButton();
   const { toast } = useToast();
   const [unit, setUnit] = useState<"kg" | "lbs">(getWeightUnitPreference());
@@ -71,7 +71,7 @@ export default function WeightPage() {
       <div className="container mx-auto px-4 py-6 max-w-2xl">
         <Button
           variant="ghost"
-          onClick={() => navigate(-1)}
+          onClick={goBack}
           className="mb-4"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />

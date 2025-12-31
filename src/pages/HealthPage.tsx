@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { ArrowLeft } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 import { HealthTracker } from "@/components/HealthTracker";
 import { useMobileBackButton } from "@/hooks/useMobileBackButton";
+import { useBackNavigation } from "@/hooks/useBackNavigation";
 
 export const HealthPage = () => {
-  const navigate = useNavigate();
+  const goBack = useBackNavigation("tools");
   useMobileBackButton();
   const [selectedDate] = useState<Date>(new Date());
 
@@ -14,8 +14,8 @@ export const HealthPage = () => {
       <div className="max-w-7xl mx-auto px-4 py-6">
         <header className="flex items-center gap-3 mb-6">
           <button
-            onClick={() => navigate(-1)}
-            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+            onClick={goBack}
+            className="p-2 hover:bg-muted rounded-full transition-colors"
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
