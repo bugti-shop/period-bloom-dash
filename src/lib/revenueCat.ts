@@ -119,9 +119,7 @@ export const getCustomerInfo = async (): Promise<SubscriptionInfo> => {
 export const hasProAccess = async (): Promise<boolean> => {
   try {
     if (!Capacitor.isNativePlatform()) {
-      // Check localStorage for admin bypass in web mode
-      const adminAccess = localStorage.getItem('lufi-admin-access');
-      return adminAccess === 'true';
+      return false;
     }
 
     const { customerInfo } = await Purchases.getCustomerInfo();
