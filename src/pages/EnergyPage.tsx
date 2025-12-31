@@ -1,17 +1,13 @@
 import { useState } from "react";
-import { ArrowLeft } from "lucide-react";
-import { useMobileBackButton } from "@/hooks/useMobileBackButton";
-import { useBackNavigation } from "@/hooks/useBackNavigation";
-import { Button } from "@/components/ui/button";
+import { Zap } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { EnergyTracker } from "@/components/EnergyTracker";
 import { Card } from "@/components/ui/card";
+import { ToolHeader } from "@/components/ToolHeader";
 import { getAllEnergyLogs, getAverageEnergyByTime } from "@/lib/energyStorage";
 import { format, parseISO } from "date-fns";
 
 const EnergyPage = () => {
-  const goBack = useBackNavigation("tools");
-  useMobileBackButton();
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const allLogs = getAllEnergyLogs();
   const averages = getAverageEnergyByTime(7);
@@ -20,17 +16,11 @@ const EnergyPage = () => {
 
   return (
     <div className="min-h-screen bg-background pb-20">
-      <div className="bg-primary text-primary-foreground p-4 sticky top-0 z-10">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={goBack}
-          className="text-primary-foreground hover:bg-primary-foreground/20"
-        >
-          <ArrowLeft className="h-5 w-5" />
-        </Button>
-        <h1 className="text-xl font-bold mt-2">Energy Level Tracker</h1>
-      </div>
+      <ToolHeader 
+        title="Energy Level Tracker" 
+        subtitle="Monitor your energy patterns"
+        icon={Zap}
+      />
 
       <div className="p-4 space-y-4">
         <Card className="p-4">

@@ -1,19 +1,16 @@
 import { useState } from "react";
-import { useMobileBackButton } from "@/hooks/useMobileBackButton";
-import { useBackNavigation } from "@/hooks/useBackNavigation";
+import { Timer, Plus, Trash2, Package } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, Plus, Trash2, DollarSign, Package } from "lucide-react";
+import { ToolHeader } from "@/components/ToolHeader";
 import { saveProductLog, getProductLogs, deleteProductLog, getProductUsageStats } from "@/lib/periodProductStorage";
 import { format } from "date-fns";
 
 export default function PeriodProductPage() {
-  const goBack = useBackNavigation("tools");
-  useMobileBackButton();
   const { toast } = useToast();
   const [productType, setProductType] = useState<"pad" | "tampon" | "cup" | "liner">("pad");
   const [brand, setBrand] = useState("");
@@ -59,19 +56,13 @@ export default function PeriodProductPage() {
 
   return (
     <div className="min-h-screen bg-background pb-20">
+      <ToolHeader 
+        title="Period Product Tracker" 
+        subtitle="Track your product usage"
+        icon={Timer}
+      />
       
       <div className="container mx-auto px-4 py-6 max-w-2xl">
-        <Button
-          variant="ghost"
-          onClick={goBack}
-          className="mb-4"
-        >
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Back
-        </Button>
-
-        <h1 className="text-2xl font-bold mb-6">Period Product Tracker</h1>
-
         <Card className="p-6 mb-6">
           <h2 className="text-lg font-semibold mb-4">Usage Statistics</h2>
           <div className="grid grid-cols-2 gap-4">

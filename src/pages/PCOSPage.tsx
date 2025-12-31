@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Activity, Pill, TrendingUp, Plus, Scale } from 'lucide-react';
+import { Activity, Pill, TrendingUp, Plus, Scale, Brain } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
+import { ToolHeader } from '@/components/ToolHeader';
 import { 
   loadPCOSData,
   savePCOSData,
@@ -28,12 +29,8 @@ import {
   WeightEntry,
   CycleIrregularityEntry
 } from '@/lib/specialModeStorage';
-import { useMobileBackButton } from '@/hooks/useMobileBackButton';
-import { useBackNavigation } from '@/hooks/useBackNavigation';
 
 const PCOSPage = () => {
-  const goBack = useBackNavigation("tools");
-  useMobileBackButton();
   
   const [data, setData] = useState(loadPCOSData());
   const [activeTab, setActiveTab] = useState('symptoms');
@@ -190,22 +187,11 @@ const PCOSPage = () => {
 
   return (
     <div className="min-h-screen bg-background pb-20">
-      <div className="bg-gradient-to-r from-teal-500 to-cyan-500 text-white p-4">
-        <div className="flex items-center gap-3">
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            onClick={goBack}
-            className="text-white hover:bg-white/20"
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <div>
-            <h1 className="text-lg font-semibold">PCOS Mode</h1>
-            <p className="text-xs opacity-90">Manage your PCOS symptoms</p>
-          </div>
-        </div>
-      </div>
+      <ToolHeader 
+        title="PCOS Mode" 
+        subtitle="Manage your PCOS symptoms"
+        icon={Brain}
+      />
 
       <div className="p-4 space-y-4">
         {/* Enable Toggle */}

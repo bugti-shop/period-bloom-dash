@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Flame, Moon, Brain, Heart, Plus, Trash2 } from 'lucide-react';
+import { Flame, Moon, Brain, Heart, Plus, Trash2, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -10,6 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
+import { ToolHeader } from '@/components/ToolHeader';
 import { 
   loadPerimenopauseData,
   savePerimenopauseData,
@@ -23,12 +24,8 @@ import {
   SleepIssueEntry,
   MoodChangeEntry
 } from '@/lib/specialModeStorage';
-import { useMobileBackButton } from '@/hooks/useMobileBackButton';
-import { useBackNavigation } from '@/hooks/useBackNavigation';
 
 const PerimenopausePage = () => {
-  const goBack = useBackNavigation("tools");
-  useMobileBackButton();
   
   const [data, setData] = useState(loadPerimenopauseData());
   const [activeTab, setActiveTab] = useState('hotflashes');
@@ -140,22 +137,11 @@ const PerimenopausePage = () => {
 
   return (
     <div className="min-h-screen bg-background pb-20">
-      <div className="bg-gradient-to-r from-orange-500 to-red-500 text-white p-4">
-        <div className="flex items-center gap-3">
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            onClick={goBack}
-            className="text-white hover:bg-white/20"
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <div>
-            <h1 className="text-lg font-semibold">Perimenopause Mode</h1>
-            <p className="text-xs opacity-90">Track your transition symptoms</p>
-          </div>
-        </div>
-      </div>
+      <ToolHeader 
+        title="Perimenopause Mode" 
+        subtitle="Track your transition symptoms"
+        icon={Sparkles}
+      />
 
       <div className="p-4 space-y-4">
         {/* Enable Toggle */}

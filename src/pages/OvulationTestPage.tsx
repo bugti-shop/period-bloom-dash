@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Plus, TestTube, Calendar, Trash2, Camera } from 'lucide-react';
+import { Plus, TestTube, Calendar, Trash2, Camera } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
+import { ToolHeader } from '@/components/ToolHeader';
 import { 
   saveOvulationTest, 
   loadOvulationTests, 
@@ -15,12 +16,8 @@ import {
   predictOvulationFromTests,
   OvulationTest 
 } from '@/lib/ovulationTestStorage';
-import { useMobileBackButton } from '@/hooks/useMobileBackButton';
-import { useBackNavigation } from '@/hooks/useBackNavigation';
 
 const OvulationTestPage = () => {
-  const goBack = useBackNavigation("tools");
-  useMobileBackButton();
   
   const [tests, setTests] = useState<OvulationTest[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -105,23 +102,11 @@ const OvulationTestPage = () => {
 
   return (
     <div className="min-h-screen bg-background pb-20">
-      <div className="bg-gradient-to-r from-purple-500 to-pink-500 text-white p-4">
-        <div className="flex items-center gap-3">
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            onClick={goBack}
-            className="text-white hover:bg-white/20"
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <div>
-            <h1 className="text-lg font-semibold">Ovulation Tests</h1>
-            <p className="text-xs opacity-90">Track your LH surge</p>
-          </div>
-        </div>
-      </div>
-
+      <ToolHeader 
+        title="Ovulation Tests" 
+        subtitle="Track your LH surge"
+        icon={TestTube}
+      />
       <div className="p-4 space-y-4">
         {/* Prediction Card */}
         {predictedOvulation && (
