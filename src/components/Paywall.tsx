@@ -133,7 +133,6 @@ export const Paywall = ({ onStartTrial }: PaywallProps) => {
             <div className="text-center">
               <div className="text-base font-semibold text-foreground mb-1">Yearly</div>
               <div className="text-sm text-muted-foreground">$1.99/yr</div>
-              <div className="text-xs text-muted-foreground mt-0.5">Save 94%</div>
             </div>
           </button>
         </div>
