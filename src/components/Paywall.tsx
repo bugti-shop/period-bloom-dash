@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react";
-import { Lock, Bell, Crown, KeyRound, RefreshCw } from "lucide-react";
+import { Lock, Bell, Crown, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { useRevenueCat } from "@/hooks/useRevenueCat";
 import { Capacitor } from "@capacitor/core";
@@ -11,14 +9,8 @@ interface PaywallProps {
   onStartTrial: () => void;
 }
 
-const ADMIN_CODE = "BUGTI";
-const ADMIN_STORAGE_KEY = "lufi-admin-access";
-
 export const Paywall = ({ onStartTrial }: PaywallProps) => {
   const [selectedPlan, setSelectedPlan] = useState<"monthly" | "yearly">("yearly");
-  const [showAdminInput, setShowAdminInput] = useState(false);
-  const [adminCode, setAdminCode] = useState("");
-  const [rememberMe, setRememberMe] = useState(false);
   const [isPurchasing, setIsPurchasing] = useState(false);
 
   const {
@@ -75,34 +67,12 @@ export const Paywall = ({ onStartTrial }: PaywallProps) => {
     return defaultYearlyTotal;
   };
 
-  // Check for remembered admin access on mount
-  useEffect(() => {
-    const savedAdminAccess = localStorage.getItem(ADMIN_STORAGE_KEY);
-    if (savedAdminAccess === "true") {
-      toast.success("Welcome back, Admin!");
-      onStartTrial();
-    }
-  }, [onStartTrial]);
-
   // If user already has Pro access via RevenueCat
   useEffect(() => {
     if (isPro && !isLoading) {
       onStartTrial();
     }
   }, [isPro, isLoading, onStartTrial]);
-
-  const handleAdminAccess = () => {
-    if (adminCode.toUpperCase() === ADMIN_CODE) {
-      if (rememberMe) {
-        localStorage.setItem(ADMIN_STORAGE_KEY, "true");
-      }
-      toast.success("Admin access granted!");
-      onStartTrial();
-    } else {
-      toast.error("Invalid admin code");
-      setAdminCode("");
-    }
-  };
 
   const handlePurchase = async () => {
     setIsPurchasing(true);
@@ -322,52 +292,6 @@ export const Paywall = ({ onStartTrial }: PaywallProps) => {
         >
           Restore Purchases
         </button>
-
-        {/* Admin Access */}
-        <div className="pt-2">
-          {!showAdminInput ? (
-            <button
-              onClick={() => setShowAdminInput(true)}
-              className="w-full flex items-center justify-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-colors py-2"
-            >
-              <KeyRound className="w-3 h-3" />
-              Admin Access
-            </button>
-          ) : (
-            <div className="space-y-3">
-              <div className="flex gap-2">
-                <Input
-                  type="password"
-                  placeholder="Enter admin code"
-                  value={adminCode}
-                  onChange={(e) => setAdminCode(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && handleAdminAccess()}
-                  className="flex-1 text-sm"
-                />
-                <Button
-                  onClick={handleAdminAccess}
-                  variant="outline"
-                  size="sm"
-                >
-                  Submit
-                </Button>
-              </div>
-              <div className="flex items-center gap-2">
-                <Checkbox
-                  id="rememberMe"
-                  checked={rememberMe}
-                  onCheckedChange={(checked) => setRememberMe(checked === true)}
-                />
-                <label
-                  htmlFor="rememberMe"
-                  className="text-xs text-muted-foreground cursor-pointer"
-                >
-                  Remember me on this device
-                </label>
-              </div>
-            </div>
-          )}
-        </div>
 
         {/* Terms */}
         <p className="text-xs text-center text-muted-foreground px-4">

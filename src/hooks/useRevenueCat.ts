@@ -40,11 +40,9 @@ export const useRevenueCat = (): UseRevenueCatReturn => {
     const init = async () => {
       try {
         setIsLoading(true);
-        
-        // Check for admin bypass first
-        const adminAccess = localStorage.getItem('lufi-admin-access');
-        if (adminAccess === 'true') {
-          setIsPro(true);
+
+        if (!Capacitor.isNativePlatform()) {
+          console.log('RevenueCat: Web mode - limited functionality');
           setIsLoading(false);
           return;
         }
@@ -85,11 +83,8 @@ export const useRevenueCat = (): UseRevenueCatReturn => {
   const refreshStatus = useCallback(async () => {
     try {
       setIsLoading(true);
-      
-      // Check admin bypass
-      const adminAccess = localStorage.getItem('lufi-admin-access');
-      if (adminAccess === 'true') {
-        setIsPro(true);
+
+      if (!Capacitor.isNativePlatform()) {
         setIsLoading(false);
         return;
       }
