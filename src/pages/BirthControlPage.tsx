@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useMobileBackButton } from "@/hooks/useMobileBackButton";
+import { useBackNavigation } from "@/hooks/useBackNavigation";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -7,12 +8,11 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Check, X, Flame, Bell, Calendar } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 import { getPillReminder, savePillReminder, logPillTaken, logPillMissed, getPillLogs, checkMissedPills } from "@/lib/birthControlStorage";
 import { format } from "date-fns";
 
 export default function BirthControlPage() {
-  const navigate = useNavigate();
+  const goBack = useBackNavigation("tools");
   useMobileBackButton();
   const { toast } = useToast();
   const [reminder, setReminder] = useState(getPillReminder());
@@ -71,7 +71,7 @@ export default function BirthControlPage() {
       <div className="container mx-auto px-4 py-6 max-w-2xl">
         <Button
           variant="ghost"
-          onClick={() => navigate(-1)}
+          onClick={goBack}
           className="mb-4"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />

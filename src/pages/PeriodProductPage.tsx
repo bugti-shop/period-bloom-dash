@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useMobileBackButton } from "@/hooks/useMobileBackButton";
+import { useBackNavigation } from "@/hooks/useBackNavigation";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -7,12 +8,11 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Plus, Trash2, DollarSign, Package } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 import { saveProductLog, getProductLogs, deleteProductLog, getProductUsageStats } from "@/lib/periodProductStorage";
 import { format } from "date-fns";
 
 export default function PeriodProductPage() {
-  const navigate = useNavigate();
+  const goBack = useBackNavigation("tools");
   useMobileBackButton();
   const { toast } = useToast();
   const [productType, setProductType] = useState<"pad" | "tampon" | "cup" | "liner">("pad");
@@ -63,7 +63,7 @@ export default function PeriodProductPage() {
       <div className="container mx-auto px-4 py-6 max-w-2xl">
         <Button
           variant="ghost"
-          onClick={() => navigate(-1)}
+          onClick={goBack}
           className="mb-4"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />

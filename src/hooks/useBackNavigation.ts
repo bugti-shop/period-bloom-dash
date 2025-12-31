@@ -5,7 +5,7 @@ import { useCallback } from "react";
  * Hook to handle back navigation with fallback to specified tab
  * Useful when a page is accessed directly without navigation history
  */
-export const useBackNavigation = (fallbackTab: "home" | "symptoms" | "settings" | "tools" = "home") => {
+export const useBackNavigation = (fallbackTab: "home" | "symptoms" | "settings" | "tools" = "home", fallbackRoute?: string) => {
   const navigate = useNavigate();
 
   const goBack = useCallback(() => {
