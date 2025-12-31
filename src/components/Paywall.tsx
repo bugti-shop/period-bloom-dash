@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Lock, Bell, Crown, KeyRound } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 
 interface PaywallProps {
@@ -9,18 +10,32 @@ interface PaywallProps {
 }
 
 const ADMIN_CODE = "BUGTI";
+const ADMIN_STORAGE_KEY = "lufi-admin-access";
 
 export const Paywall = ({ onStartTrial }: PaywallProps) => {
   const [selectedPlan, setSelectedPlan] = useState<"monthly" | "yearly">("yearly");
   const [showAdminInput, setShowAdminInput] = useState(false);
   const [adminCode, setAdminCode] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
 
   const monthlyPrice = 2.99;
   const yearlyPrice = 1.99;
   const yearlyTotal = (yearlyPrice * 12).toFixed(2);
 
+  // Check for remembered admin access on mount
+  useEffect(() => {
+    const savedAdminAccess = localStorage.getItem(ADMIN_STORAGE_KEY);
+    if (savedAdminAccess === "true") {
+      toast.success("Welcome back, Admin!");
+      onStartTrial();
+    }
+  }, [onStartTrial]);
+
   const handleAdminAccess = () => {
     if (adminCode.toUpperCase() === ADMIN_CODE) {
+      if (rememberMe) {
+        localStorage.setItem(ADMIN_STORAGE_KEY, "true");
+      }
       toast.success("Admin access granted!");
       onStartTrial();
     } else {
@@ -187,22 +202,37 @@ export const Paywall = ({ onStartTrial }: PaywallProps) => {
               Admin Access
             </button>
           ) : (
-            <div className="flex gap-2">
-              <Input
-                type="password"
-                placeholder="Enter admin code"
-                value={adminCode}
-                onChange={(e) => setAdminCode(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleAdminAccess()}
-                className="flex-1 text-sm"
-              />
-              <Button
-                onClick={handleAdminAccess}
-                variant="outline"
-                size="sm"
-              >
-                Submit
-              </Button>
+            <div className="space-y-3">
+              <div className="flex gap-2">
+                <Input
+                  type="password"
+                  placeholder="Enter admin code"
+                  value={adminCode}
+                  onChange={(e) => setAdminCode(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && handleAdminAccess()}
+                  className="flex-1 text-sm"
+                />
+                <Button
+                  onClick={handleAdminAccess}
+                  variant="outline"
+                  size="sm"
+                >
+                  Submit
+                </Button>
+              </div>
+              <div className="flex items-center gap-2">
+                <Checkbox
+                  id="rememberMe"
+                  checked={rememberMe}
+                  onCheckedChange={(checked) => setRememberMe(checked === true)}
+                />
+                <label
+                  htmlFor="rememberMe"
+                  className="text-xs text-muted-foreground cursor-pointer"
+                >
+                  Remember me on this device
+                </label>
+              </div>
             </div>
           )}
         </div>
