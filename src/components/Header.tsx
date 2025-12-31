@@ -20,17 +20,7 @@ export const Header = ({ showArticlesToggle = false }: HeaderProps) => {
           </div>
           
           <div className="flex items-center gap-2">
-            {showArticlesToggle && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => navigate('/articles')}
-                className="gap-2"
-              >
-                <BookOpen className="h-4 w-4" />
-                <span className="hidden sm:inline">Learn</span>
-              </Button>
-            )}
+            {/* Articles toggle removed */}
           </div>
         </div>
       </div>
