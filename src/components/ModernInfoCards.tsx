@@ -131,10 +131,10 @@ export const ModernInfoCards = ({ periodData, displayMonth }: ModernInfoCardsPro
         return (
           <div
             key={card.id}
-            className={`${card.style.bgColor} ${card.style.borderColor} border rounded-2xl p-4 transition-all duration-200 hover:scale-[1.02] hover:shadow-md active:scale-[0.98]`}
+            className={`${card.style.bgColor} ${card.style.borderColor} border rounded-lg p-4`}
           >
             <div className="flex items-start justify-between mb-3">
-              <div className={`w-10 h-10 ${card.style.iconBg} rounded-xl flex items-center justify-center shadow-sm`}>
+              <div className={`w-10 h-10 ${card.style.iconBg} rounded-lg flex items-center justify-center`}>
                 <Icon className="w-5 h-5 text-white" />
               </div>
               <span className={`text-xs font-medium ${card.style.textColor} bg-white/60 px-2 py-1 rounded-full`}>

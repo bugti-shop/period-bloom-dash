@@ -61,7 +61,7 @@ export const QuickActionsBar = ({ variant, onActionClick }: QuickActionsBarProps
               <button
                 key={action.id}
                 onClick={() => handleClick(action)}
-                className={`flex items-center gap-2 px-4 py-2.5 rounded-full font-medium text-sm transition-all duration-200 hover:scale-105 active:scale-95 shadow-sm ${action.bgColor} ${action.color}`}
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-full font-medium text-sm transition-all border-2 border-b-4 active:border-b-2 active:translate-y-0.5 ${action.bgColor} ${action.color}`}
               >
                 <Icon className="w-4 h-4" />
                 <span>{action.label}</span>
