@@ -190,8 +190,8 @@ const Index = () => {
       
       {/* Render content based on active tab */}
       {activeTab === "home" && (
-        <div className="max-w-lg mx-auto py-4 px-4 pb-24">
-          <div className="space-y-5">
+        <div className="max-w-lg mx-auto py-5 px-5 pb-28">
+          <div className="space-y-6">
             {/* Quick Actions */}
             <QuickActionsBar variant="period" />
 
@@ -200,19 +200,20 @@ const Index = () => {
 
             {/* Confidence Score for Irregular Cycles */}
             {periodData.cycleType === 'irregular' && (
-              <div className="bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-100 rounded-2xl p-4">
-                <div className="flex items-center justify-between">
+              <div className="relative overflow-hidden bg-gradient-to-br from-indigo-500/10 via-purple-500/10 to-pink-500/10 border border-indigo-200/50 rounded-3xl p-5">
+                <div className="absolute top-0 right-0 w-24 h-24 bg-purple-500/10 rounded-full blur-2xl" />
+                <div className="relative flex items-center justify-between">
                   <div>
-                    <p className="text-xs text-muted-foreground mb-1">Prediction Confidence</p>
-                    <p className="text-2xl font-bold text-primary">{periodData.confidence}%</p>
-                    <p className="text-xs text-muted-foreground mt-1">
+                    <p className="text-xs font-medium text-muted-foreground mb-1.5 tracking-wide uppercase">Prediction Confidence</p>
+                    <p className="text-4xl font-bold text-primary tracking-tight">{periodData.confidence}%</p>
+                    <p className="text-xs text-muted-foreground mt-1.5">
                       Based on {periodData.cycles.length} cycles
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="text-xs text-muted-foreground mb-1">Avg Cycle</p>
-                    <p className="text-xl font-bold text-foreground">{periodData.mean} days</p>
-                    <p className="text-xs text-muted-foreground mt-1">
+                    <p className="text-xs font-medium text-muted-foreground mb-1.5 tracking-wide uppercase">Avg Cycle</p>
+                    <p className="text-3xl font-bold text-foreground tracking-tight">{periodData.mean}d</p>
+                    <p className="text-xs text-muted-foreground mt-1.5">
                       ± {periodData.stdDev.toFixed(1)} days
                     </p>
                   </div>
@@ -222,8 +223,8 @@ const Index = () => {
 
             {/* Calendar */}
             {visibility.periodCalendar && (
-              <div className="space-y-2">
-                <h3 className="text-sm font-bold text-foreground px-1">Your Calendar</h3>
+              <div className="space-y-3">
+                <h3 className="text-sm font-bold text-foreground px-1 tracking-wide">Your Calendar</h3>
                 <ModernCalendar 
                   periodDates={periodDates}
                   cycleLength={periodData.cycleType === 'regular' ? periodData.cycleLength : periodData.mean}
@@ -244,8 +245,8 @@ const Index = () => {
 
             {/* Info Cards */}
             {visibility.periodInfoCards && (
-              <div className="space-y-2">
-                <h3 className="text-sm font-bold text-foreground px-1">Cycle Overview</h3>
+              <div className="space-y-3">
+                <h3 className="text-sm font-bold text-foreground px-1 tracking-wide">Cycle Overview</h3>
                 <ModernInfoCards 
                   periodData={periodData} 
                   displayMonth={selectedMonth || undefined} 
