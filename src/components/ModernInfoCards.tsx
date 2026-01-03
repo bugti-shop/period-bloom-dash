@@ -124,28 +124,28 @@ export const ModernInfoCards = ({ periodData, displayMonth }: ModernInfoCardsPro
   ];
 
   return (
-    <div className="grid grid-cols-2 gap-3">
+    <div className="grid grid-cols-2 gap-2 sm:gap-3">
       {cards.map((card) => {
         const Icon = card.icon;
         
         return (
           <div
             key={card.id}
-            className={`${card.style.bgColor} ${card.style.borderColor} border rounded-lg p-4`}
+            className={`${card.style.bgColor} ${card.style.borderColor} border rounded-lg p-2.5 sm:p-4`}
           >
-            <div className="flex items-start justify-between mb-3">
-              <div className={`w-10 h-10 ${card.style.iconBg} rounded-lg flex items-center justify-center`}>
-                <Icon className="w-5 h-5 text-white" />
+            <div className="flex items-start justify-between mb-2 sm:mb-3">
+              <div className={`w-8 h-8 sm:w-10 sm:h-10 ${card.style.iconBg} rounded-lg flex items-center justify-center`}>
+                <Icon className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
               </div>
-              <span className={`text-xs font-medium ${card.style.textColor} bg-white/60 px-2 py-1 rounded-full`}>
+              <span className={`text-[10px] sm:text-xs font-medium ${card.style.textColor} bg-white/60 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full`}>
                 {card.subtitle}
               </span>
             </div>
             
-            <h3 className="text-sm font-semibold text-gray-800 mb-1">
+            <h3 className="text-xs sm:text-sm font-semibold text-gray-800 mb-0.5 sm:mb-1">
               {card.title}
             </h3>
-            <p className={`text-lg font-bold ${card.style.textColor}`}>
+            <p className={`text-sm sm:text-lg font-bold ${card.style.textColor}`}>
               {card.date}
             </p>
           </div>
