@@ -31,7 +31,7 @@ export const ActionButtons = ({ onUpdatePeriod, onViewHistory, onViewInsights }:
       {/* Secondary action */}
       <button
         onClick={onViewInsights}
-        className="w-full flex items-center justify-center gap-2 py-4 bg-primary/20 backdrop-blur-sm text-primary rounded-lg font-semibold text-sm border-2 border-b-4 border-primary/30 active:border-b-2 active:translate-y-0.5 transition-all"
+        className="w-full flex items-center justify-center gap-2 py-4 bg-primary text-primary-foreground rounded-lg font-semibold text-sm border-2 border-b-4 border-primary/80 active:border-b-2 active:translate-y-0.5 transition-all"
       >
         <TrendingUp className="w-4 h-4" />
         View Cycle Insights & Trends
