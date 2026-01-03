@@ -25,12 +25,12 @@ interface ModernInfoCardsProps {
 }
 
 const cardStyles = [
-  { gradient: 'from-rose-500 to-pink-500', iconGlow: 'shadow-rose-500/30', badgeBg: 'bg-rose-100 text-rose-700' },
-  { gradient: 'from-pink-500 to-fuchsia-500', iconGlow: 'shadow-pink-500/30', badgeBg: 'bg-pink-100 text-pink-700' },
-  { gradient: 'from-cyan-500 to-teal-500', iconGlow: 'shadow-cyan-500/30', badgeBg: 'bg-cyan-100 text-cyan-700' },
-  { gradient: 'from-blue-500 to-indigo-500', iconGlow: 'shadow-blue-500/30', badgeBg: 'bg-blue-100 text-blue-700' },
-  { gradient: 'from-amber-500 to-orange-500', iconGlow: 'shadow-amber-500/30', badgeBg: 'bg-amber-100 text-amber-700' },
-  { gradient: 'from-violet-500 to-purple-500', iconGlow: 'shadow-violet-500/30', badgeBg: 'bg-violet-100 text-violet-700' },
+  { bgColor: 'bg-rose-100', iconBg: 'bg-rose-500', textColor: 'text-rose-700', borderColor: 'border-rose-200' },
+  { bgColor: 'bg-pink-100', iconBg: 'bg-pink-500', textColor: 'text-pink-700', borderColor: 'border-pink-200' },
+  { bgColor: 'bg-cyan-100', iconBg: 'bg-cyan-500', textColor: 'text-cyan-700', borderColor: 'border-cyan-200' },
+  { bgColor: 'bg-blue-100', iconBg: 'bg-blue-500', textColor: 'text-blue-700', borderColor: 'border-blue-200' },
+  { bgColor: 'bg-amber-100', iconBg: 'bg-amber-500', textColor: 'text-amber-700', borderColor: 'border-amber-200' },
+  { bgColor: 'bg-purple-100', iconBg: 'bg-purple-500', textColor: 'text-purple-700', borderColor: 'border-purple-200' },
 ];
 
 export const ModernInfoCards = ({ periodData, displayMonth }: ModernInfoCardsProps) => {
@@ -77,7 +77,7 @@ export const ModernInfoCards = ({ periodData, displayMonth }: ModernInfoCardsPro
       date: isIrregular 
         ? `${format(addDays(nextPeriodDate, -Math.round(stdDev * 1.5)), "MMM dd")} - ${format(addDays(nextPeriodDate, Math.round(stdDev * 1.5)), "MMM dd")}`
         : format(nextPeriodDate, "MMM dd"),
-      subtitle: `${daysToNextPeriod} days`,
+      subtitle: `${daysToNextPeriod} days left`,
       icon: Droplet,
       style: cardStyles[0],
     },
@@ -85,7 +85,7 @@ export const ModernInfoCards = ({ periodData, displayMonth }: ModernInfoCardsPro
       id: 2,
       title: "Ovulation",
       date: format(nextOvulationDate, "MMM dd"),
-      subtitle: `${daysToOvulation} days`,
+      subtitle: `${daysToOvulation} days left`,
       icon: Heart,
       style: cardStyles[1],
     },
@@ -93,7 +93,7 @@ export const ModernInfoCards = ({ periodData, displayMonth }: ModernInfoCardsPro
       id: 3,
       title: "Fertile Days",
       date: `${format(fertileWindowStart, "MMM dd")} - ${format(fertileWindowEnd, "dd")}`,
-      subtitle: `${daysToFertileWindow} days`,
+      subtitle: `${daysToFertileWindow} days left`,
       icon: Flower2,
       style: cardStyles[2],
     },
@@ -101,7 +101,7 @@ export const ModernInfoCards = ({ periodData, displayMonth }: ModernInfoCardsPro
       id: 4,
       title: "Safe Days",
       date: `${format(safeDayStart, "MMM dd")} - ${format(safeDayEnd, "dd")}`,
-      subtitle: `${daysToSafeDays} days`,
+      subtitle: `${daysToSafeDays} days left`,
       icon: Shield,
       style: cardStyles[3],
     },
@@ -117,7 +117,7 @@ export const ModernInfoCards = ({ periodData, displayMonth }: ModernInfoCardsPro
       id: 6,
       title: "Pregnancy Test",
       date: format(addDays(nextPeriodDate, 14), "MMM dd"),
-      subtitle: "Earliest",
+      subtitle: "Earliest date",
       icon: TestTube2,
       style: cardStyles[5],
     },
@@ -125,35 +125,29 @@ export const ModernInfoCards = ({ periodData, displayMonth }: ModernInfoCardsPro
 
   return (
     <div className="grid grid-cols-2 gap-3">
-      {cards.map((card, index) => {
+      {cards.map((card) => {
         const Icon = card.icon;
         
         return (
           <div
             key={card.id}
-            className="group relative bg-card rounded-3xl p-4 border border-border/40 transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5 active:scale-[0.98] overflow-hidden"
-            style={{ animationDelay: `${index * 50}ms` }}
+            className={`${card.style.bgColor} ${card.style.borderColor} border rounded-2xl p-4 transition-all duration-200 hover:scale-[1.02] hover:shadow-md active:scale-[0.98]`}
           >
-            {/* Subtle gradient overlay on hover */}
-            <div className={`absolute inset-0 bg-gradient-to-br ${card.style.gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-300`} />
-            
-            <div className="relative z-10">
-              <div className="flex items-start justify-between mb-3">
-                <div className={`w-11 h-11 bg-gradient-to-br ${card.style.gradient} rounded-2xl flex items-center justify-center shadow-lg ${card.style.iconGlow} transition-transform duration-300 group-hover:scale-110`}>
-                  <Icon className="w-5 h-5 text-white drop-shadow-sm" />
-                </div>
-                <span className={`text-[10px] font-bold ${card.style.badgeBg} px-2.5 py-1 rounded-full tracking-wide uppercase`}>
-                  {card.subtitle}
-                </span>
+            <div className="flex items-start justify-between mb-3">
+              <div className={`w-10 h-10 ${card.style.iconBg} rounded-xl flex items-center justify-center shadow-sm`}>
+                <Icon className="w-5 h-5 text-white" />
               </div>
-              
-              <h3 className="text-xs font-medium text-muted-foreground mb-1 tracking-wide">
-                {card.title}
-              </h3>
-              <p className="text-lg font-bold text-foreground tracking-tight">
-                {card.date}
-              </p>
+              <span className={`text-xs font-medium ${card.style.textColor} bg-white/60 px-2 py-1 rounded-full`}>
+                {card.subtitle}
+              </span>
             </div>
+            
+            <h3 className="text-sm font-semibold text-gray-800 mb-1">
+              {card.title}
+            </h3>
+            <p className={`text-lg font-bold ${card.style.textColor}`}>
+              {card.date}
+            </p>
           </div>
         );
       })}

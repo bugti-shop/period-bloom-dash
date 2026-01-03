@@ -1,5 +1,5 @@
 import { format, addDays, differenceInDays } from "date-fns";
-import { Droplet, Sparkles, TrendingUp } from "lucide-react";
+import { Droplet, Sparkles } from "lucide-react";
 import { CycleEntry } from "@/lib/irregularCycle";
 
 interface RegularPeriodData {
@@ -42,121 +42,60 @@ export const CycleStatusCard = ({ periodData }: CycleStatusCardProps) => {
   
   const daysUntilOvulation = differenceInDays(ovulationDate, today);
 
-  // Determine current phase with luxury colors
+  // Determine current phase
   const getPhaseInfo = () => {
     if (daysUntilPeriod <= 0 && daysUntilPeriod >= -(periodData.cycleType === 'regular' ? periodData.periodDuration : 5)) {
-      return { 
-        phase: 'Period', 
-        gradient: 'from-rose-500 via-pink-500 to-rose-400',
-        bgGlow: 'shadow-rose-500/30',
-        message: "You're on your period",
-        icon: Droplet
-      };
+      return { phase: 'Period', color: 'from-rose-400 to-pink-500', message: "You're on your period" };
     } else if (daysUntilOvulation >= -1 && daysUntilOvulation <= 1) {
-      return { 
-        phase: 'Ovulation', 
-        gradient: 'from-violet-500 via-purple-500 to-fuchsia-500',
-        bgGlow: 'shadow-purple-500/30',
-        message: "Peak fertility window",
-        icon: Sparkles
-      };
+      return { phase: 'Ovulation', color: 'from-purple-400 to-pink-500', message: "Peak fertility window" };
     } else if (daysUntilOvulation > 1 && daysUntilOvulation <= 5) {
-      return { 
-        phase: 'Fertile', 
-        gradient: 'from-sky-500 via-cyan-500 to-teal-400',
-        bgGlow: 'shadow-cyan-500/30',
-        message: "Fertile window",
-        icon: TrendingUp
-      };
+      return { phase: 'Fertile', color: 'from-blue-400 to-cyan-500', message: "Fertile window" };
     } else if (daysUntilPeriod <= 7) {
-      return { 
-        phase: 'Luteal', 
-        gradient: 'from-amber-500 via-orange-500 to-yellow-400',
-        bgGlow: 'shadow-amber-500/30',
-        message: "Luteal phase",
-        icon: Sparkles
-      };
+      return { phase: 'Luteal', color: 'from-amber-400 to-orange-500', message: "Luteal phase" };
     } else {
-      return { 
-        phase: 'Follicular', 
-        gradient: 'from-emerald-500 via-green-500 to-teal-400',
-        bgGlow: 'shadow-emerald-500/30',
-        message: "Follicular phase",
-        icon: TrendingUp
-      };
+      return { phase: 'Follicular', color: 'from-green-400 to-emerald-500', message: "Follicular phase" };
     }
   };
 
   const phaseInfo = getPhaseInfo();
-  const PhaseIcon = phaseInfo.icon;
-
-  // Calculate progress through cycle
-  const cycleProgress = periodData.cycleType === 'regular'
-    ? ((cycleLength - daysUntilPeriod) / cycleLength) * 100
-    : ((periodData.mean - daysUntilPeriod) / periodData.mean) * 100;
 
   return (
-    <div className={`relative overflow-hidden rounded-[2rem] bg-gradient-to-br ${phaseInfo.gradient} p-1 shadow-2xl ${phaseInfo.bgGlow}`}>
-      {/* Inner card with glass effect */}
-      <div className="relative bg-gradient-to-br from-white/20 to-transparent rounded-[1.75rem] p-6 backdrop-blur-sm">
-        {/* Animated background orbs */}
-        <div className="absolute top-0 right-0 w-40 h-40 bg-white/20 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl animate-pulse" />
-        <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/15 rounded-full translate-y-1/2 -translate-x-1/2 blur-xl" />
-        <div className="absolute top-1/2 right-1/4 w-20 h-20 bg-white/10 rounded-full blur-xl animate-pulse" style={{ animationDelay: '1s' }} />
-        
-        <div className="relative z-10">
-          {/* Header */}
-          <div className="flex items-start justify-between mb-6">
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <div className="flex items-center gap-1.5 bg-white/25 backdrop-blur-md px-3 py-1 rounded-full">
-                  <PhaseIcon className="w-3.5 h-3.5 text-white" />
-                  <span className="text-xs font-semibold text-white tracking-wide">{phaseInfo.phase}</span>
-                </div>
-              </div>
-              <h2 className="text-6xl font-bold text-white tracking-tighter drop-shadow-lg">
-                {daysUntilPeriod > 0 ? daysUntilPeriod : 0}
-              </h2>
-              <p className="text-base font-medium text-white/90 mt-1 tracking-wide">
-                days until next period
-              </p>
+    <div className={`relative overflow-hidden rounded-3xl bg-gradient-to-br ${phaseInfo.color} p-6 text-white shadow-lg`}>
+      {/* Decorative elements */}
+      <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2" />
+      <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2" />
+      
+      <div className="relative z-10">
+        <div className="flex items-start justify-between mb-4">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <Sparkles className="w-4 h-4" />
+              <span className="text-xs font-medium opacity-90">{phaseInfo.message}</span>
             </div>
-            
-            <div className="w-16 h-16 bg-white/25 rounded-2xl flex items-center justify-center backdrop-blur-md shadow-lg border border-white/30">
-              <Droplet className="w-8 h-8 text-white drop-shadow-md" />
-            </div>
-          </div>
-
-          {/* Progress bar */}
-          <div className="mb-5">
-            <div className="flex items-center justify-between mb-1.5">
-              <span className="text-xs font-medium text-white/80">Cycle Progress</span>
-              <span className="text-xs font-bold text-white">{Math.min(Math.round(cycleProgress), 100)}%</span>
-            </div>
-            <div className="h-2 bg-white/20 rounded-full overflow-hidden backdrop-blur-sm">
-              <div 
-                className="h-full bg-white rounded-full transition-all duration-700 ease-out shadow-md"
-                style={{ width: `${Math.min(cycleProgress, 100)}%` }}
-              />
-            </div>
+            <h2 className="text-4xl font-bold tracking-tight">
+              {daysUntilPeriod > 0 ? daysUntilPeriod : 0}
+            </h2>
+            <p className="text-sm font-medium opacity-90 mt-1">
+              days until next period
+            </p>
           </div>
           
-          {/* Footer stats */}
-          <div className="flex items-center gap-3 pt-4 border-t border-white/25">
-            <div className="flex-1 bg-white/15 backdrop-blur-sm rounded-2xl p-3">
-              <p className="text-[10px] uppercase tracking-wider text-white/70 mb-0.5 font-medium">Next Period</p>
-              <p className="text-sm font-bold text-white">{format(nextPeriodDate, "MMM dd")}</p>
-            </div>
-            <div className="flex-1 bg-white/15 backdrop-blur-sm rounded-2xl p-3">
-              <p className="text-[10px] uppercase tracking-wider text-white/70 mb-0.5 font-medium">Ovulation</p>
-              <p className="text-sm font-bold text-white">
-                {daysUntilOvulation > 0 ? `in ${daysUntilOvulation}d` : 'Passed'}
-              </p>
-            </div>
-            <div className="flex-1 bg-white/15 backdrop-blur-sm rounded-2xl p-3">
-              <p className="text-[10px] uppercase tracking-wider text-white/70 mb-0.5 font-medium">Cycle</p>
-              <p className="text-sm font-bold text-white">{cycleLength} days</p>
-            </div>
+          <div className="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+            <Droplet className="w-7 h-7" />
+          </div>
+        </div>
+        
+        <div className="flex items-center gap-4 pt-4 border-t border-white/20">
+          <div className="flex-1">
+            <p className="text-xs opacity-75 mb-0.5">Next Period</p>
+            <p className="text-sm font-semibold">{format(nextPeriodDate, "MMM dd, yyyy")}</p>
+          </div>
+          <div className="w-px h-8 bg-white/30" />
+          <div className="flex-1">
+            <p className="text-xs opacity-75 mb-0.5">Ovulation</p>
+            <p className="text-sm font-semibold">
+              {daysUntilOvulation > 0 ? `in ${daysUntilOvulation} days` : 'Passed'}
+            </p>
           </div>
         </div>
       </div>
