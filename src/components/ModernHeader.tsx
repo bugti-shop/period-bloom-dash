@@ -31,7 +31,7 @@ export const ModernHeader = ({ title = "Lufi" }: ModernHeaderProps) => {
       <div className="max-w-7xl mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center overflow-hidden shadow-sm">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center overflow-hidden">
               <img src={logo} alt="Lufi" className="h-8 w-8" />
             </div>
             <span className="text-xl font-bold text-foreground tracking-tight">{title}</span>
@@ -40,7 +40,7 @@ export const ModernHeader = ({ title = "Lufi" }: ModernHeaderProps) => {
           <div className="flex items-center gap-2">
             <button
               onClick={toggleTheme}
-              className="w-9 h-9 rounded-xl bg-muted/50 hover:bg-muted flex items-center justify-center transition-all duration-200 hover:scale-105"
+              className="w-9 h-9 rounded-lg bg-muted/50 hover:bg-muted flex items-center justify-center transition-colors border-2 border-b-4 border-border active:border-b-2 active:translate-y-0.5"
               aria-label="Toggle theme"
             >
               {isDark ? (
