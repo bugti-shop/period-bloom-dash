@@ -58,28 +58,28 @@ export const HealthFeaturesSection = () => {
   if (visibleFeatures.length === 0) return null;
 
   return (
-    <div className="space-y-2 sm:space-y-3">
-      <h3 className="text-xs sm:text-sm font-bold text-foreground px-1">Health Features</h3>
+    <div className="space-y-3">
+      <h3 className="text-sm font-bold text-foreground px-1">Health Features</h3>
       
-      <div className="space-y-1.5 sm:space-y-2">
+      <div className="space-y-2">
         {visibleFeatures.map((feature) => {
           const Icon = feature.icon;
           return (
             <button
               key={feature.id}
               onClick={() => navigate(feature.route)}
-              className={`w-full flex items-center gap-2.5 sm:gap-3 p-2.5 sm:p-4 ${feature.bgColor} ${feature.borderColor} border rounded-lg`}
+              className={`w-full flex items-center gap-3 p-3 ${feature.bgColor} ${feature.borderColor} border rounded-xl shadow-sm`}
             >
-              <div className={`w-9 h-9 sm:w-11 sm:h-11 ${feature.color} rounded-lg flex items-center justify-center`}>
-                <Icon className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+              <div className={`w-10 h-10 ${feature.color} rounded-xl flex items-center justify-center`}>
+                <Icon className="w-5 h-5 text-white" />
               </div>
               
               <div className="flex-1 text-left">
-                <h4 className="text-xs sm:text-sm font-semibold text-gray-900">{feature.title}</h4>
-                <p className="text-[10px] sm:text-xs text-gray-500">{feature.description}</p>
+                <h4 className="text-sm font-semibold text-gray-900">{feature.title}</h4>
+                <p className="text-xs text-gray-500">{feature.description}</p>
               </div>
               
-              <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
+              <ChevronRight className="w-5 h-5 text-gray-400" />
             </button>
           );
         })}

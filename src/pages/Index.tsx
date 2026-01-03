@@ -190,8 +190,8 @@ const Index = () => {
       
       {/* Render content based on active tab */}
       {activeTab === "home" && (
-        <div className="max-w-lg mx-auto py-2 sm:py-4 px-3 sm:px-4 pb-24">
-          <div className="space-y-3 sm:space-y-5">
+        <div className="max-w-lg mx-auto py-3 px-4 pb-24">
+          <div className="space-y-4">
             {/* Quick Actions */}
             <QuickActionsBar variant="period" />
 

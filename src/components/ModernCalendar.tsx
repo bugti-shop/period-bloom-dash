@@ -95,24 +95,24 @@ export const ModernCalendar = ({
   };
 
   return (
-    <div className="bg-card rounded-lg p-3 sm:p-4 border border-border/50">
+    <div className="bg-card rounded-xl p-4 border border-border/50 shadow-sm">
       {/* Header */}
-      <div className="flex items-center justify-between mb-2 sm:mb-4">
+      <div className="flex items-center justify-between mb-3">
         <button
           onClick={handlePrevMonth}
-          className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-muted/50 hover:bg-muted flex items-center justify-center transition-all"
+          className="w-8 h-8 rounded-lg bg-muted/50 hover:bg-muted flex items-center justify-center transition-all"
           aria-label="Previous month"
         >
           <ChevronLeft className="w-4 h-4 text-foreground" />
         </button>
         
-        <h3 className="text-sm sm:text-base font-bold text-foreground">
+        <h3 className="text-base font-bold text-foreground">
           {format(displayMonth, "MMMM yyyy")}
         </h3>
         
         <button
           onClick={handleNextMonth}
-          className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-muted/50 hover:bg-muted flex items-center justify-center transition-all"
+          className="w-8 h-8 rounded-lg bg-muted/50 hover:bg-muted flex items-center justify-center transition-all"
           aria-label="Next month"
         >
           <ChevronRight className="w-4 h-4 text-foreground" />
@@ -120,11 +120,11 @@ export const ModernCalendar = ({
       </div>
 
       {/* Week days header */}
-      <div className="grid grid-cols-7 gap-0.5 sm:gap-1 mb-1 sm:mb-2">
+      <div className="grid grid-cols-7 gap-1 mb-1">
         {weekDays.map((day, index) => (
           <div
             key={index}
-            className="text-center text-[10px] sm:text-xs font-semibold text-muted-foreground py-1 sm:py-2"
+            className="text-center text-xs font-semibold text-muted-foreground py-1"
           >
             {day}
           </div>
@@ -132,7 +132,7 @@ export const ModernCalendar = ({
       </div>
 
       {/* Calendar grid */}
-      <div className="grid grid-cols-7 gap-0.5 sm:gap-1">
+      <div className="grid grid-cols-7 gap-1">
         {Array.from({ length: startPadding }).map((_, index) => (
           <div key={`empty-${index}`} />
         ))}
@@ -164,7 +164,7 @@ export const ModernCalendar = ({
               key={day.toString()}
               onClick={() => onDateSelect?.(day)}
               className={`
-                aspect-square flex items-center justify-center rounded-lg text-xs sm:text-sm font-medium transition-all
+                aspect-square flex items-center justify-center rounded-xl text-sm font-medium transition-all
                 ${bgClass}
                 ${ringClass}
                 ${isToday && !isPeriod && !isOvulation && !isFertile && !isSymptom ? "ring-2 ring-primary ring-offset-1" : ""}
@@ -179,22 +179,22 @@ export const ModernCalendar = ({
       </div>
 
       {/* Legend */}
-      <div className="mt-2 sm:mt-4 flex gap-2 sm:gap-3 justify-center flex-wrap">
+      <div className="mt-3 flex gap-3 justify-center flex-wrap">
         <div className="flex items-center gap-1">
-          <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-md bg-rose-500" />
-          <span className="text-[10px] sm:text-xs text-muted-foreground">Period</span>
+          <div className="w-3 h-3 rounded-md bg-rose-500" />
+          <span className="text-xs text-muted-foreground">Period</span>
         </div>
         <div className="flex items-center gap-1">
-          <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-md bg-purple-500 ring-1 ring-purple-300" />
-          <span className="text-[10px] sm:text-xs text-muted-foreground">Ovulation</span>
+          <div className="w-3 h-3 rounded-md bg-purple-500 ring-1 ring-purple-300" />
+          <span className="text-xs text-muted-foreground">Ovulation</span>
         </div>
         <div className="flex items-center gap-1">
-          <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-md bg-cyan-400" />
-          <span className="text-[10px] sm:text-xs text-muted-foreground">Fertile</span>
+          <div className="w-3 h-3 rounded-md bg-cyan-400" />
+          <span className="text-xs text-muted-foreground">Fertile</span>
         </div>
         <div className="flex items-center gap-1">
-          <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-md ring-2 ring-primary" />
-          <span className="text-[10px] sm:text-xs text-muted-foreground">Today</span>
+          <div className="w-3 h-3 rounded-md ring-2 ring-primary" />
+          <span className="text-xs text-muted-foreground">Today</span>
         </div>
       </div>
     </div>
