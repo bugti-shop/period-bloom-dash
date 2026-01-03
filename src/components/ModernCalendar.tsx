@@ -132,9 +132,9 @@ export const ModernCalendar = ({
       </div>
 
       {/* Calendar grid */}
-      <div className="grid grid-cols-7 gap-1">
+      <div className="grid grid-cols-7 gap-1.5">
         {Array.from({ length: startPadding }).map((_, index) => (
-          <div key={`empty-${index}`} />
+          <div key={`empty-${index}`} className="min-h-[44px]" />
         ))}
         
         {daysInMonth.map((day) => {
@@ -145,18 +145,18 @@ export const ModernCalendar = ({
           const isToday = isSameDay(day, today);
           const isSelected = selectedDate && isSameDay(day, selectedDate);
           
-          let bgClass = "bg-transparent text-foreground hover:bg-muted/50";
+          let bgClass = "bg-transparent text-foreground hover:bg-muted/50 active:scale-95";
           let ringClass = "";
           
           if (isPeriod) {
-            bgClass = "bg-rose-500 text-white";
+            bgClass = "bg-rose-500 text-white active:scale-95";
           } else if (isOvulation) {
-            bgClass = "bg-purple-500 text-white";
+            bgClass = "bg-purple-500 text-white active:scale-95";
             ringClass = "ring-2 ring-purple-300";
           } else if (isFertile) {
-            bgClass = "bg-cyan-400 text-white";
+            bgClass = "bg-cyan-400 text-white active:scale-95";
           } else if (isSymptom) {
-            bgClass = "bg-gray-400 text-white";
+            bgClass = "bg-gray-400 text-white active:scale-95";
           }
 
           return (
@@ -164,7 +164,7 @@ export const ModernCalendar = ({
               key={day.toString()}
               onClick={() => onDateSelect?.(day)}
               className={`
-                aspect-square flex items-center justify-center rounded-xl text-sm font-medium transition-all
+                min-h-[44px] min-w-[44px] flex items-center justify-center rounded-xl text-sm font-semibold transition-all
                 ${bgClass}
                 ${ringClass}
                 ${isToday && !isPeriod && !isOvulation && !isFertile && !isSymptom ? "ring-2 ring-primary ring-offset-1" : ""}
